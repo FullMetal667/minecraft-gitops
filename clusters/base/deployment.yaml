@@ -40,10 +40,10 @@ spec:
       volumes:
         - name: world-data
           persistentVolumeClaim:
-            claimName: atm-world-data
+            claimName: world-data
         - name: backup-storage
           persistentVolumeClaim:
-            claimName: backup-data
+            claimName: backup-pvc
         - name: mcrcon-script
           configMap:
             name: rcon-commands-script
@@ -64,9 +64,12 @@ spec:
           configMap:
             name: minecraft-commands
             defaultMode: 0755
+        - name: env-file
+          secret:                  # oder configMap:
+            secretName: mc-env 
       containers:
         - name: all-the-mods-10
-          image: docker.io/chrisroth667/allthemods10:4.9
+          image: docker.io/chrisroth667/atm10:4.14
           imagePullPolicy: Always
           ports:
             - containerPort: 25565
@@ -104,6 +107,9 @@ spec:
             - name: mcrcon-commands
               mountPath: /data/commands.txt
               subPath: commands.txt
+            - name: env-file
+              mountPath: /opt/.env
+              subPath: .env
           terminationMessagePath: /dev/termination-log
           terminationMessagePolicy: File
       restartPolicy: Always

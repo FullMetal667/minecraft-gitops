@@ -1,0 +1,57 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+metadata:
+  name: atm10-image-build
+parameters:
+  - name: GIT_URL
+    description: Git repo URL mit dem Dockerfile
+    required: true
+  - name: GIT_REVISION
+    description: Git-Branch/Tag
+    value: main
+  - name: CONTEXT_DIR
+    description: Pfad zum Dockerfile im Repo
+    value: build/docker
+  - name: IMAGE_TAG
+    description: Ziel-Tag (z.B. 4.14)
+    value: "4.14"
+  - name: WEBHOOK_SECRET
+    description: Secret für GitHub Webhook
+    value: "set-a-random-secret"
+
+objects:
+- apiVersion: v1
+  kind: Secret
+  metadata:
+    name: github-webhook-secret
+  type: Opaque
+  stringData:
+    WebHookSecretKey: "${WEBHOOK_SECRET}"
+
+- apiVersion: build.openshift.io/v1
+  kind: BuildConfig
+  metadata:
+    name: "atm10-${IMAGE_TAG}"
+  spec:
+    source:
+      type: Git
+      git:
+        uri: "${GIT_URL}"
+        ref: "${GIT_REVISION}"
+      contextDir: "${CONTEXT_DIR}"
+    strategy:
+      type: Docker
+      dockerStrategy: {}
+    output:
+      to:
+        kind: DockerImage
+        name: "docker.io/chrisroth667/atm10:${IMAGE_TAG}"
+      pushSecret:
+        name: dockerhub-push
+    triggers:
+      - type: GitHub
+        github:
+          secretReference:
+            name: github-webhook-secret
+      - type: ConfigChange
+
