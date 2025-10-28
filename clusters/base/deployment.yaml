@@ -14,7 +14,7 @@ spec:
         app: minecraft
     spec:
       securityContext:
-        fsGroup: 1000
+        fsGroup: 1001400000
         runAsNonRoot: true
         fsGroupChangePolicy: OnRootMismatch
       initContainers:
@@ -24,6 +24,9 @@ spec:
         envFrom:
         - secretRef: { name: mc-env }
         workingDir: /data
+        volumeMounts:
+          - name: data
+            mountPath: /data
         # konstruiert die CurseForge-URL dynamisch wie dein Script & lädt nur wenn ZIP fehlt
         args:
         - |
@@ -35,20 +38,12 @@ spec:
           if [ ! -f "$ZIP" ]; then curl -fL -o "$ZIP" "$FINAL_URL"; fi
           microdnf -y install unzip && unzip -uo "$ZIP" -d .
       volumes:
-        - name: world-data
+        - name: data
           persistentVolumeClaim:
             claimName: world-data
-        - name: backup-storage
+        - name: backup
           persistentVolumeClaim:
             claimName: backup-pvc
-        - name: mcrcon-script
-          configMap:
-            name: rcon-commands-script
-            defaultMode: 0755
-        - name: start-server
-          configMap:
-            name: startserver
-            defaultMode: 0755
         - name: jvm-user-args
           configMap:
             name: user-jvm-args
@@ -66,7 +61,7 @@ spec:
             secretName: mc-env 
       containers:
         - name: all-the-mods-10
-          image: docker.io/chrisroth667/atm10:4.14
+          image: "docker.io/chrisroth667/atm10:4.14"
           imagePullPolicy: Always
           ports:
             - containerPort: 25565
@@ -85,16 +80,10 @@ spec:
             - secretRef:
                 name: mc-env
           volumeMounts:
-            - name: world-data
+            - name: data
               mountPath: /data/world
-            - name: backup-storage
+            - name: backup
               mountPath: /data/simplebackups
-            - name: mcrcon-script
-              mountPath: /data/rcon-commands-script.sh
-              subPath: rcon-commands-script.sh
-            - name: start-server
-              mountPath: /data/startserver.sh
-              subPath: startserver.sh
             - name: jvm-user-args
               mountPath: /data/user_jvm_args.txt
               subPath: user_jvm_args.txt

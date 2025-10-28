@@ -10,4 +10,4 @@ resources:
   - secret-mcrcon.yaml
   - service.yaml
   - deployment.yaml
-
+  - cm-mcrcon.yaml
