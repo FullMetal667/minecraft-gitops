@@ -24,9 +24,6 @@ spec:
         envFrom:
         - secretRef: { name: mc-env }
         workingDir: /data
-        volumeMounts:
-        - name: data
-          mountPath: /data
         # konstruiert die CurseForge-URL dynamisch wie dein Script & lädt nur wenn ZIP fehlt
         args:
         - |
