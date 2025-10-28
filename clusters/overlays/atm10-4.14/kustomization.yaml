@@ -15,3 +15,7 @@ patches:
       kind: Deployment
       name: all-the-mods-10
       namespace: minecraft-atm10
+  - path: patch-delete-minecraft-container.yaml
+    target:
+      name: all-the-mods-10
+      namespace: minecraft-atm10
