@@ -11,11 +11,16 @@ else
   exit 1
 fi
 
-if ! [[ "${EULA:-false}" != "true" ]]; then
+EULA_VAL="${EULA:-false}"
+case "${EULA_VAL,,}" in
+  true|yes|1)
+    echo "eula=true" > eula.txt
+    ;;
+  *)
     echo "You must accept the EULA to install."
     exit 99
-fi
-echo "eula=true" > eula.txt
+    ;;
+esac
 
 if [[ ! -f "$ZIP" ]]; then
     curl -fL -o "$ZIP" "$SERVER_FILE_URL"
