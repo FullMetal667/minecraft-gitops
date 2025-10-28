@@ -57,7 +57,7 @@ spec:
             name: minecraft-commands
             defaultMode: 0755
         - name: env-file
-          secret:                  # oder configMap:
+          secret:
             secretName: mc-env 
       containers:
         - name: all-the-mods-10
