@@ -14,7 +14,7 @@ spec:
         app: minecraft
     spec:
       securityContext:
-        fsGroup: 1001400000
+        fsGroup: 1001420000
         runAsNonRoot: true
         fsGroupChangePolicy: OnRootMismatch
       initContainers:
