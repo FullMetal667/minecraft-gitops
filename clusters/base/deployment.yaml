@@ -1,0 +1,111 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: all-the-mods-10
+  namespace: minecraft-atm10
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: minecraft
+  template:
+    metadata:
+      labels:
+        app: minecraft
+    spec:
+      securityContext:
+        fsGroup: 1000
+      initContainers:
+      - name: fetch-modpack
+        image: registry.access.redhat.com/ubi9/ubi-minimal
+        command: ["/bin/bash","-lc"]
+        envFrom:
+        - secretRef: { name: mc-env }
+        workingDir: /data
+        volumeMounts:
+        - name: data
+          mountPath: /data
+        # konstruiert die CurseForge-URL dynamisch wie dein Script & lädt nur wenn ZIP fehlt
+        args:
+        - |
+          set -euo pipefail
+          : "${FILE_ID:?}" "${ZIP:?}"
+          DIR1=$(( FILE_ID / 1000 )); DIR2=$(( FILE_ID % 1000 ))
+          FINAL_URL="https://mediafilez.forgecdn.net/files/${DIR1}/${DIR2}/${ZIP}"
+          echo "Download: ${FINAL_URL}"
+          if [ ! -f "$ZIP" ]; then curl -fL -o "$ZIP" "$FINAL_URL"; fi
+          microdnf -y install unzip && unzip -uo "$ZIP" -d .
+      volumes:
+        - name: world-data
+          persistentVolumeClaim:
+            claimName: atm-world-data
+        - name: backup-storage
+          persistentVolumeClaim:
+            claimName: backup-data
+        - name: mcrcon-script
+          configMap:
+            name: rcon-commands-script
+            defaultMode: 0755
+        - name: start-server
+          configMap:
+            name: startserver
+            defaultMode: 0755
+        - name: jvm-user-args
+          configMap:
+            name: user-jvm-args
+            defaultMode: 0755
+        - name: server-properties
+          configMap:
+            name: mc-server-properties
+            defaultMode: 0755
+        - name: mcrcon-commands
+          configMap:
+            name: minecraft-commands
+            defaultMode: 0755
+      containers:
+        - name: all-the-mods-10
+          image: docker.io/chrisroth667/allthemods10:4.9
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 25565
+              protocol: TCP
+          env:
+            - name: MCRCON_HOST
+              value: "localhost"
+            - name: MCRCON_PORT
+              value: "25575"
+            - name: MCRCON_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: mcrcon-password
+                  key: MCRCON_PASS
+          envFrom:
+            - secretRef:
+                name: mc-env
+          volumeMounts:
+            - name: world-data
+              mountPath: /data/world
+            - name: backup-storage
+              mountPath: /data/simplebackups
+            - name: mcrcon-script
+              mountPath: /data/rcon-commands-script.sh
+              subPath: rcon-commands-script.sh
+            - name: start-server
+              mountPath: /data/startserver.sh
+              subPath: startserver.sh
+            - name: jvm-user-args
+              mountPath: /data/user_jvm_args.txt
+              subPath: user_jvm_args.txt
+            - name: server-properties
+              mountPath: /data/server.properties
+              subPath: server.properties
+            - name: mcrcon-commands
+              mountPath: /data/commands.txt
+              subPath: commands.txt
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      securityContext: {}
+      schedulerName: default-scheduler

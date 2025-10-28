@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mc-env
+type: Opaque
+stringData:
+  MOD_VERSION: "4.14"
+  FILE_ID: "7121795"
+  ZIP: "ServerFiles-4.14.zip"
+  DIR: "ServerFiles-4.14"
+  MOTD: "All the Mods 10 (4.14) on OpenShift"
+  EULA: "true"

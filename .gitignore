@@ -1,0 +1,15 @@
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# builds/artefakte
+*.zip
+*.tgz
+*.gz
+*.log
+
+# minecraft daten (nur manifests im repo behalten!)
+world/
+backup/
+data/

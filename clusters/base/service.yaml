@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: all-the-mods-10
+  namespace: minecraft-atm10
+spec:
+  selector:
+    app: minecraft
+  ports:
+    - name: game
+      protocol: TCP
+      port: 25565
+      targetPort: 25565
+  type: LoadBalancer
+  externalTrafficPolicy: Local

@@ -1,0 +1,9 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: minecraft-atm10
+resources:
+  - ../../base
+patches:
+  - path: patch-env.yaml
+  - path: patch-resources.yaml
+  # - path: patch-image.yaml (falls spezieller Tag)

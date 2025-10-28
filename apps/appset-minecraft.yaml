@@ -1,0 +1,30 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: minecraft-servers
+  namespace: openshift-gitops
+spec:
+  generators:
+  - git:
+      repoURL: https://github.com/FullMetal667/minecraft-gitops.git
+      revision: main
+      directories:
+      - path: clusters/overlays/*
+  template:
+    metadata:
+      name: '{{path.basename}}'
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/FullMetal667/minecraft-gitops.git
+        targetRevision: main
+        path: '{{path}}'
+      destination:
+        server: https://
+        namespace: minecraft-atm10
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+        - CreateNamespace=true
