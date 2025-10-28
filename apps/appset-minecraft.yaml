@@ -14,7 +14,7 @@ spec:
     metadata:
       name: '{{path.basename}}'
     spec:
-      project: default
+      project: minecraft
       source:
         repoURL: https://github.com/FullMetal667/minecraft-gitops.git
         targetRevision: main
