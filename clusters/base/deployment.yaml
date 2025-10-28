@@ -19,7 +19,7 @@ spec:
         fsGroupChangePolicy: OnRootMismatch
       initContainers:
       - name: fetch-modpack
-        image: registry.access.redhat.com/ubi9/ubi-minimal
+        image: docker.io/chrisroth667/atm10:4.14
         command: ["/bin/bash","-lc"]
         envFrom:
         - secretRef: { name: mc-env }
@@ -27,7 +27,6 @@ spec:
         volumeMounts:
           - name: data
             mountPath: /data
-        # konstruiert die CurseForge-URL dynamisch wie dein Script & lädt nur wenn ZIP fehlt
         args:
         - |
           set -euo pipefail
@@ -36,7 +35,8 @@ spec:
           FINAL_URL="https://mediafilez.forgecdn.net/files/${DIR1}/${DIR2}/${ZIP}"
           echo "Download: ${FINAL_URL}"
           if [ ! -f "$ZIP" ]; then curl -fL -o "$ZIP" "$FINAL_URL"; fi
-          microdnf -y install unzip && unzip -uo "$ZIP" -d .
+          # direkt entpacken – ohne microdnf
+          unzip -uo "$ZIP" -d .
       volumes:
         - name: data
           persistentVolumeClaim:
