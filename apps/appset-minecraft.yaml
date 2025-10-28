@@ -20,7 +20,7 @@ spec:
         targetRevision: main
         path: '{{path}}'
       destination:
-        server: https://
+        server: https://kubernetes.default.svc
         namespace: minecraft-atm10
       syncPolicy:
         automated:
