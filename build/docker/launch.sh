@@ -22,10 +22,24 @@ case "${EULA_VAL,,}" in
     ;;
 esac
 
-if [[ ! -f "$ZIP" ]]; then
-    curl -fL -o "$ZIP" "$SERVER_FILE_URL"
-    unzip -uo "$ZIP" -d .
+EULA_VAL="${EULA:-false}"
+case "${EULA_VAL,,}" in
+  true|yes|1) echo "eula=true" > eula.txt ;;
+  *) echo "You must accept the EULA to install."; exit 99 ;;
+esac
+
+if [[ ! -f "${ZIP:?ZIP not set}" ]]; then
+  if [[ -z "${SERVER_FILE_URL:-}" ]]; then
+    : "${FILE_ID:?FILE_ID not set}"
+    DIR1=$(( FILE_ID / 1000 ))
+    DIR2=$(( FILE_ID % 1000 ))
+    SERVER_FILE_URL="https://mediafilez.forgecdn.net/files/${DIR1}/${DIR2}/${ZIP}"
+  fi
+  echo "Downloading ${ZIP} from ${SERVER_FILE_URL}"
+  curl -fL -o "$ZIP" "$SERVER_FILE_URL"
 fi
+
+unzip -uo "$ZIP" -d .
 
 if [[ ! -f "libraries/net/minecraftforge/forge/${FORGE_VERSION}/unix_args.txt" ]]; then
     echo "Installing Forge server..."
