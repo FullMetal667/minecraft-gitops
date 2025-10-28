@@ -1,0 +1,19 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: minecraft
+  namespace: openshift-gitops
+spec:
+  description: Minecraft on OpenShift
+  sourceRepos:
+    - https://github.com/FullMetal667/minecraft-gitops.git
+  destinations:
+    - namespace: minecraft-atm10
+      server: https://kubernetes.default.svc
+  clusterResourceWhitelist:
+    - group: '*'
+      kind: '*'
+  namespaceResourceWhitelist:
+    - group: '*'
+      kind: '*'
+
