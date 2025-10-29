@@ -98,4 +98,14 @@ fi
 [[ -n "${OPS:-}" ]] && echo "$OPS" | tr ',' '\n' > ops.txt
 [[ -n "${ALLOWLIST:-}" ]] && echo "$ALLOWLIST" | tr ',' '\n' > white-list.txt
 
-exec /data/startserver.sh
+if [[ -x /data/startserver.sh ]]; then
+  exec /data/startserver.sh
+else
+  # Variante A: direkt mit bash ausführen (kein +x nötig)
+  # exec bash /data/startserver.sh
+
+  # Variante B (empfohlen): einmalig nach /opt kopieren und ausführbar machen
+  cp -f /data/startserver.sh /opt/startserver.sh
+  chmod +x /opt/startserver.sh
+  exec /opt/startserver.sh
+fi
