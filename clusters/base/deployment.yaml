@@ -88,7 +88,7 @@ spec:
               mountPath: /data/user_jvm_args.txt
               subPath: user_jvm_args.txt
             - name: server-properties
-              mountPath: /data/server.properties
+              mountPath: /opt/defaults/server.properties
               subPath: server.properties
             - name: mcrcon-commands
               mountPath: /data/commands.txt
