@@ -28,7 +28,7 @@ RUN microdnf install -y unzip nmap-ncat which --setopt=install_weak_deps=0 && \
 
 # tini rein
 RUN curl -sL https://github.com/krallin/tini/releases/download/v0.19.0/tini-amd64 -o /usr/local/bin/tini && \
-    chmod +x /usr/local/bin/tini
+    chmod +x /usr/local/bin/tini && \
     ln -s /usr/local/bin/tini /usr/bin/tini
 
 # mcrcon rein
