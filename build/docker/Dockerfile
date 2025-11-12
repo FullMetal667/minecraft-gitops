@@ -13,7 +13,9 @@ RUN make
 # -------- Stage 2: runtime image --------
 FROM registry.access.redhat.com/ubi9/openjdk-21:latest
 
-# root fürs Installieren
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+
+# Root NUR fürs Installieren
 USER 0
 
 LABEL org.opencontainers.image.source="https://github.com/FullMetal667/minecraft-gitops-aof7" \
@@ -22,51 +24,60 @@ LABEL org.opencontainers.image.source="https://github.com/FullMetal667/minecraft
       org.opencontainers.image.vendor="chrisroth667" \
       org.opencontainers.image.licenses="MIT"
 
-# nur was wir brauchen
-RUN microdnf install -y unzip nmap-ncat which --setopt=install_weak_deps=0 && \
-    microdnf clean all
+# Minimal-Tools (inkl. curl) + CAs
+RUN microdnf install -y curl unzip nmap-ncat which --setopt=install_weak_deps=0 \
+ && microdnf clean all \
+ && update-ca-trust
 
 # tini rein
-RUN curl -sL https://github.com/krallin/tini/releases/download/v0.19.0/tini-amd64 -o /usr/local/bin/tini && \
-    chmod +x /usr/local/bin/tini && \
-    ln -s /usr/local/bin/tini /usr/bin/tini
+ENV TINI_VERSION=v0.19.0
+ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini-amd64 /usr/local/bin/tini
+RUN chmod +x /usr/local/bin/tini && ln -s /usr/local/bin/tini /usr/bin/tini
 
 # mcrcon rein
-COPY --from=mcrcon-builder /src/mcrcon/mcrcon /usr/local/bin/mcrcon
+COPY --from=mcrcon-builder --chmod=0755 --chown=0:0 /src/mcrcon/mcrcon /usr/local/bin/mcrcon
 
 # startscript rein
-COPY startserver.sh /opt/startserver.sh
+COPY --chown=0:0 startserver.sh /opt/startserver.sh
+RUN chmod 0755 /opt/startserver.sh
 
-# ---- HIER: Forge-/Modpack-Zip schon beim Build holen ----
-# Wir machen die Werte per Build-Arg konfigurierbar
+# Verzeichnisse definieren
+ENV APP_DIR=/opt/aof7 \
+    DATA_DIR=/data
+RUN mkdir -p "${APP_DIR}" "${DATA_DIR}"
+
+# ---- Optional: Forge-/Modpack-Zip schon beim Build holen ----
+# Per Build-Args:
+#   --build-arg FILE_ID=<zahl> --build-arg ZIP=<dateiname.zip>
 ARG FILE_ID
 ARG ZIP
-
-# Zielverzeichnis vorbereiten
-RUN mkdir -p /opt/aof7
-
-# Download + Entpacken nur, wenn beide Variablen gesetzt sind
-RUN if [ -n "${FILE_ID}" ] && [ -n "${ZIP}" ]; then \
+RUN if [[ -n "${FILE_ID}" && -n "${ZIP}" ]]; then \
       DIR1=$(( FILE_ID / 1000 )); \
       DIR2=$(( FILE_ID % 1000 )); \
       FINAL_URL="https://mediafilez.forgecdn.net/files/${DIR1}/${DIR2}/${ZIP}"; \
-      echo "Download: ${FINAL_URL}"; \
-      curl -fL -o "/opt/aof7/${ZIP}" "${FINAL_URL}"; \
-      unzip -uo "/opt/aof7/${ZIP}" -d /data; \
+      echo "Downloading: ${FINAL_URL}"; \
+      curl -fL -o "${APP_DIR}/${ZIP}" "${FINAL_URL}"; \
+      unzip -uo "${APP_DIR}/${ZIP}" -d "${DATA_DIR}"; \
     else \
       echo "FILE_ID oder ZIP nicht gesetzt – skip download"; \
     fi
 
-# OpenShift-Rechte
-RUN chgrp -R 0 /opt/aof7 /opt /usr/local/bin/mcrcon /opt/startserver.sh \
- && chmod -R g+rwX /opt/aof7 /opt /usr/local/bin/mcrcon \
- && chmod +x /opt/startserver.sh \
- && find /opt/aof7 -type d -exec chmod g+s {} \; 
+# -------- OpenShift: arbitrary UID-fähig machen --------
+# Gruppe 0 setzen und Gruppenrechte an Userrechte spiegeln (g=u),
+# damit mit fsGroup: 0 auf dem PVC geschrieben werden kann.
+RUN chgrp -R 0 "${APP_DIR}" "${DATA_DIR}" /opt/startserver.sh /usr/local/bin/mcrcon \
+ && chmod -R g=u "${APP_DIR}" "${DATA_DIR}" \
+ && chmod g=u /opt/startserver.sh /usr/local/bin/mcrcon \
+ && find "${APP_DIR}" -type d -exec chmod g+s {} \; \
+ && find "${DATA_DIR}" -type d -exec chmod g+s {} \;
 
-WORKDIR /data
+WORKDIR ${DATA_DIR}
 VOLUME ["/data"]
 
 EXPOSE 25565/tcp
+
+# Nicht-root als Default (OpenShift weist sowieso eine arbitrary UID zu)
+USER 1001
 
 ENTRYPOINT ["/usr/local/bin/tini","--"]
 CMD ["/opt/startserver.sh"]

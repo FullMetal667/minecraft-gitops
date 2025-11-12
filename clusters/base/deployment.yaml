@@ -14,8 +14,8 @@ spec:
         app: minecraft
     spec:
       securityContext:
-        runAsNonRoot: true
-        fsGroupChangePolicy: OnRootMismatch
+        fsGroup: 0
+        fsGroupChangePolicy: "OnRootMismatch"
       initContainers:
       - name: fetch-modpack
         image: docker.io/chrisroth667/aof7:2.5.3
