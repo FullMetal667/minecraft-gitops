@@ -59,6 +59,12 @@ fi
 # 5) Start (arbeite aus /data, damit relative Pfade passen)
 cd "${DATA}"
 
+{
+  echo "# You accepted the EULA by deploying this server"
+  date -u +"# %Y-%m-%dT%H:%M:%SZ"
+  echo "eula=true"
+} > eula.txt
+
 if [ ! -f eula.txt ] || ! grep -q 'eula=true' eula.txt; then
   if [ "${EULA:-}" = "TRUE" ] || [ "${EULA:-}" = "true" ]; then
     {
