@@ -11,7 +11,7 @@ WORKDIR /src/mcrcon
 RUN make
 
 # -------- Stage 2: runtime image --------
-FROM openjdk:21-slim
+FROM registry.access.redhat.com/ubi9/openjdk-21:latest
 
 # OCI Labels
 LABEL org.opencontainers.image.source="https://github.com/FullMetal667/minecraft-gitops-aof7" \
