@@ -1,8 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: all-the-mods-10
-  namespace: minecraft-atm10
+  name: all-of-fabric-7
+  namespace: minecraft-aof7
+  annotations:
+    argocd.argoproj.io/sync-options: Replace=true
 spec:
   selector:
     app: minecraft

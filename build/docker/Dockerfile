@@ -14,8 +14,8 @@ RUN make
 FROM openjdk:21-jdk-slim
 
 # OCI Labels
-LABEL org.opencontainers.image.source="https://github.com/FullMetal667/minecraft-gitops" \
-      org.opencontainers.image.title="ATM10 Minecraft Server" \
+LABEL org.opencontainers.image.source="https://github.com/FullMetal667/minecraft-gitops-aof7" \
+      org.opencontainers.image.title="AOF7 Minecraft Server" \
       org.opencontainers.image.version="0.2.61" \
       org.opencontainers.image.vendor="chrisroth667" \
       org.opencontainers.image.licenses="MIT"
@@ -29,13 +29,13 @@ RUN apt-get update \
 COPY --from=mcrcon-builder /src/mcrcon/mcrcon /usr/local/bin/mcrcon
 
 # Launch-Skript rein
-COPY launch.sh /opt/launch.sh
+COPY startserver.sh /opt/startserver.sh
 
 # OpenShift: Verzeichnisse für arbitrary UID vorbereiten (Gruppe 0, group-writable)
 RUN mkdir -p /data /opt \
  && chgrp -R 0 /data /opt /usr/local/bin/mcrcon \
  && chmod -R g+rwX /data /opt /usr/local/bin/mcrcon \
- && chmod +x /opt/launch.sh
+ && chmod +x /opt/startserver.sh
 
 # Arbeitsverzeichnis + Volume-Deklaration
 WORKDIR /data
@@ -50,5 +50,5 @@ EXPOSE 25565/tcp
 ENTRYPOINT ["/usr/bin/tini","--"]
 
 # Wichtig: .env NICHT im Image! Bitte als Secret/ConfigMap nach /opt/.env mounten.
-CMD ["/opt/launch.sh"]
+CMD ["/opt/startserver.sh"]
 

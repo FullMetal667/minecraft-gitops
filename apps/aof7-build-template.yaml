@@ -1,7 +1,7 @@
 apiVersion: template.openshift.io/v1
 kind: Template
 metadata:
-  name: atm10-image-build
+  name: aof7-image-build
 parameters:
   - name: GIT_URL
     description: Git repo URL mit dem Dockerfile
@@ -14,7 +14,7 @@ parameters:
     value: build/docker
   - name: IMAGE_TAG
     description: Ziel-Tag (z.B. 4.14)
-    value: "4.14"
+    value: "2.5.3"
   - name: WEBHOOK_SECRET
     description: Secret für GitHub Webhook
     value: "set-a-random-secret"
@@ -31,7 +31,7 @@ objects:
 - apiVersion: build.openshift.io/v1
   kind: BuildConfig
   metadata:
-    name: "atm10-${IMAGE_TAG}"
+    name: "aof7-${IMAGE_TAG}"
   spec:
     source:
       type: Git
@@ -45,7 +45,7 @@ objects:
     output:
       to:
         kind: DockerImage
-        name: "docker.io/chrisroth667/atm10:${IMAGE_TAG}"
+        name: "docker.io/chrisroth667/aof7:${IMAGE_TAG}"
       pushSecret:
         name: dockerhub-push
     triggers:

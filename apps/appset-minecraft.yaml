@@ -1,27 +1,38 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: minecraft-servers
+  name: minecraft-servers-aof7
   namespace: openshift-gitops
 spec:
   generators:
   - git:
-      repoURL: https://github.com/FullMetal667/minecraft-gitops.git
+      repoURL: https://github.com/FullMetal667/minecraft-gitops-aof7.git
       revision: main
       directories:
-      - path: clusters/overlays/*
+      - path: clusters/overlays/aof7-2.5.3
   template:
     metadata:
-      name: '{{path.basename}}'
+      name: aof7-2.5.3
     spec:
-      project: minecraft
+      ignoreDifferences:
+        - group: ""
+          kind: Service
+          jsonPointers:
+            - /spec/clusterIP
+            - /spec/clusterIPs
+            - /spec/ipFamilies
+            - /spec/ipFamilyPolicy
+            - /spec/healthCheckNodePort
+            - /spec/ports/0/nodePort
+            - /spec/ports/1/nodePort
+      project: minecraft-aof7
       source:
-        repoURL: https://github.com/FullMetal667/minecraft-gitops.git
+        repoURL: https://github.com/FullMetal667/minecraft-gitops-aof7.git
         targetRevision: main
         path: '{{path}}'
       destination:
         server: https://kubernetes.default.svc
-        namespace: minecraft-atm10
+        namespace: minecraft-aof7
       syncPolicy:
         automated:
           prune: true

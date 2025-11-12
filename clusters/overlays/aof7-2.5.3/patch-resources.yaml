@@ -1,8 +1,8 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: all-the-mods-10
-  namespace: minecraft-atm10
+  name: all-of-fabric-7
+  namespace: minecraft-aof7
 spec:
   template:
     spec:

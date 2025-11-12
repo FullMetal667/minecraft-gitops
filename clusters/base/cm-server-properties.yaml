@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: mc-server-properties
-  namespace: minecraft-atm10
+  namespace: minecraft-aof7
 data:
   server.properties: |
     #Minecraft server properties

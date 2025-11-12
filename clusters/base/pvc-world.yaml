@@ -2,7 +2,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: world-data
-  namespace: minecraft-atm10
+  namespace: minecraft-aof7
 spec:
   accessModes:
     - ReadWriteOnce

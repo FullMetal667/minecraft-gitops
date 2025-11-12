@@ -1,8 +1,8 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: all-the-mods-10
-  namespace: minecraft-atm10
+  name: all-of-fabric-7
+  namespace: minecraft-aof7
 spec:
   replicas: 1
   selector:
@@ -19,7 +19,7 @@ spec:
         fsGroupChangePolicy: OnRootMismatch
       initContainers:
       - name: fetch-modpack
-        image: docker.io/chrisroth667/atm10:4.14
+        image: docker.io/chrisroth667/aof7:2.5.3
         command: ["/bin/bash","-lc"]
         envFrom:
         - secretRef: { name: mc-env }
@@ -60,8 +60,8 @@ spec:
           secret:
             secretName: mc-env 
       containers:
-        - name: all-the-mods-10
-          image: "docker.io/chrisroth667/atm10:4.14"
+        - name: all-of-fabric-7
+          image: "docker.io/chrisroth667/aof7:2.5.3"
           imagePullPolicy: Always
           ports:
             - containerPort: 25565
