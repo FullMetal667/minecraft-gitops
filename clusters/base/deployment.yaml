@@ -26,16 +26,6 @@ spec:
         volumeMounts:
           - name: data
             mountPath: /data
-        args:
-        - |
-          set -euo pipefail
-          : "${FILE_ID:?}" "${ZIP:?}"
-          DIR1=$(( FILE_ID / 1000 )); DIR2=$(( FILE_ID % 1000 ))
-          FINAL_URL="https://mediafilez.forgecdn.net/files/${DIR1}/${DIR2}/${ZIP}"
-          echo "Download: ${FINAL_URL}"
-          if [ ! -f "$ZIP" ]; then curl -fL -o "$ZIP" "$FINAL_URL"; fi
-          # direkt entpacken – ohne microdnf
-          unzip -uo "$ZIP" -d .
       volumes:
         - name: data
           persistentVolumeClaim:
