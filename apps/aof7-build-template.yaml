@@ -46,7 +46,7 @@ objects:
           - name: FILE_ID
             value: 6766320
           - name: ZIP
-            value: "All of Fabric 7-Server-2.5.3.zip"
+            value: "All-of-Fabric-7-Server-2.5.3.zip"
     output:
       to:
         kind: DockerImage
