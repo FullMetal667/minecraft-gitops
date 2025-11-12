@@ -13,7 +13,7 @@ RUN make
 # -------- Stage 2: runtime image --------
 FROM registry.access.redhat.com/ubi9/openjdk-21:latest
 
-# erst mal root werden für die Paket-Installation
+# für die Installation root werden
 USER 0
 
 LABEL org.opencontainers.image.source="https://github.com/FullMetal667/minecraft-gitops-aof7" \
@@ -22,16 +22,18 @@ LABEL org.opencontainers.image.source="https://github.com/FullMetal667/minecraft
       org.opencontainers.image.vendor="chrisroth667" \
       org.opencontainers.image.licenses="MIT"
 
-# Pakete installieren (UBI -> microdnf, nicht apt)
-RUN microdnf update -y && \
-    microdnf install -y curl unzip nmap-ncat && \
+# WICHTIG:
+# - kein 'microdnf update'
+# - KEIN 'curl' installieren (curl-minimal ist schon da)
+# - nur das installieren, was wirklich fehlt
+RUN microdnf install -y unzip nmap-ncat --setopt=install_weak_deps=0 && \
     microdnf clean all
 
-# tini reinholen
+# tini holen (nutzt das vorhandene curl-minimal)
 RUN curl -sL https://github.com/krallin/tini/releases/download/v0.19.0/tini-amd64 -o /usr/local/bin/tini && \
     chmod +x /usr/local/bin/tini
 
-# mcrcon aus Stage 1 holen
+# mcrcon aus dem Builder übernehmen
 COPY --from=mcrcon-builder /src/mcrcon/mcrcon /usr/local/bin/mcrcon
 
 # dein Startscript
@@ -48,7 +50,7 @@ VOLUME ["/data"]
 
 EXPOSE 25565/tcp
 
-# zurück auf "whoever OpenShift wählt"
+# wieder weg von root
 USER 1001
 
 ENTRYPOINT ["/usr/local/bin/tini","--"]
