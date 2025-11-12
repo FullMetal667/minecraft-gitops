@@ -19,7 +19,8 @@ spec:
       initContainers:
       - name: fetch-modpack
         image: docker.io/chrisroth667/aof7:2.5.3
-        command: ["/bin/bash","-lc"]
+        command: ["/usr/bin/tini","--"]
+        args: ["/ops/startserver.sh"]
         envFrom:
         - secretRef: { name: mc-env }
         workingDir: /data
