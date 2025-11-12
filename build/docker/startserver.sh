@@ -1,40 +1,63 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+DATA="/data"
+SEED="/opt/aof7"
+JAR_OPT="/opt/serverstarter-2.4.0.jar"
+JAR_DATA="${DATA}/serverstarter-2.4.0.jar"
+RAMDISK_PATH="${RAMDISK_PATH:-}"   # optional via Deployment setzen, z.B. /ramdisk
+RAMDISK_SIZE="${RAMDISK_SIZE:-2G}" # nur Info/Log
+
+umask 0002
+
+# 1) Erst-Start: /data seeden, falls noch leer
+if [ ! -f "${DATA}/server-setup-config.yaml" ]; then
+  echo "First run: seeding ${DATA} from ${SEED}"
+  cp -a "${SEED}/." "${DATA}/"
+fi
+
+# 2) Verzeichnisstruktur + Rechte (OpenShift: arbitrary UID)
+mkdir -p "${DATA}/logs" "${DATA}/config"
+# Offen, aber robust. Optional enger machen, wenn fsGroup funktioniert.
+find "${DATA}" -type d -exec chmod 0777 {} + || true
+find "${DATA}" -type f -exec chmod 0666 {} + || true
+
+# 3) Optional RAM-"Disk": nur wenn Deployment einen Memory-EmptyDir mounted hat
+#    (z.B. mountPath: /ramdisk). Kein 'mount' im Container!
 DO_RAMDISK=0
-if [[ $(cat server-setup-config.yaml | grep 'ramDisk:' | awk 'BEGIN {FS=":"}{print $2}') =~ "yes" ]]; then
-    SAVE_DIR=$(cat server.properties | grep 'level-name' | awk 'BEGIN {FS="="}{print $2}')
-    mv $SAVE_DIR "${SAVE_DIR}_backup"
-    mkdir $SAVE_DIR
-    sudo mount -t tmpfs -o size=2G tmpfs $SAVE_DIR
+if grep -Eq '^[[:space:]]*ramDisk:[[:space:]]*yes' "${DATA}/server-setup-config.yaml"; then
+  if [ -n "${RAMDISK_PATH}" ] && [ -d "${RAMDISK_PATH}" ]; then
+    SAVE_DIR="$(awk -F= '/^level-name=/{print $2}' "${DATA}/server.properties" || true)"
+    SAVE_DIR="${SAVE_DIR:-world}"
+    echo "RAM mode requested; using ${RAMDISK_PATH} for world '${SAVE_DIR}'"
+    mkdir -p "${RAMDISK_PATH}/${SAVE_DIR}"
+    # Falls schon eine Welt existiert, initial kopieren
+    if [ -d "${DATA}/${SAVE_DIR}" ]; then
+      cp -a "${DATA}/${SAVE_DIR}/." "${RAMDISK_PATH}/${SAVE_DIR}/" || true
+    fi
+    # Symlink Welt -> RAM
+    rm -rf "${DATA:?}/${SAVE_DIR}" && ln -s "${RAMDISK_PATH}/${SAVE_DIR}" "${DATA}/${SAVE_DIR}"
     DO_RAMDISK=1
+  else
+    echo "ramDisk: yes konfiguriert, aber RAMDISK_PATH ist nicht gemountet. Weiter ohne RAM."
+  fi
 fi
-	if [ -f serverstarter-2.4.0.jar ]; then
-			echo "Skipping download. Using existing serverstarter-2.4.0.jar"
-         java -jar serverstarter-2.4.0.jar
-               if [[ $DO_RAMDISK -eq 1 ]]; then
-               sudo umount $SAVE_DIR
-               rm -rf $SAVE_DIR
-               mv "${SAVE_DIR}_backup" $SAVE_DIR
-               fi
-               exit 0
-	else
-			export URL="https://github.com/TeamAOF/ServerStarter/releases/download/v2.4.0/serverstarter-2.4.0.jar"
-	fi
-		echo $URL
-		which wget >> /dev/null
-		if [ $? -eq 0 ]; then
-			echo "DEBUG: (wget) Downloading ${URL}"
-			wget -O serverstarter-2.4.0.jar "${URL}"
-   else
-			which curl >> /dev/null
-			if [ $? -eq 0 ]; then
-				echo "DEBUG: (curl) Downloading ${URL}"
-				curl -o serverstarter-2.4.0.jar -L "${URL}"
-			else
-				echo "Neither wget or curl were found on your system. Please install one and try again"
-         fi
-      fi
-java -jar serverstarter-2.4.0.jar
-if [[ $DO_RAMDISK -eq 1 ]]; then
-    sudo umount $SAVE_DIR
-    rm -rf $SAVE_DIR
-    mv "${SAVE_DIR}_backup" $SAVE_DIR
+
+# 4) ServerStarter JAR wählen/holen
+if [ -f "${JAR_DATA}" ]; then
+  JAR="${JAR_DATA}"
+elif [ -f "${JAR_OPT}" ]; then
+  JAR="${JAR_OPT}"
+else
+  # Fallback: herunterladen (Cluster muss Egress erlauben)
+  URL="https://github.com/TeamAOF/ServerStarter/releases/download/v2.4.0/serverstarter-2.4.0.jar"
+  echo "serverstarter.jar not found; downloading ${URL}"
+  curl -fL -A "Mozilla/5.0" -o "${JAR_DATA}" "${URL}"
+  JAR="${JAR_DATA}"
 fi
+
+# 5) Start (arbeite aus /data, damit relative Pfade passen)
+cd "${DATA}"
+echo "Launching ServerStarter with config ${DATA}/server-setup-config.yaml"
+exec java -jar "${JAR}" --config "${DATA}/server-setup-config.yaml"
+

@@ -44,9 +44,9 @@ objects:
       dockerStrategy:
         buildArgs:
           - name: FILE_ID
-            value: 6766320
+            value: "6766320"
           - name: ZIP
-            value: "All-of-Fabric-7-Server-2.5.3.zip"
+            value: "All%20of%20Fabric%207-Server-${IMAGE_TAG}.zip"
     output:
       to:
         kind: DockerImage
