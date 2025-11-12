@@ -23,12 +23,13 @@ LABEL org.opencontainers.image.source="https://github.com/FullMetal667/minecraft
       org.opencontainers.image.licenses="MIT"
 
 # nur was wir brauchen
-RUN microdnf install -y unzip nmap-ncat --setopt=install_weak_deps=0 && \
+RUN microdnf install -y unzip nmap-ncat which --setopt=install_weak_deps=0 && \
     microdnf clean all
 
 # tini rein
 RUN curl -sL https://github.com/krallin/tini/releases/download/v0.19.0/tini-amd64 -o /usr/local/bin/tini && \
     chmod +x /usr/local/bin/tini
+    ln -s /usr/local/bin/tini /usr/bin/tini
 
 # mcrcon rein
 COPY --from=mcrcon-builder /src/mcrcon/mcrcon /usr/local/bin/mcrcon
