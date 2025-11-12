@@ -58,6 +58,21 @@ fi
 
 # 5) Start (arbeite aus /data, damit relative Pfade passen)
 cd "${DATA}"
+
+if [ ! -f eula.txt ] || ! grep -q 'eula=true' eula.txt; then
+  if [ "${EULA:-}" = "TRUE" ] || [ "${EULA:-}" = "true" ]; then
+    {
+      echo "# By changing the setting below to TRUE you are indicating your agreement to the EULA (https://aka.ms/MinecraftEULA)."
+      echo "# $(date -u)"
+      echo "eula=true"
+    } > eula.txt
+    echo "[init] EULA accepted via ENV"
+  else
+    echo "[init] EULA not accepted. Setze ENV EULA=true oder lege /data/eula.txt mit 'eula=true' an."
+    exit 3
+  fi
+fi
+
 echo "Launching ServerStarter with config ${DATA}/server-setup-config.yaml"
 exec java -jar "${JAR}" --config "${DATA}/server-setup-config.yaml"
 
