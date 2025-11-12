@@ -20,7 +20,7 @@ spec:
       - name: fetch-modpack
         image: docker.io/chrisroth667/aof7:2.5.3
         command: ["/usr/local/bin/tini","--"]
-        args: ["/ops/startserver.sh"]
+        args: ["/opt/startserver.sh"]
         envFrom:
         - secretRef: { name: mc-env }
         workingDir: /data
