@@ -20,10 +20,16 @@ LABEL org.opencontainers.image.source="https://github.com/FullMetal667/minecraft
       org.opencontainers.image.vendor="chrisroth667" \
       org.opencontainers.image.licenses="MIT"
 
-# Runtime-Tools: curl, unzip, netcat, tini (für sauberes Signal-Handling)
-RUN apt-get update \
- && apt-get install -y --no-install-recommends curl unzip netcat-traditional tini \
- && rm -rf /var/lib/apt/lists/*
+# UBI hat kein apt-get -> microdnf benutzen
+# curl, unzip: selbsterklärend
+# netcat: unter RHEL heißt das Paket i.d.R. nmap-ncat
+RUN microdnf update -y && \
+    microdnf install -y curl unzip nmap-ncat && \
+    microdnf clean all
+
+# tini gibt's nicht standardmäßig, also holen wir es rein
+RUN curl -sL https://github.com/krallin/tini/releases/download/v0.19.0/tini-amd64 -o /usr/local/bin/tini && \
+    chmod +x /usr/local/bin/tini
 
 # mcrcon aus dem Builder übernehmen
 COPY --from=mcrcon-builder /src/mcrcon/mcrcon /usr/local/bin/mcrcon
@@ -31,24 +37,17 @@ COPY --from=mcrcon-builder /src/mcrcon/mcrcon /usr/local/bin/mcrcon
 # Launch-Skript rein
 COPY startserver.sh /opt/startserver.sh
 
-# OpenShift: Verzeichnisse für arbitrary UID vorbereiten (Gruppe 0, group-writable)
+# OpenShift: Verzeichnisse für arbitrary UID vorbereiten
 RUN mkdir -p /data /opt \
  && chgrp -R 0 /data /opt /usr/local/bin/mcrcon \
  && chmod -R g+rwX /data /opt /usr/local/bin/mcrcon \
  && chmod +x /opt/startserver.sh
 
-# Arbeitsverzeichnis + Volume-Deklaration
 WORKDIR /data
 VOLUME ["/data"]
 
-# Exponiere den Minecraft-Port (und optional RCON, falls genutzt)
 EXPOSE 25565/tcp
-# EXPOSE 25575/tcp
 
-# OpenShift läuft mit zufälliger UID -> KEIN fixed USER setzen.
-# EntryPoint über tini (PID1)
-ENTRYPOINT ["/usr/bin/tini","--"]
-
-# Wichtig: .env NICHT im Image! Bitte als Secret/ConfigMap nach /opt/.env mounten.
+ENTRYPOINT ["/usr/local/bin/tini","--"]
 CMD ["/opt/startserver.sh"]
 
