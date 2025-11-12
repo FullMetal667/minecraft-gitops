@@ -12,10 +12,7 @@ RUN make
 
 # -------- Stage 2: runtime image --------
 FROM registry.access.redhat.com/ubi9/openjdk-21:latest
-
-SHELL ["/bin/bash", "-o", "pipefail", "-c"]
-
-# Root NUR fürs Installieren
+SHELL ["/bin/bash","-o","pipefail","-c"]
 USER 0
 
 LABEL org.opencontainers.image.source="https://github.com/FullMetal667/minecraft-gitops-aof7" \
@@ -24,12 +21,12 @@ LABEL org.opencontainers.image.source="https://github.com/FullMetal667/minecraft
       org.opencontainers.image.vendor="chrisroth667" \
       org.opencontainers.image.licenses="MIT"
 
-# Minimal-Tools (inkl. curl) + CAs
-RUN microdnf install -y curl unzip nmap-ncat which --setopt=install_weak_deps=0 \
+# 👉 KEIN 'curl', sondern 'curl-minimal' verwenden (plus ca-certificates)
+RUN microdnf install -y curl-minimal unzip nmap-ncat which ca-certificates --setopt=install_weak_deps=0 \
  && microdnf clean all \
  && update-ca-trust
 
-# tini rein
+# tini rein (per ADD, braucht kein curl)
 ENV TINI_VERSION=v0.19.0
 ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini-amd64 /usr/local/bin/tini
 RUN chmod +x /usr/local/bin/tini && ln -s /usr/local/bin/tini /usr/bin/tini
@@ -41,14 +38,12 @@ COPY --from=mcrcon-builder --chmod=0755 --chown=0:0 /src/mcrcon/mcrcon /usr/loca
 COPY --chown=0:0 startserver.sh /opt/startserver.sh
 RUN chmod 0755 /opt/startserver.sh
 
-# Verzeichnisse definieren
 ENV APP_DIR=/opt/aof7 \
     DATA_DIR=/data
+
 RUN mkdir -p "${APP_DIR}" "${DATA_DIR}"
 
-# ---- Optional: Forge-/Modpack-Zip schon beim Build holen ----
-# Per Build-Args:
-#   --build-arg FILE_ID=<zahl> --build-arg ZIP=<dateiname.zip>
+# Optionaler Modpack-Download zur Buildzeit
 ARG FILE_ID
 ARG ZIP
 RUN if [[ -n "${FILE_ID}" && -n "${ZIP}" ]]; then \
@@ -62,9 +57,7 @@ RUN if [[ -n "${FILE_ID}" && -n "${ZIP}" ]]; then \
       echo "FILE_ID oder ZIP nicht gesetzt – skip download"; \
     fi
 
-# -------- OpenShift: arbitrary UID-fähig machen --------
-# Gruppe 0 setzen und Gruppenrechte an Userrechte spiegeln (g=u),
-# damit mit fsGroup: 0 auf dem PVC geschrieben werden kann.
+# OpenShift-kompatible Rechte (arbitrary UID)
 RUN chgrp -R 0 "${APP_DIR}" "${DATA_DIR}" /opt/startserver.sh /usr/local/bin/mcrcon \
  && chmod -R g=u "${APP_DIR}" "${DATA_DIR}" \
  && chmod g=u /opt/startserver.sh /usr/local/bin/mcrcon \
@@ -73,12 +66,9 @@ RUN chgrp -R 0 "${APP_DIR}" "${DATA_DIR}" /opt/startserver.sh /usr/local/bin/mcr
 
 WORKDIR ${DATA_DIR}
 VOLUME ["/data"]
-
 EXPOSE 25565/tcp
 
-# Nicht-root als Default (OpenShift weist sowieso eine arbitrary UID zu)
 USER 1001
-
 ENTRYPOINT ["/usr/local/bin/tini","--"]
 CMD ["/opt/startserver.sh"]
 
