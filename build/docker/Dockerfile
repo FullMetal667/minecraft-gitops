@@ -55,9 +55,6 @@ RUN if [[ -n "${FILE_ID}" && -n "${ZIP}" ]]; then \
       echo "FILE_ID oder ZIP nicht gesetzt – skip download"; \
     fi
 
-COPY startserver.sh /data/startserver.sh
-RUN chmod 0755 /data/startserver.sh
-
 # OpenShift-kompatible Rechte (arbitrary UID)
 RUN chgrp -R 0 "${APP_DIR}" "${DATA_DIR}" /opt/startserver.sh /usr/local/bin/mcrcon \
  && chmod -R g=u "${APP_DIR}" "${DATA_DIR}" \

@@ -23,6 +23,10 @@ spec:
         - name: backup
           persistentVolumeClaim:
             claimName: backup-pvc
+        - name: startserver
+          configMap:
+            name: aof7-startserver
+            defaultMode: 0755
         - name: server-setup-config
           configMap:
             name: server-setup-config
@@ -69,6 +73,9 @@ spec:
               mountPath: /data/world
             - name: backup
               mountPath: /data/simplebackups
+            - name: startserver
+              mountPath: /data/startserver.sh
+              subPath: startserver.sh
             - name: server-setup-config
               mountPath: /data/server-setup-config.yaml
               subPath: server-setup-config.yaml

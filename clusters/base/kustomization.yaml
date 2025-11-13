@@ -11,3 +11,4 @@ resources:
   - service.yaml
   - deployment.yaml
   - cm-mcrcon.yaml
+  - cm-startserver.yaml
