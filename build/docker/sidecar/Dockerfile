@@ -13,7 +13,7 @@ SHELL ["/bin/bash","-o","pipefail","-c"]
 USER 0
 
 RUN microdnf install -y --setopt=install_weak_deps=0 \
-      curl-minimal ca-certificates nmap-ncat coreutils grep sed findutils procps-ng \
+      curl-minimal ca-certificates nmap-ncat grep sed findutils procps-ng \
   && update-ca-trust \
   && microdnf clean all
 
