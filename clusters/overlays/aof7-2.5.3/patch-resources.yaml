@@ -10,6 +10,8 @@ spec:
       - name: minecraft
         resources:
           requests:
-            memory: "8Gi"
+            cpu: "4"
+            memory: "12Gi"
           limits:
-            memory: "14Gi"
+            cpu: "8"
+            memory: "24Gi"
