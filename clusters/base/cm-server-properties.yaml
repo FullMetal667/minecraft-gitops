@@ -6,12 +6,10 @@ metadata:
 data:
   server.properties: |
     #Minecraft server properties
-    accepts-transfers=false
     allow-flight=true
     allow-nether=true
     broadcast-console-to-ops=true
     broadcast-rcon-to-ops=true
-    bug-report-link=
     difficulty=easy
     enable-command-block=false
     enable-jmx-monitoring=false
@@ -28,17 +26,16 @@ data:
     generator-settings={}
     hardcore=false
     hide-online-players=false
-    initial-disabled-packs=
-    initial-enabled-packs=vanilla
+    initial-disabled-packs=data/LessStructures-SpacingTweaks-1.20.1-2.1.56.zip,data/Repurposed_Structures-Better_Desert_Temples_v8.zip,data/Repurposed_Structures-Better_Dungeons_v5.zip,data/Repurposed_Structures-Better_Jungle_Temples_v6.zip,data/Repurposed_Structures-Better_Monuments_v6.zip,data/Repurposed_Structures-Better_Strongholds_v5.zip,data/Repurposed_Structures-Better_Witch_Huts_v4.zip,data/Repurposed_Structures-Bygone_Nether_v2.zip,data/Repurposed_Structures-Chef's_Delight_v3.zip,data/Repurposed_Structures-Farmers_Delight_v6.zip,data/Repurposed_Structures-Gazebo_v2.zip,data/Repurposed_Structures-VillagersPlus_v3.zip,data/Repurposed_Structures-Wizards_v3.zip,data/WDA-NoFlyingStructures-1.18.2-1.19.2.zip,data/WDA-VanillaLoot-1.18.2-1.19.2-0.0.1.zip,data/ctov-beautify-add-on-v2-0.zip,data/ctov-chefs-delight-add-on-v2-0.zip,data/ctov-croptopia-add-on-v2-0.zip,data/ctov-farmers-delight-add-on-v2-1a.zip,data/ctov-gazebos-add-on-v1-0.zip,data/ctov-mores-villager-add-on-v2-0.zip,data/ctov-villager-plus-add-on-v2-0.zip,data/ctov-wizards-add-on-v2-1.zip
+    initial-enabled-packs=vanilla,fabric,zenith\:structures
     level-name=world
     level-seed=
     level-type=minecraft\:normal
-    log-ips=true
     max-chained-neighbor-updates=1000000
     max-players=20
     max-tick-time=180000
     max-world-size=29999984
-    motd=All the Mods 10
+    motd=All of Fabric 7
     network-compression-threshold=256
     online-mode=true
     op-permission-level=4
@@ -49,10 +46,8 @@ data:
     rate-limit=0
     rcon.password=mc321
     rcon.port=25575
-    region-file-compression=deflate
     require-resource-pack=false
     resource-pack=
-    resource-pack-id=
     resource-pack-prompt=
     resource-pack-sha1=
     server-ip=
