@@ -14,7 +14,7 @@ spec:
                 path: commands.txt
       containers:
         - name: aof7-ops
-          image: image-registry.openshift-image-registry.svc:5000/$(NAMESPACE)/aof7-ops:latest
+          image: image-registry.openshift-image-registry.svc:5000/minecraft-aof7/aof7-ops:latest
           imagePullPolicy: IfNotPresent
           env:
             - name: DATA_DIR
