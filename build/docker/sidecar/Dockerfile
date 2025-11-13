@@ -12,8 +12,10 @@ FROM registry.access.redhat.com/ubi9/ubi-minimal:latest
 SHELL ["/bin/bash","-o","pipefail","-c"]
 USER 0
 
-RUN microdnf install -y curl-core nmap-ncat coreutils sed grep \
- && microdnf clean all
+RUN microdnf install -y --setopt=install_weak_deps=0 \
+      curl-minimal ca-certificates nmap-ncat coreutils grep sed findutils procps-ng \
+  && update-ca-trust \
+  && microdnf clean all
 
 # mcrcon rein
 COPY --from=mcrcon-builder /src/mcrcon/mcrcon /usr/local/bin/mcrcon
