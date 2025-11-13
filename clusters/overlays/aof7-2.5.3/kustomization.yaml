@@ -19,3 +19,7 @@ patches:
     target:
       name: all-of-fabric-7
       namespace: minecraft-aof7
+  - path: patch-add-sidecar.yaml
+    target:
+      name: all-of-fabric-7
+      namespace: minecraft-aof7
