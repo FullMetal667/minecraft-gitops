@@ -34,6 +34,7 @@ RUN chmod +x /usr/local/bin/tini && ln -s /usr/local/bin/tini /usr/bin/tini
 # mcrcon rein
 COPY --from=mcrcon-builder --chmod=0755 --chown=0:0 /src/mcrcon/mcrcon /usr/local/bin/mcrcon
 # startscript rein
+COPY startserver.sh /data/startserver.sh
 
 ENV APP_DIR=/opt/aof7 \
     DATA_DIR=/data
