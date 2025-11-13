@@ -35,7 +35,8 @@ RUN chmod +x /usr/local/bin/tini && ln -s /usr/local/bin/tini /usr/bin/tini
 COPY --from=mcrcon-builder --chmod=0755 --chown=0:0 /src/mcrcon/mcrcon /usr/local/bin/mcrcon
 COPY eula.txt /opt/eula.txt
 # startscript rein
-COPY --chown=0:0 startserver.sh /opt/startserver.sh &&\
+
+COPY --chown=0:0 startserver.sh /opt/startserver.sh
 RUN chmod 0755 /opt/startserver.sh
 
 ENV APP_DIR=/opt/aof7 \
