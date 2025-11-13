@@ -58,6 +58,14 @@ RUN if [[ -n "${FILE_ID}" && -n "${ZIP}" ]]; then \
       echo "FILE_ID oder ZIP nicht gesetzt – skip download"; \
     fi
 
+# SimpleBackup (Fabric) für MC 1.20.1 einbauen
+ARG SB_FILE_ID=45771097
+ARG SB_FILE_NAME="simplebackup-2.0-1.20.jar"
+RUN mkdir -p "${DATA_DIR}/mods" "${DATA_DIR}/backups" && \
+    DIR1=$(( SB_FILE_ID / 1000 )) && DIR2=$(( SB_FILE_ID % 1000 )) && \
+    curl -fL -o "${DATA_DIR}/mods/${SB_FILE_NAME}" \
+      "https://mediafilez.forgecdn.net/files/${DIR1}/${DIR2}/${SB_FILE_NAME}"
+
 # OpenShift-kompatible Rechte (arbitrary UID)
 RUN chgrp -R 0 "${APP_DIR}" "${DATA_DIR}" /opt/startserver.sh /usr/local/bin/mcrcon \
  && chmod -R g=u "${APP_DIR}" "${DATA_DIR}" \

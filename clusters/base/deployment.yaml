@@ -16,27 +16,16 @@ spec:
       securityContext:
         fsGroup: 0
         fsGroupChangePolicy: "OnRootMismatch"
-      initContainers:
-      - name: fetch-modpack
-        image: docker.io/chrisroth667/aof7:2.5.3
-        command: ["/usr/local/bin/tini","--"]
-        args: ["/opt/startserver.sh"]
-        envFrom:
-        - secretRef: { name: mc-env }
-        workingDir: /data
-        volumeMounts:
-          - name: data
-            mountPath: /data
       volumes:
         - name: data
           persistentVolumeClaim:
             claimName: world-data
-        - name: backup
-          persistentVolumeClaim:
-            claimName: backup-pvc
-        - name: jvm-user-args
+              #- name: backup
+              #  persistentVolumeClaim:
+              #    claimName: backup-pvc
+        - name: server-setup-config
           configMap:
-            name: user-jvm-args
+            name: server-setup-config
             defaultMode: 0755
         - name: server-properties
           configMap:
@@ -70,22 +59,22 @@ spec:
             - secretRef:
                 name: mc-env
           volumeMounts:
-            - name: data
-              mountPath: /data/world
-            - name: backup
-              mountPath: /data/simplebackups
-            - name: jvm-user-args
-              mountPath: /data/user_jvm_args.txt
-              subPath: user_jvm_args.txt
-            - name: server-properties
-              mountPath: /opt/defaults/server.properties
-              subPath: server.properties
             - name: mcrcon-commands
               mountPath: /data/commands.txt
               subPath: commands.txt
             - name: env-file
               mountPath: /opt/.env
               subPath: .env
+                  - name: data
+                    mountPath: /data/world
+                      #- name: backup
+                      #  mountPath: /data/simplebackups
+                  - name: server-setup-config
+                    mountPath: /data/server-setup-config.yaml
+                    subPath: server-setup-config.yaml
+                  - name: server-properties
+                    mountPath: /opt/defaults/server.properties
+                    subPath: server.properties
           terminationMessagePath: /dev/termination-log
           terminationMessagePolicy: File
       restartPolicy: Always

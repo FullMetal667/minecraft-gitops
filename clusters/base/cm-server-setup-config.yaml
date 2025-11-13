@@ -1,0 +1,100 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: server-setup-config
+  namespace: minecraft-aof7
+  labels:
+    app.kubernetes.io/instance: aof7-2.5.3
+data:
+  server-setup-config.yaml: |
+    _specver: 2
+    
+    modpack:
+      name: All of Fabric 7
+      description: The latest & best of Fabric on 1.20.1.
+      
+    install:
+      mcVersion: 1.20.1
+      loaderVersion: 0.16.0
+      modpackUrl: https://mediafilez.forgecdn.net/files/6766/319/All+of+Fabric+7-2.5.3.zip
+      installerUrl: https://maven.fabricmc.net/net/fabricmc/fabric-installer/1.0.0/fabric-installer-1.0.0.jar
+      
+      ignoreFiles:
+        - mods/optifine*.jar
+        - resources/**
+      additionalFiles:
+      localFiles: ~
+      
+      installerArguments:
+        - "server"
+        - "-downloadMinecraft"
+        - "-snapshot"
+        - "-mcversion"
+        - "1.20.1"
+        - "-loader"
+        - "0.16.0"
+      modpackFormat: curse
+      
+      formatSpecific:
+        ignoreProject: 
+          - 472772 # Dashloader
+          
+      baseInstallPath: ~
+      
+      checkFolder: true
+      
+      installLoader: true
+      
+      installPack: true
+      
+      spongeBootstrapper: ~
+    
+      connectTimeout: 90
+    
+      readTimeout: 90
+    
+    launch:
+      # specifies the max amount of ram the server is supposed to launch with (Xmx)
+      maxRam: 24G
+      # specifies the minimal amount of ram the server is supposed to launch with (Xms)
+      minRam: 12G
+      # specifies whether the server is supposed to auto restart after crash
+      autoRestart: true
+      javaArgs:
+      - "-Xms12G"
+      - "-Xmx24G"
+      - "-XX:+UseG1GC"
+      - "-XX:+ParallelRefProcEnabled"
+      - "-XX:MaxGCPauseMillis=200"
+      - "-XX:+UnlockExperimentalVMOptions"
+      - "-XX:+DisableExplicitGC"
+      - "-XX:+AlwaysPreTouch"
+      - "-XX:G1NewSizePercent=30"
+      - "-XX:G1MaxNewSizePercent=40"
+      - "-XX:G1HeapRegionSize=8M"
+      - "-XX:G1ReservePercent=20"
+      - "-XX:G1HeapWastePercent=5"
+      - "-XX:G1MixedGCCountTarget=4"
+      - "-XX:InitiatingHeapOccupancyPercent=15"
+      - "-XX:G1MixedGCLiveThresholdPercent=90"
+      - "-XX:G1RSetUpdatingPauseTimePercent=5"
+      - "-XX:SurvivorRatio=32"
+      - "-XX:+PerfDisableSharedMem"
+      - "-Dusing.aikars.flags=true"
+      - "-Daikars.new.flags=true"
+      - "-XX:MaxTenuringThreshold=1"
+      - "-XX:ActiveProcessorCount=8"
+      - "-Dfml.readTimeout=90"
+      - "-Dspark.enabled=false" 
+      spongefix: false
+      ramDisk: false
+      checkOffline: true
+      crashLimit: 10
+      crashTimer: 60min
+      preJavaArgs: ~
+      forcedJavaPath: ~
+      startFile: ""
+      startCommand:
+        - "-jar"
+        - "fabric-server-launch.jar"
+        - "nogui"
