@@ -55,9 +55,9 @@ RUN if [[ -n "${FILE_ID}" && -n "${ZIP}" ]]; then \
     fi
 
 # OpenShift-kompatible Rechte (arbitrary UID)
-RUN chgrp -R 0 "${APP_DIR}" "${DATA_DIR}" /opt/startserver.sh /usr/local/bin/mcrcon \
+RUN chgrp -R 0 "${APP_DIR}" "${DATA_DIR}" /data/startserver.sh /usr/local/bin/mcrcon \
  && chmod -R g=u "${APP_DIR}" "${DATA_DIR}" \
- && chmod g=u /opt/startserver.sh /usr/local/bin/mcrcon \
+ && chmod g=u /data/startserver.sh /usr/local/bin/mcrcon \
  && find "${APP_DIR}" -type d -exec chmod g+s {} \; \
  && find "${DATA_DIR}" -type d -exec chmod g+s {} \;
 
