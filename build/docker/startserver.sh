@@ -1,70 +1,40 @@
-#!/usr/bin/env bash
-set -euo pipefail
-
-APP_DIR="${APP_DIR:-/opt/aof7}"
-DATA_DIR="${DATA_DIR:-/data}"
-JAR="${JAR:-serverstarter-2.4.0.jar}"
-RCON_ENABLE="${RCON_ENABLE:-true}"
-RCON_PORT="${RCON_PORT:-25575}"
-RCON_PASSWORD="${RCON_PASSWORD:-mc321}"
-SB_FILE_ID=7151898
-SB_FILE_NAME="SimpleBackups-1.20.1-3.1.18.jar"
-DIR1=$(( SB_FILE_ID / 1000 )) 
-DIR2=$(( SB_FILE_ID % 1000 ))
-SIMPLEBACKUPS_URL="https://mediafilez.forgecdn.net/files/${DIR1}/${DIR2}/${SB_FILE_NAME}"
-
-mkdir -p "${DATA_DIR}/overrides/mods" "${DATA_DIR}/mods" "${DATA_DIR}/config"
-
-# 1) EULA vorab akzeptieren
-echo "eula=true" > "${DATA_DIR}/eula.txt"
-
-# 2) RCON in server.properties sicher aktivieren (Datei ggf. vorerzeugen)
-touch "${DATA_DIR}/server.properties"
-ensure_prop() {
-  local key="$1" val="$2" file="${DATA_DIR}/server.properties"
-  if grep -qE "^${key}=" "$file"; then
-    sed -i "s#^${key}=.*#${key}=${val}#" "$file"
-  else
-    echo "${key}=${val}" >> "$file"
-  fi
-}
-if [[ "${RCON_ENABLE}" == "true" ]]; then
-  ensure_prop "enable-rcon" "true"
-  ensure_prop "rcon.port" "${RCON_PORT}"
-  ensure_prop "rcon.password" "${RCON_PASSWORD}"
+DO_RAMDISK=0
+if [[ $(cat server-setup-config.yaml | grep 'ramDisk:' | awk 'BEGIN {FS=":"}{print $2}') =~ "yes" ]]; then
+    SAVE_DIR=$(cat server.properties | grep 'level-name' | awk 'BEGIN {FS="="}{print $2}')
+    mv $SAVE_DIR "${SAVE_DIR}_backup"
+    mkdir $SAVE_DIR
+    sudo mount -t tmpfs -o size=2G tmpfs $SAVE_DIR
+    DO_RAMDISK=1
 fi
-
-# 3) SimpleBackups in overrides/mods ablegen (so überlebt es das ServerStarter-Syncen)
-if [[ -n "${SIMPLEBACKUPS_URL}" ]]; then
-  echo "Fetching SimpleBackups.jar from ${SIMPLEBACKUPS_URL}"
-  curl -fsSL "${SIMPLEBACKUPS_URL}" -o "${DATA_DIR}/overrides/mods/SimpleBackups.jar"
-elif [[ -f "${APP_DIR}/extras/SimpleBackups.jar" ]]; then
-  cp -f "${APP_DIR}/extras/SimpleBackups.jar" "${DATA_DIR}/overrides/mods/SimpleBackups.jar"
+	if [ -f serverstarter-2.4.0.jar ]; then
+			echo "Skipping download. Using existing serverstarter-2.4.0.jar"
+         java -jar serverstarter-2.4.0.jar
+               if [[ $DO_RAMDISK -eq 1 ]]; then
+               sudo umount $SAVE_DIR
+               rm -rf $SAVE_DIR
+               mv "${SAVE_DIR}_backup" $SAVE_DIR
+               fi
+               exit 0
+	else
+			export URL="https://github.com/TeamAOF/ServerStarter/releases/download/v2.4.0/serverstarter-2.4.0.jar"
+	fi
+		echo $URL
+		which wget >> /dev/null
+		if [ $? -eq 0 ]; then
+			echo "DEBUG: (wget) Downloading ${URL}"
+			wget -O serverstarter-2.4.0.jar "${URL}"
+   else
+			which curl >> /dev/null
+			if [ $? -eq 0 ]; then
+				echo "DEBUG: (curl) Downloading ${URL}"
+				curl -o serverstarter-2.4.0.jar -L "${URL}"
+			else
+				echo "Neither wget or curl were found on your system. Please install one and try again"
+         fi
+      fi
+java -jar serverstarter-2.4.0.jar
+if [[ $DO_RAMDISK -eq 1 ]]; then
+    sudo umount $SAVE_DIR
+    rm -rf $SAVE_DIR
+    mv "${SAVE_DIR}_backup" $SAVE_DIR
 fi
-
-# 4) ServerStarter bereitstellen
-cd "${DATA_DIR}"
-if [[ ! -f "${JAR}" ]]; then
-  curl -fsSL -o "${JAR}" "https://github.com/TeamAOF/ServerStarter/releases/download/v2.4.0/${JAR}"
-fi
-
-# 5) Server starten (ServerStarter installiert/merged und startet danach den Loader)
-java -jar "${JAR}" &
-SERVER_PID=$!
-
-# 6) Nach RCON-Start einmalig commands.txt abfeuern
-if [[ "${RCON_ENABLE}" == "true" && -s "${DATA_DIR}/commands.txt" ]]; then
-  echo "Waiting for RCON on 127.0.0.1:${RCON_PORT} ..."
-  for _ in {1..180}; do
-    if nc -z 127.0.0.1 "${RCON_PORT}" 2>/dev/null; then
-      # führende Slashes aus Kommandos entfernen (RCON erwartet i.d.R. ohne /)
-      sed 's#^/##' "${DATA_DIR}/commands.txt" | \
-        /usr/local/bin/mcrcon -H 127.0.0.1 -P "${RCON_PORT}" -p "${RCON_PASSWORD}" -s || true
-      break
-    fi
-    sleep 2
-  done
-fi
-
-wait "${SERVER_PID}"
-
