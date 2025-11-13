@@ -8,7 +8,7 @@ spec:
       volumes:
         - name: commands
           configMap:
-            name: cm-commands
+            name: minecraft-commands
             items:
               - key: commands.txt
                 path: commands.txt
