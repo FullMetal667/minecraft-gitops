@@ -36,9 +36,6 @@ COPY --from=mcrcon-builder --chmod=0755 --chown=0:0 /src/mcrcon/mcrcon /usr/loca
 COPY eula.txt /opt/aof7/eula.txt
 # startscript rein
 
-COPY --chown=0:0 startserver.sh /opt/startserver.sh
-RUN chmod 0755 /opt/startserver.sh
-
 ENV APP_DIR=/opt/aof7 \
     DATA_DIR=/data
 
@@ -58,13 +55,8 @@ RUN if [[ -n "${FILE_ID}" && -n "${ZIP}" ]]; then \
       echo "FILE_ID oder ZIP nicht gesetzt – skip download"; \
     fi
 
-# SimpleBackup (Fabric) für MC 1.20.1 einbauen
-ARG SB_FILE_ID=7151898
-ARG SB_FILE_NAME="SimpleBackups-1.20.1-3.1.18.jar"
-RUN mkdir -p "${DATA_DIR}/mods" "${DATA_DIR}/backups" && \
-    DIR1=$(( SB_FILE_ID / 1000 )) && DIR2=$(( SB_FILE_ID % 1000 )) && \
-    curl -fL -o "${DATA_DIR}/mods/${SB_FILE_NAME}" \
-      "https://mediafilez.forgecdn.net/files/${DIR1}/${DIR2}/${SB_FILE_NAME}"
+COPY startserver.sh /data/startserver.sh
+RUN chmod 0755 /data/startserver.sh
 
 # OpenShift-kompatible Rechte (arbitrary UID)
 RUN chgrp -R 0 "${APP_DIR}" "${DATA_DIR}" /opt/startserver.sh /usr/local/bin/mcrcon \
@@ -79,5 +71,5 @@ EXPOSE 25565/tcp
 
 USER 1001
 ENTRYPOINT ["/usr/local/bin/tini","--"]
-CMD ["/opt/startserver.sh"]
+CMD ["startserver.sh"]
 

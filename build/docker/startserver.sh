@@ -1,84 +1,70 @@
 #!/usr/bin/env bash
-set -Eeuo pipefail
+set -euo pipefail
 
-DATA="/data"
-SEED="/opt/aof7"
-JAR_OPT="/opt/serverstarter-2.4.0.jar"
-JAR_DATA="${DATA}/serverstarter-2.4.0.jar"
-RAMDISK_PATH="${RAMDISK_PATH:-}"   # optional via Deployment setzen, z.B. /ramdisk
-RAMDISK_SIZE="${RAMDISK_SIZE:-2G}" # nur Info/Log
+APP_DIR="${APP_DIR:-/opt/aof7}"
+DATA_DIR="${DATA_DIR:-/data}"
+JAR="${JAR:-serverstarter-2.4.0.jar}"
+RCON_ENABLE="${RCON_ENABLE:-true}"
+RCON_PORT="${RCON_PORT:-25575}"
+RCON_PASSWORD="${RCON_PASSWORD:-mc321}"
+SB_FILE_ID=7151898
+SB_FILE_NAME="SimpleBackups-1.20.1-3.1.18.jar"
+DIR1=$(( SB_FILE_ID / 1000 )) 
+DIR2=$(( SB_FILE_ID % 1000 ))
+SIMPLEBACKUPS_URL="https://mediafilez.forgecdn.net/files/${DIR1}/${DIR2}/${SB_FILE_NAME}"
 
-umask 0002
+mkdir -p "${DATA_DIR}/overrides/mods" "${DATA_DIR}/mods" "${DATA_DIR}/config"
 
-# 1) Erst-Start: /data seeden, falls noch leer
-if [ ! -f "${DATA}/server-setup-config.yaml" ]; then
-  echo "First run: seeding ${DATA} from ${SEED}"
-  cp -a "${SEED}/." "${DATA}/"
+# 1) EULA vorab akzeptieren
+echo "eula=true" > "${DATA_DIR}/eula.txt"
+
+# 2) RCON in server.properties sicher aktivieren (Datei ggf. vorerzeugen)
+touch "${DATA_DIR}/server.properties"
+ensure_prop() {
+  local key="$1" val="$2" file="${DATA_DIR}/server.properties"
+  if grep -qE "^${key}=" "$file"; then
+    sed -i "s#^${key}=.*#${key}=${val}#" "$file"
+  else
+    echo "${key}=${val}" >> "$file"
+  fi
+}
+if [[ "${RCON_ENABLE}" == "true" ]]; then
+  ensure_prop "enable-rcon" "true"
+  ensure_prop "rcon.port" "${RCON_PORT}"
+  ensure_prop "rcon.password" "${RCON_PASSWORD}"
 fi
 
-# 2) Verzeichnisstruktur + Rechte (OpenShift: arbitrary UID)
-mkdir -p "${DATA}/logs" "${DATA}/config"
-# Offen, aber robust. Optional enger machen, wenn fsGroup funktioniert.
-find "${DATA}" -type d -exec chmod 0777 {} + || true
-find "${DATA}" -type f -exec chmod 0666 {} + || true
+# 3) SimpleBackups in overrides/mods ablegen (so überlebt es das ServerStarter-Syncen)
+if [[ -n "${SIMPLEBACKUPS_URL}" ]]; then
+  echo "Fetching SimpleBackups.jar from ${SIMPLEBACKUPS_URL}"
+  curl -fsSL "${SIMPLEBACKUPS_URL}" -o "${DATA_DIR}/overrides/mods/SimpleBackups.jar"
+elif [[ -f "${APP_DIR}/extras/SimpleBackups.jar" ]]; then
+  cp -f "${APP_DIR}/extras/SimpleBackups.jar" "${DATA_DIR}/overrides/mods/SimpleBackups.jar"
+fi
 
-# 3) Optional RAM-"Disk": nur wenn Deployment einen Memory-EmptyDir mounted hat
-#    (z.B. mountPath: /ramdisk). Kein 'mount' im Container!
-DO_RAMDISK=0
-if grep -Eq '^[[:space:]]*ramDisk:[[:space:]]*yes' "${DATA}/server-setup-config.yaml"; then
-  if [ -n "${RAMDISK_PATH}" ] && [ -d "${RAMDISK_PATH}" ]; then
-    SAVE_DIR="$(awk -F= '/^level-name=/{print $2}' "${DATA}/server.properties" || true)"
-    SAVE_DIR="${SAVE_DIR:-world}"
-    echo "RAM mode requested; using ${RAMDISK_PATH} for world '${SAVE_DIR}'"
-    mkdir -p "${RAMDISK_PATH}/${SAVE_DIR}"
-    # Falls schon eine Welt existiert, initial kopieren
-    if [ -d "${DATA}/${SAVE_DIR}" ]; then
-      cp -a "${DATA}/${SAVE_DIR}/." "${RAMDISK_PATH}/${SAVE_DIR}/" || true
+# 4) ServerStarter bereitstellen
+cd "${DATA_DIR}"
+if [[ ! -f "${JAR}" ]]; then
+  curl -fsSL -o "${JAR}" "https://github.com/TeamAOF/ServerStarter/releases/download/v2.4.0/${JAR}"
+fi
+
+# 5) Server starten (ServerStarter installiert/merged und startet danach den Loader)
+java -jar "${JAR}" &
+SERVER_PID=$!
+
+# 6) Nach RCON-Start einmalig commands.txt abfeuern
+if [[ "${RCON_ENABLE}" == "true" && -s "${DATA_DIR}/commands.txt" ]]; then
+  echo "Waiting for RCON on 127.0.0.1:${RCON_PORT} ..."
+  for _ in {1..180}; do
+    if nc -z 127.0.0.1 "${RCON_PORT}" 2>/dev/null; then
+      # führende Slashes aus Kommandos entfernen (RCON erwartet i.d.R. ohne /)
+      sed 's#^/##' "${DATA_DIR}/commands.txt" | \
+        /usr/local/bin/mcrcon -H 127.0.0.1 -P "${RCON_PORT}" -p "${RCON_PASSWORD}" -s || true
+      break
     fi
-    # Symlink Welt -> RAM
-    rm -rf "${DATA:?}/${SAVE_DIR}" && ln -s "${RAMDISK_PATH}/${SAVE_DIR}" "${DATA}/${SAVE_DIR}"
-    DO_RAMDISK=1
-  else
-    echo "ramDisk: yes konfiguriert, aber RAMDISK_PATH ist nicht gemountet. Weiter ohne RAM."
-  fi
+    sleep 2
+  done
 fi
 
-# 4) ServerStarter JAR wählen/holen
-if [ -f "${JAR_DATA}" ]; then
-  JAR="${JAR_DATA}"
-elif [ -f "${JAR_OPT}" ]; then
-  JAR="${JAR_OPT}"
-else
-  # Fallback: herunterladen (Cluster muss Egress erlauben)
-  URL="https://github.com/TeamAOF/ServerStarter/releases/download/v2.4.0/serverstarter-2.4.0.jar"
-  echo "serverstarter.jar not found; downloading ${URL}"
-  curl -fL -A "Mozilla/5.0" -o "${JAR_DATA}" "${URL}"
-  JAR="${JAR_DATA}"
-fi
-
-# 5) Start (arbeite aus /data, damit relative Pfade passen)
-cd "${DATA}"
-
-{
-  echo "# You accepted the EULA by deploying this server"
-  date -u +"# %Y-%m-%dT%H:%M:%SZ"
-  echo "eula=true"
-} > eula.txt
-
-if [ ! -f eula.txt ] || ! grep -q 'eula=true' eula.txt; then
-  if [ "${EULA:-}" = "TRUE" ] || [ "${EULA:-}" = "true" ]; then
-    {
-      echo "# By changing the setting below to TRUE you are indicating your agreement to the EULA (https://aka.ms/MinecraftEULA)."
-      echo "# $(date -u)"
-      echo "eula=true"
-    } > eula.txt
-    echo "[init] EULA accepted via ENV"
-  else
-    echo "[init] EULA not accepted. Setze ENV EULA=true oder lege /data/eula.txt mit 'eula=true' an."
-    exit 3
-  fi
-fi
-
-echo "Launching ServerStarter with config ${DATA}/server-setup-config.yaml"
-exec java -jar "${JAR}" --config "${DATA}/server-setup-config.yaml"
+wait "${SERVER_PID}"
 
