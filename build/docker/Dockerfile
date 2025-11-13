@@ -68,5 +68,5 @@ EXPOSE 25565/tcp
 
 USER 1001
 ENTRYPOINT ["/usr/local/bin/tini","--"]
-CMD ["startserver.sh"]
+CMD ["/data/startserver.sh"]
 
