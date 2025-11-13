@@ -20,9 +20,9 @@ spec:
         - name: data
           persistentVolumeClaim:
             claimName: world-data
-        # - name: backup
-        #   persistentVolumeClaim:
-        #     claimName: backup-pvc
+        - name: backup
+          persistentVolumeClaim:
+            claimName: backup-pvc
         - name: server-setup-config
           configMap:
             name: server-setup-config
@@ -67,8 +67,8 @@ spec:
               subPath: .env
             - name: data
               mountPath: /data/world
-          # - name: backup
-          #   mountPath: /data/simplebackups
+            - name: backup
+              mountPath: /data/simplebackups
             - name: server-setup-config
               mountPath: /data/server-setup-config.yaml
               subPath: server-setup-config.yaml
