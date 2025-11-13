@@ -33,7 +33,7 @@ RUN chmod +x /usr/local/bin/tini && ln -s /usr/local/bin/tini /usr/bin/tini
 
 # mcrcon rein
 COPY --from=mcrcon-builder --chmod=0755 --chown=0:0 /src/mcrcon/mcrcon /usr/local/bin/mcrcon
-COPY eula.txt /opt/eula.txt
+COPY eula.txt /opt/aof7/eula.txt
 # startscript rein
 
 COPY --chown=0:0 startserver.sh /opt/startserver.sh
