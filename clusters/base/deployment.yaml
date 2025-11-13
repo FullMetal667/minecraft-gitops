@@ -19,7 +19,7 @@ spec:
       volumes:
         - name: data
           persistentVolumeClaim:
-            claimName: world-data
+            claimName: aof7-data
         - name: backup
           persistentVolumeClaim:
             claimName: backup-pvc
@@ -70,7 +70,7 @@ spec:
               mountPath: /opt/.env
               subPath: .env
             - name: data
-              mountPath: /data/world
+              mountPath: /data
             - name: backup
               mountPath: /data/simplebackups
             - name: startserver
