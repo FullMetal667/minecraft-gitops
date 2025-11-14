@@ -18,7 +18,7 @@ spec:
         fsGroup: 0
         fsGroupChangePolicy: "OnRootMismatch"
       volumes:
-        - name: data
+        - name: mod-data
           persistentVolumeClaim:
             claimName: aof7-data
         #        - name: backup
@@ -66,8 +66,8 @@ spec:
             - name: env-file
               mountPath: /opt/.env
               subPath: .env
-            - name: data
-              mountPath: /data
+            - name: mod-data
+              mountPath: /data/mods
                 #            - name: backup
                 #              mountPath: /data/simplebackups
             - name: startserver
