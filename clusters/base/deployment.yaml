@@ -55,7 +55,7 @@ spec:
               protocol: TCP
           env:
             - name: EULA
-              value: true
+              value: "true"
           envFrom:
             - secretRef:
                 name: mc-env
