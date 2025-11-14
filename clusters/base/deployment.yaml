@@ -28,6 +28,10 @@ spec:
           configMap:
             name: aof7-startserver
             defaultMode: 0755
+        - name: backup-config
+          configMap:
+            name: advanced-backups-config
+            defaultMode: 0755
         - name: server-properties
           configMap:
             name: mc-server-properties
@@ -77,6 +81,9 @@ spec:
             - name: startserver
               mountPath: /data/startserver.sh
               subPath: startserver.sh
+            - name: backup-config
+              mountPath: /data/config/AdvancedBackups.properties
+              subPath: AdvancedBackups.properties
             - name: server-properties
               mountPath: /data/server.properties
               subPath: server.properties

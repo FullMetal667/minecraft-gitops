@@ -6,6 +6,7 @@ resources:
   - pvc-backup.yaml
   - cm-server-setup-config.yaml
   - cm-server-properties.yaml
+  - cm-backup.yaml
   - secret-env.yaml
   - secret-mcrcon.yaml
   - service.yaml
