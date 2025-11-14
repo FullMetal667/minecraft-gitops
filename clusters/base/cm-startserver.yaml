@@ -41,18 +41,18 @@ data:
     place_simplebackups() {
       local src=""
       if [[ -f "${APP_DIR}/extras/${SB_FILE_NAME}" ]]; then
-        src="${APP_DIR}/extras/SimpleBackups.jar"
+        src="${APP_DIR}/extras/${SB_FILE_NAME}"
       elif [[ -f "${DATA_DIR}/overrides/mods/${SB_FILE_NAME}" ]]; then
-        src="${DATA_DIR}/overrides/mods/SimpleBackups.jar"
+        src="${DATA_DIR}/overrides/mods/${SB_FILE_NAME}"
       elif [[ -f "${DATA_DIR}/${SB_FILE_NAME}" ]]; then
-        src="${DATA_DIR}/SimpleBackups.jar"
+        src="${DATA_DIR}/${SB_FILE_NAME}"
       fi
     
       if [[ -z "${src}" && -n "${SIMPLEBACKUPS_URL}" ]]; then
         echo "[SB] downloading ${SIMPLEBACKUPS_URL}"
         # Download NICHT failen lassen, damit der Rest weiterläuft
         if curl -fsSL "${SIMPLEBACKUPS_URL}" -o "${DATA_DIR}/overrides/mods/${SB_FILE_NAME}"; then
-          src="${DATA_DIR}/overrides/mods/SimpleBackups.jar"
+          src="${DATA_DIR}/overrides/mods/${SB_FILE_NAME}"
         fi
       fi
     
