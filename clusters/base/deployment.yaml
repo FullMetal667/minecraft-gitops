@@ -26,6 +26,9 @@ spec:
         - name: backup
           persistentVolumeClaim:
             claimName: backup-pvc
+        - name: overrides
+          persistentVolumeClaim:
+            claimName: overrides-storage
         - name: startserver
           configMap:
             name: aof7-startserver
@@ -74,6 +77,8 @@ spec:
               subPath: .env
             - name: world-data
               mountPath: /data/world
+            - name: overrides
+              mountPath: /data/overrides
             - name: backup
               mountPath: /data/backups
             - name: startserver
