@@ -4,12 +4,12 @@ metadata:
   name: minecraft
   namespace: openshift-gitops
 spec:
-  description: Project for minecraft aof7
+  description: Project for minecraft-servers
   sourceRepos:
-    - https://github.com/FullMetal667/minecraft.git
+    - https://github.com/FullMetal667/minecraft-gitops.git
   destinations:
     - server: https://kubernetes.default.svc
-      namespace: minecraft-aof7
+      namespace: 'minecraft-*'
   clusterResourceWhitelist:
     - group: "*"
       kind: "*"

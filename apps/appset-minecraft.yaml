@@ -2,6 +2,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
   name: minecraft-servers
+  namespace: openshift-gitops
 spec:
   generators:
     - git:
@@ -11,16 +12,16 @@ spec:
           - path: clusters/overlays/*
   template:
     metadata:
-      name: '{{path.basename}}'
+      name: '{{path.basename}}' 
     spec:
       project: minecraft
       source:
-        repoURL: https://github.com/deinuser/minecraft-gitops.git
+        repoURL: https://github.com/FullMetal667/minecraft-gitops.git
         targetRevision: main
         path: '{{path}}'
       destination:
         server: https://kubernetes.default.svc
-        namespace: default
+        namespace: 'minecraft-{{path.basename}}'
       syncPolicy:
         automated:
           prune: true
