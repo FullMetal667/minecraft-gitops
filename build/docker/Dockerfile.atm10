@@ -37,7 +37,7 @@ RUN chmod +x /usr/local/bin/tini && ln -s /usr/local/bin/tini /usr/bin/tini
 COPY --from=mcrcon-builder --chmod=0755 --chown=0:0 /src/mcrcon/mcrcon /usr/local/bin/mcrcon
 
 # Startscript rein (wie bei aof7)
-COPY startserver.sh /data/startserver.sh
+COPY atm10/startserver.sh /data/startserver.sh
 
 # Directories
 ENV APP_DIR=/opt/atm10 \
