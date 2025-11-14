@@ -66,7 +66,6 @@ WORKDIR ${DATA_DIR}
 VOLUME ["/data"]
 EXPOSE 25565/tcp
 
-USER 1001
 ENTRYPOINT ["/usr/local/bin/tini","--"]
 CMD ["/data/startserver.sh"]
 
