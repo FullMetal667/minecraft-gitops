@@ -26,9 +26,6 @@ spec:
         - name: backup
           persistentVolumeClaim:
             claimName: backup-pvc
-        - name: config-data
-          persistentVolumeClaim:
-            claimName: config-storage
         - name: startserver
           configMap:
             name: aof7-startserver
@@ -82,8 +79,6 @@ spec:
             - name: startserver
               mountPath: /data/startserver.sh
               subPath: startserver.sh
-            - name: config-data
-              mountPath: /data/config
             - name: server-properties
               mountPath: /data/server.properties
               subPath: server.properties
