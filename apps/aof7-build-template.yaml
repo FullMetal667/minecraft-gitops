@@ -75,7 +75,7 @@ objects:
           - name: DIR
             value: "${DIR}"
         # falls du ein eigenes Dockerfile-Namen hast, hier setzen
-        dockerfilePath: /aof7/Dockerfile.aof7
+        dockerfilePath: Dockerfile.aof7
     output:
       to:
         kind: DockerImage
