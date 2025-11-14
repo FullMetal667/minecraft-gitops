@@ -7,104 +7,71 @@ data:
   startserver.sh: |
     #!/usr/bin/env bash
     set -euo pipefail
-    shopt -s nullglob
-    umask 0002
-
-    RCON_ENABLE_ENV="${RCON_ENABLE:-true}"
-    RCON_PORT_ENV="${RCON_PORT:-25575}"
-    RCON_PASSWORD_ENV="${RCON_PASSWORD:-mc321}"
-
+    
     APP_DIR="${APP_DIR:-/opt/aof7}"
     DATA_DIR="${DATA_DIR:-/data}"
     JAR="${JAR:-serverstarter-2.4.0.jar}"
-
-    # --- Zusatz-Mods ---
-    EXTRA_MODS_DIR="${EXTRA_MODS_DIR:-${DATA_DIR}/mods-extra}"
-    EXTRA_MODS_URLS="${EXTRA_MODS_URLS:-https://mediafilez.forgecdn.net/files/7151/898/SimpleBackups-1.20.1-3.1.18.jar}"
-
-
-    mkdir -p "${DATA_DIR}/overrides/mods" "${DATA_DIR}/mods" "${DATA_DIR}/config" "${EXTRA_MODS_DIR}"
-
-    # 1) EULA (separat von ConfigMap, schreibbar)
+    
+    # --- RCON (ENV-Defaults) ---
+    RCON_ENABLE="${RCON_ENABLE:-true}"
+    RCON_PORT="${RCON_PORT:-25575}"
+    RCON_PASSWORD="${RCON_PASSWORD:-mc321}"
+    
+    # --- SimpleBackups (feste Version aus CurseForge) ---
+    SB_FILE_ID="${SB_FILE_ID:-7151898}"
+    SB_FILE_NAME="${SB_FILE_NAME:-SimpleBackups-1.20.1-3.1.18.jar}"
+    DIR1=$(( SB_FILE_ID / 1000 ))
+    DIR2=$(( SB_FILE_ID % 1000 ))
+    SIMPLEBACKUPS_URL="https://mediafilez.forgecdn.net/files/${DIR1}/${DIR2}/${SB_FILE_NAME}"
+    
+    mkdir -p "${DATA_DIR}/overrides/mods" "${DATA_DIR}/mods" "${DATA_DIR}/config"
+    
+    # 1) EULA separat ablegen (schreibbar)
     echo "eula=true" > "${DATA_DIR}/eula.txt"
-
-    # 2) server.properties NUR LESEN
+    
+    # 2) server.properties NUR LESEN (falls gemountet)
     PROP_FILE="${DATA_DIR}/server.properties"
     get_prop() {
       local key="$1"
-      if [[ -r "${PROP_FILE}" ]]; then
-        # letzte Übereinstimmung, Value-Teil ausgeben; keine Fehler bei nicht gefunden
-        local line
-        line="$(grep -E "^[[:space:]]*${key}=" "${PROP_FILE}" | tail -n1 || true)"
-        if [[ -n "${line:-}" ]]; then
-          printf '%s\n' "${line#*=}" | tr -d '\r'
-          return 0
-        fi
-      fi
-      return 1
+      [[ -r "${PROP_FILE}" ]] || return 1
+      local line
+      line="$(grep -E "^[[:space:]]*${key}=" "${PROP_FILE}" | tail -n1 || true)"
+      [[ -n "${line}" ]] || return 1
+      printf '%s\n' "${line#*=}" | tr -d '\r'
+      return 0
     }
-
-    RCON_ENABLED_FILE="$(get_prop 'enable-rcon' || true)"
-    RCON_PORT_FILE="$(get_prop 'rcon.port' || true)"
-    RCON_PASSWORD_FILE="$(get_prop 'rcon.password' || true)"
-
-    # Effektive Werte: bevorzugt aus Datei, sonst ENV Defaults
-    RCON_ENABLED_EFF="false"
-    if [[ "${RCON_ENABLED_FILE,,}" == "true" ]]; then
-      RCON_ENABLED_EFF="true"
-    elif [[ "${RCON_ENABLE_ENV,,}" == "true" ]]; then
-      # Nur als Fallback-„Wunsch“, wir ändern die Datei NICHT
-      RCON_ENABLED_EFF="true"
+    if [[ -r "${PROP_FILE}" ]]; then
+      if v="$(get_prop 'rcon.port' || true)"; then RCON_PORT="$v"; fi
+      if v="$(get_prop 'rcon.password' || true)"; then RCON_PASSWORD="$v"; fi
     fi
-    RCON_PORT="${RCON_PORT_FILE:-$RCON_PORT_ENV}"
-    RCON_PASSWORD="${RCON_PASSWORD_FILE:-$RCON_PASSWORD_ENV}"
-
-    if [[ ! -r "${PROP_FILE}" ]]; then
-      echo "[WARN] ${PROP_FILE} nicht lesbar (ConfigMap nicht gemountet?). RCON nutzt nur ENV-Fallbacks."
-    fi
-    if [[ "${RCON_ENABLED_EFF}" != "true" ]]; then
-      echo "[INFO] RCON laut server.properties nicht aktiv (oder ENV-Fallback deaktiviert). RCON-Commands werden übersprungen."
-    fi
-
-    # 3) Zusatz-Mods in overrides/mods injizieren (überleben ServerStarter-Sync)
-    for f in "${EXTRA_MODS_DIR}"/*.jar; do
-      bn="$(basename "$f")"
-      echo "Injecting extra mod: ${bn}"
-      cp -f "$f" "${DATA_DIR}/overrides/mods/${bn}"
-    done
-    if [[ -n "${EXTRA_MODS_URLS}" ]]; then
-      for u in ${EXTRA_MODS_URLS}; do
-        bn="$(basename "${u%%\?*}")"
-        echo "Fetching extra mod: ${u}"
-        curl -fsSL "${u}" -o "${DATA_DIR}/overrides/mods/${bn}"
-      done
-    fi
-    chgrp -R 0 "${DATA_DIR}/overrides/mods" || true
-    chmod -R g=u "${DATA_DIR}/overrides/mods" || true
-
+    
+    # 3) SimpleBackups in overrides/mods legen (überlebt Sync des ServerStarter)
+    echo "Fetching SimpleBackups from ${SIMPLEBACKUPS_URL}"
+    curl -fsSL "${SIMPLEBACKUPS_URL}" -o "${DATA_DIR}/overrides/mods/${SB_FILE_NAME}"
+    
     # 4) ServerStarter bereitstellen
     cd "${DATA_DIR}"
     if [[ ! -f "${JAR}" ]]; then
       curl -fsSL -o "${JAR}" "https://github.com/TeamAOF/ServerStarter/releases/download/v2.4.0/${JAR}"
     fi
-
+    
     # 5) ServerStarter starten
     java -jar "${JAR}" &
     SERVER_PID=$!
-
-    # 6) RCON-Commands nur ausführen, wenn effektiv aktiv und Passwort vorhanden
-    if [[ "${RCON_ENABLED_EFF}" == "true" && -n "${RCON_PASSWORD}" && -s "${DATA_DIR}/commands.txt" ]]; then
+    
+    # 6) RCON-Commands: **GENAU** wie zuvor (nur ENV-Flag steuert, keine Dateiänderung)
+    if [[ "${RCON_ENABLE}" == "true" && -s "${DATA_DIR}/commands.txt" ]]; then
       echo "Waiting for RCON on 127.0.0.1:${RCON_PORT} ..."
       for _ in {1..180}; do
         if nc -z 127.0.0.1 "${RCON_PORT}" 2>/dev/null; then
+          # führende Slashes entfernen (RCON erwartet i.d.R. ohne /)
           sed 's#^/##' "${DATA_DIR}/commands.txt" | \
             /usr/local/bin/mcrcon -H 127.0.0.1 -P "${RCON_PORT}" -p "${RCON_PASSWORD}" -s || true
           break
         fi
         sleep 2
       done
-    else
-      echo "[INFO] RCON-Phase übersprungen (enable-rcon=false oder kein Passwort oder keine commands.txt)."
     fi
-
+    
     wait "${SERVER_PID}"
+    
