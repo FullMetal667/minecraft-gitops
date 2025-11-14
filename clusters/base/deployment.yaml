@@ -20,7 +20,7 @@ spec:
       volumes:
         - name: data
           persistentVolumeClaim:
-          claimName: aof7-data
+            claimName: aof7-data
         #        - name: backup
         #          persistentVolumeClaim:
         #            claimName: backup-pvc
