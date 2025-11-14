@@ -21,16 +21,15 @@ spec:
         - name: world-data
           persistentVolumeClaim:
             claimName: world-data
-        #        - name: backup
-        #          persistentVolumeClaim:
-        #            claimName: backup-pvc
+        - name: backup
+          persistentVolumeClaim:
+            claimName: backup-pvc
+        - name: config-data
+          persistentVolumeClaim:
+            claimName: config-storage
         - name: startserver
           configMap:
             name: aof7-startserver
-            defaultMode: 0755
-        - name: backup-config
-          configMap:
-            name: advanced-backups-config
             defaultMode: 0755
         - name: server-properties
           configMap:
@@ -76,14 +75,13 @@ spec:
               subPath: .env
             - name: world-data
               mountPath: /data/world
-                #            - name: backup
-                #              mountPath: /data/simplebackups
+            - name: backup
+              mountPath: /data/backups
             - name: startserver
               mountPath: /data/startserver.sh
               subPath: startserver.sh
             - name: backup-config
-              mountPath: /data/config/AdvancedBackups.properties
-              subPath: AdvancedBackups.properties
+              mountPath: /data/config
             - name: server-properties
               mountPath: /data/server.properties
               subPath: server.properties
