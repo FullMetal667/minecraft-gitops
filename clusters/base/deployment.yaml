@@ -17,6 +17,8 @@ spec:
         runAsUser: 0
         fsGroup: 0
         fsGroupChangePolicy: "OnRootMismatch"
+      serviceAccount: aof7
+      serviceAccountName: aof7
       volumes:
         - name: world-data
           persistentVolumeClaim:

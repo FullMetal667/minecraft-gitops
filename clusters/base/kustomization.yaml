@@ -5,6 +5,7 @@ resources:
   - pvc-world.yaml
   - pvc-backup.yaml
   - pvc-config.yaml
+  - serviceaccount.yaml
   - cm-server-setup-config.yaml
   - cm-server-properties.yaml
   - cm-backup.yaml
