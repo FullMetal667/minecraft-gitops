@@ -22,7 +22,7 @@ LABEL org.opencontainers.image.source="https://github.com/FullMetal667/minecraft
       org.opencontainers.image.licenses="MIT"
 
 # 👉 KEIN 'curl', sondern 'curl-minimal' verwenden (plus ca-certificates)
-RUN microdnf install -y curl-minimal wget unzip nmap-ncat which ca-certificates --setopt=install_weak_deps=0 \
+RUN microdnf install -y curl-minimal wget vim unzip nmap-ncat which ca-certificates --setopt=install_weak_deps=0 \
  && microdnf clean all \
  && update-ca-trust
 
