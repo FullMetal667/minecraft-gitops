@@ -75,12 +75,12 @@ spec:
               subPath: .env
             - name: world-data
               mountPath: /data/world
-            - name: backup-config
+            - name: backup
               mountPath: /data/backups
             - name: startserver
               mountPath: /data/startserver.sh
               subPath: startserver.sh
-            - name: backup-config
+            - name: config-data
               mountPath: /data/config
             - name: server-properties
               mountPath: /data/server.properties
