@@ -14,15 +14,16 @@ spec:
         app: minecraft
     spec:
       securityContext:
+        runAsUser: 0
         fsGroup: 0
         fsGroupChangePolicy: "OnRootMismatch"
       volumes:
-        - name: data
-          persistentVolumeClaim:
-            claimName: aof7-data
-        - name: backup
-          persistentVolumeClaim:
-            claimName: backup-pvc
+        #        - name: data
+        #          persistentVolumeClaim:
+        #            claimName: aof7-data
+        #        - name: backup
+        #          persistentVolumeClaim:
+        #            claimName: backup-pvc
         - name: startserver
           configMap:
             name: aof7-startserver
@@ -65,10 +66,10 @@ spec:
             - name: env-file
               mountPath: /opt/.env
               subPath: .env
-            - name: data
-              mountPath: /data
-            - name: backup
-              mountPath: /data/simplebackups
+                #            - name: data
+                #              mountPath: /data
+                #            - name: backup
+                #              mountPath: /data/simplebackups
             - name: startserver
               mountPath: /data/startserver.sh
               subPath: startserver.sh
