@@ -53,6 +53,9 @@ spec:
           ports:
             - containerPort: 25565
               protocol: TCP
+          env:
+            - name: EULA
+              value: true
           envFrom:
             - secretRef:
                 name: mc-env
