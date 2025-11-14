@@ -66,7 +66,7 @@ spec:
             - name: env-file
               mountPath: /opt/.env
               subPath: .env
-            - name: mod-data
+            - name: world-data
               mountPath: /data/world
                 #            - name: backup
                 #              mountPath: /data/simplebackups
