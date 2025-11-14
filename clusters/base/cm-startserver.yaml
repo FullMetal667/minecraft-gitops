@@ -40,25 +40,25 @@ data:
     # --- Helper: SimpleBackups nach mods/ legen (ohne cmp; einfach immer kopieren) ---
     place_simplebackups() {
       local src=""
-      if [[ -f "${APP_DIR}/extras/SimpleBackups.jar" ]]; then
+      if [[ -f "${APP_DIR}/extras/${SB_FILE_NAME}" ]]; then
         src="${APP_DIR}/extras/SimpleBackups.jar"
-      elif [[ -f "${DATA_DIR}/overrides/mods/SimpleBackups.jar" ]]; then
+      elif [[ -f "${DATA_DIR}/overrides/mods/${SB_FILE_NAME}" ]]; then
         src="${DATA_DIR}/overrides/mods/SimpleBackups.jar"
-      elif [[ -f "${DATA_DIR}/SimpleBackups.jar" ]]; then
+      elif [[ -f "${DATA_DIR}/${SB_FILE_NAME}" ]]; then
         src="${DATA_DIR}/SimpleBackups.jar"
       fi
     
       if [[ -z "${src}" && -n "${SIMPLEBACKUPS_URL}" ]]; then
         echo "[SB] downloading ${SIMPLEBACKUPS_URL}"
         # Download NICHT failen lassen, damit der Rest weiterläuft
-        if curl -fsSL "${SIMPLEBACKUPS_URL}" -o "${DATA_DIR}/overrides/mods/SimpleBackups.jar"; then
+        if curl -fsSL "${SIMPLEBACKUPS_URL}" -o "${DATA_DIR}/overrides/mods/${SB_FILE_NAME}"; then
           src="${DATA_DIR}/overrides/mods/SimpleBackups.jar"
         fi
       fi
     
       if [[ -n "${src}" ]]; then
         mkdir -p "${DATA_DIR}/mods"
-        cp -f "${src}" "${DATA_DIR}/mods/SimpleBackups.jar" || true
+        cp -f "${src}" "${DATA_DIR}/mods/${SB_FILE_NAME}" || true
       fi
     }
 
@@ -85,7 +85,7 @@ data:
     fi
     
     # 2) SimpleBackups einmal in overrides/mods primen (falls noch nicht vorhanden)
-    if [[ ! -f "${DATA_DIR}/overrides/mods/SimpleBackups.jar" ]]; then
+    if [[ ! -f "${DATA_DIR}/overrides/mods/${SB_FILE_NAME}" ]]; then
       place_simplebackups || true
     fi
     
