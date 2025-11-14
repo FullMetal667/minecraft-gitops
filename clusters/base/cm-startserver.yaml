@@ -17,7 +17,7 @@ data:
     RCON_HOST="${RCON_HOST:-127.0.0.1}"
     RCON_PORT="${RCON_PORT:-25575}"
     RCON_PASSWORD="${RCON_PASSWORD:-mc321}"
-    RCON_WAIT_SECS="${RCON_WAIT_SECS:-1800}"   # bis zu 30 Minuten warten (modded Server dauert)
+    RCON_WAIT_SECS="${RCON_WAIT_SECS:-1800}"   # bis zu 30 Minuten warten
     RCON_POLL_INTERVAL="${RCON_POLL_INTERVAL:-5}"
     
     # ---- SimpleBackups (CurseForge-Direct) ----
@@ -27,9 +27,17 @@ data:
     SB_DIR2=$(( SB_FILE_ID % 1000 ))
     SIMPLEBACKUPS_URL="${SIMPLEBACKUPS_URL:-https://mediafilez.forgecdn.net/files/${SB_DIR1}/${SB_DIR2}/${SB_FILE_NAME}}"
     
+    # ---- nc / ncat detection ----
+    NC_BIN="${NC_BIN:-nc}"
+    if ! command -v "${NC_BIN}" >/dev/null 2>&1; then
+      if command -v ncat >/dev/null 2>&1; then
+        NC_BIN="ncat"
+      fi
+    fi
+    
     mkdir -p "${DATA_DIR}/overrides/mods" "${DATA_DIR}/mods" "${DATA_DIR}/config"
     
-    # 0) Hilfsfunktion: sichert das JAR hartnäckig in /mods
+    # --- Helper: SimpleBackups nach mods/ legen (ohne cmp; einfach immer kopieren) ---
     place_simplebackups() {
       local src=""
       if [[ -f "${APP_DIR}/extras/SimpleBackups.jar" ]]; then
@@ -40,64 +48,56 @@ data:
         src="${DATA_DIR}/SimpleBackups.jar"
       fi
     
-      if [[ -z "${src}" ]]; then
-        # noch keine lokale Quelle? dann laden
-        if [[ -n "${SIMPLEBACKUPS_URL}" ]]; then
-          echo "[SB] downloading ${SIMPLEBACKUPS_URL}"
-          curl -fsSL "${SIMPLEBACKUPS_URL}" -o "${DATA_DIR}/overrides/mods/SimpleBackups.jar"
+      if [[ -z "${src}" && -n "${SIMPLEBACKUPS_URL}" ]]; then
+        echo "[SB] downloading ${SIMPLEBACKUPS_URL}"
+        # Download NICHT failen lassen, damit der Rest weiterläuft
+        if curl -fsSL "${SIMPLEBACKUPS_URL}" -o "${DATA_DIR}/overrides/mods/SimpleBackups.jar"; then
           src="${DATA_DIR}/overrides/mods/SimpleBackups.jar"
         fi
       fi
     
       if [[ -n "${src}" ]]; then
-        # mods/ existiert evtl. noch nicht oder wird gerade überschrieben -> mkdir -p und dann *immer wieder* hinein kopieren
         mkdir -p "${DATA_DIR}/mods"
-        # Nur kopieren, wenn fehlt oder andere Größe/Checksum
-        if [[ ! -f "${DATA_DIR}/mods/SimpleBackups.jar" ]] || ! cmp -s "${src}" "${DATA_DIR}/mods/SimpleBackups.jar"; then
-          cp -f "${src}" "${DATA_DIR}/mods/SimpleBackups.jar" || true
-        fi
+        cp -f "${src}" "${DATA_DIR}/mods/SimpleBackups.jar" || true
       fi
     }
     
-    # 1) ServerStarter JAR bereitstellen (ohne Pack-Download; nur das Tool)
+    # 1) ServerStarter JAR bereitstellen
     cd "${DATA_DIR}"
     if [[ ! -f "${JAR}" ]]; then
       echo "[SS] fetching ${JAR}"
       curl -fsSL -o "${JAR}" "https://github.com/TeamAOF/ServerStarter/releases/download/v2.4.0/${JAR}"
     fi
     
-    # 2) SimpleBackups schon vor dem Start in overrides ablegen (überlebt initiale Syncs)
-    if [[ -n "${SIMPLEBACKUPS_URL}" && ! -f "${DATA_DIR}/overrides/mods/SimpleBackups.jar" ]]; then
-      echo "[SB] priming overrides/mods with SimpleBackups.jar"
-      curl -fsSL "${SIMPLEBACKUPS_URL}" -o "${DATA_DIR}/overrides/mods/SimpleBackups.jar"
+    # 2) SimpleBackups einmal in overrides/mods primen (falls noch nicht vorhanden)
+    if [[ ! -f "${DATA_DIR}/overrides/mods/SimpleBackups.jar" ]]; then
+      place_simplebackups || true
     fi
     
-    # 3) ServerStarter starten (im Hintergrund)
+    # 3) ServerStarter starten
     echo "[SS] starting ServerStarter ..."
     java -jar "${JAR}" &
     SERVER_PID=$!
     
-    # 4) Während ServerStarter synchronisiert/auspackt: SimpleBackups hartnäckig in /mods injizieren,
-    #    bis der RCON ansprechbar ist (damit das Mod *zum eigentlichen Start* da ist, auch wenn /mods überschrieben wird).
+    # 4) Während des Install-/Sync-Fensters SimpleBackups hartnäckig in mods/ schreiben,
+    #    bis RCON erreichbar ist oder Timeout erreicht.
     (
-      # kurze Anlauffase, dann in Intervallen kopieren
       sleep 2
       end_time=$(( $(date +%s) + RCON_WAIT_SECS ))
       while [[ $(date +%s) -lt ${end_time} ]]; do
         place_simplebackups
-        # abbrechen, wenn RCON offen ist -> dann startet/ist der Server und Mods-Fenster ist vorbei
-        if nc -z "${RCON_HOST}" "${RCON_PORT}" 2>/dev/null; then
+        if command -v "${NC_BIN}" >/dev/null 2>&1 && ${NC_BIN} -z "${RCON_HOST}" "${RCON_PORT}" 2>/dev/null; then
           break
         fi
         sleep 2
       done
     ) &
     
-    # 5) Nach RCON-Start einmalig commands.txt abfeuern (falls vorhanden)
+    # 5) Nach RCON-Start commands.txt schießen (falls vorhanden)
     if [[ "${RCON_ENABLE}" == "true" && -s "${DATA_DIR}/commands.txt" ]]; then
       echo "[RCON] waiting for ${RCON_HOST}:${RCON_PORT} (timeout ${RCON_WAIT_SECS}s) ..."
       waited=0
-      until nc -z "${RCON_HOST}" "${RCON_PORT}" 2>/dev/null; do
+      until command -v "${NC_BIN}" >/dev/null 2>&1 && ${NC_BIN} -z "${RCON_HOST}" "${RCON_PORT}" 2>/dev/null; do
         sleep "${RCON_POLL_INTERVAL}"
         waited=$(( waited + RCON_POLL_INTERVAL ))
         if [[ "${waited}" -ge "${RCON_WAIT_SECS}" ]]; then
@@ -106,16 +106,14 @@ data:
         fi
       done
     
-      if nc -z "${RCON_HOST}" "${RCON_PORT}" 2>/dev/null; then
-        # kleinen Puffer, damit RCON wirklich bereit ist
+      if command -v "${NC_BIN}" >/dev/null 2>&1 && ${NC_BIN} -z "${RCON_HOST}" "${RCON_PORT}" 2>/dev/null; then
         sleep 3
         echo "[RCON] sending commands from commands.txt"
-        # führende Slashes entfernen; leere/Kommentarzeilen ignorieren
         sed -e 's#^/##' -e '/^\s*#/d' -e '/^\s*$/d' "${DATA_DIR}/commands.txt" | \
           /usr/local/bin/mcrcon -H "${RCON_HOST}" -P "${RCON_PORT}" -p "${RCON_PASSWORD}" -s || true
       fi
     fi
     
-    # 6) Auf Beendigung des ServerStarter/Servers warten
+    # 6) Auf Server warten
     wait "${SERVER_PID}"
     
