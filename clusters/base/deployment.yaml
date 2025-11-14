@@ -83,7 +83,7 @@ spec:
               mountPath: /data/startserver.sh
               subPath: startserver.sh
             - name: config-data
-              mountPath: /data/config
+              mountPath: /data/config-temp
             - name: server-properties
               mountPath: /data/server.properties
               subPath: server.properties
