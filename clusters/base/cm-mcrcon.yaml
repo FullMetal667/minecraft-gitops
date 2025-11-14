@@ -2,7 +2,6 @@ kind: ConfigMap
 apiVersion: v1
 metadata:
   name: minecraft-commands
-  namespace: minecraft-aof7
 data:
   commands.txt: |
     say Willkommen auf dem Server!

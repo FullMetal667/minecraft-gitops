@@ -1,8 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: all-of-fabric-7
-  namespace: minecraft-aof7
+  name: minecraft-server
 spec:
   replicas: 1
   selector:
@@ -17,8 +16,7 @@ spec:
         runAsUser: 0
         fsGroup: 0
         fsGroupChangePolicy: "OnRootMismatch"
-      serviceAccount: aof7
-      serviceAccountName: aof7
+      serviceAccountName: minecraft-sa
       volumes:
         - name: world-data
           persistentVolumeClaim:
@@ -49,22 +47,12 @@ spec:
           secret:
             secretName: mc-env 
       containers:
-        - name: all-of-fabric-7
-          image: "docker.io/chrisroth667/aof7:2.5.3"
+        - name: minecraft
+          image: "docker.io/chrisroth667/minecraft:0.0.0"
           imagePullPolicy: Always
           ports:
             - containerPort: 25565
               protocol: TCP
-          env:
-            - name: MCRCON_HOST
-              value: "localhost"
-            - name: MCRCON_PORT
-              value: "25575"
-            - name: MCRCON_PASS
-              valueFrom:
-                secretKeyRef:
-                  name: mcrcon-password
-                  key: MCRCON_PASS
           envFrom:
             - secretRef:
                 name: mc-env

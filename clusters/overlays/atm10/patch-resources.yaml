@@ -1,0 +1,17 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: all-of-fabric-7
+  namespace: minecraft-aof7
+spec:
+  template:
+    spec:
+      containers:
+      - name: minecraft
+        resources:
+          requests:
+            cpu: "4"
+            memory: "12Gi"
+          limits:
+            cpu: "8"
+            memory: "24Gi"

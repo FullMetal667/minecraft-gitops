@@ -1,0 +1,59 @@
+# .github/workflows/build-minecraft.yml
+name: Build Minecraft Server
+
+on:
+  workflow_dispatch:
+    inputs:
+      server:
+        description: "Welcher Server?"
+        required: true
+        type: choice
+        options:
+          - aof7
+          - atm10
+      version:
+        description: "Version (z.B. 2.5.3)"
+        required: true
+        type: string
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select env file
+        run: |
+          if [ "${{ inputs.server }}" = "aof7" ]; then
+            cp clusters/overlays/aof7-2.5.3/mc-env.env .env
+          elif [ "${{ inputs.server }}" = "atm10" ]; then
+            cp clusters/overlays/atm10-5.0/mc-env.env .env
+          fi
+          cat .env
+
+      - name: Export env vars
+        run: |
+          set -a
+          source .env
+          set +a
+          echo "IMAGE_TAG=${MOD_VERSION}" >> $GITHUB_ENV
+
+      - name: Login DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USER }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build & push
+        run: |
+          docker build \
+            -f build/docker/Dockerfile \
+            --build-arg FILE_ID=${FILE_ID} \
+            --build-arg ZIP="${ZIP}" \
+            --build-arg DIR="${DIR}" \
+            -t docker.io/chrisroth667/${{ inputs.server }}:${IMAGE_TAG} \
+            .
+          docker push docker.io/chrisroth667/${{ inputs.server }}:${IMAGE_TAG}
+
