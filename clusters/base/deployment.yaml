@@ -28,7 +28,7 @@ spec:
           configMap:
             name: aof7-startserver
             defaultMode: 0755
-        - name: server.properties
+        - name: server-properties
           configMap:
             name: mc-server-properties
             defaultMode: 0755
@@ -77,7 +77,7 @@ spec:
             - name: startserver
               mountPath: /data/startserver.sh
               subPath: startserver.sh
-            - name: server.properties
+            - name: server-properties
               mountPath: /data/server.properties
               subPath: server.properties
             - name: server-setup-config
