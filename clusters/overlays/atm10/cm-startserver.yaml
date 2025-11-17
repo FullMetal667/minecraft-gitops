@@ -121,7 +121,7 @@ data:
       local fname src=""
       fname="$(selected_backup_filename)"
       [[ -n "${fname}" ]] || return 0
-    
+
       if [[ -f "${DATA_DIR}/overrides/mods/${fname}" ]]; then
         src="${DATA_DIR}/overrides/mods/${fname}"
       elif [[ -f "${APP_DIR}/extras/${fname}" ]]; then
@@ -129,10 +129,17 @@ data:
       elif [[ -f "${DATA_DIR}/${fname}" ]]; then
         src="${DATA_DIR}/${fname}"
       fi
-    
-      if [[ -n "${src}" ]]; then
-        mkdir -p "${DATA_DIR}/mods"
-        cp -f "${src}" "${DATA_DIR}/mods/${fname}" || true
+
+      # Wenn keine Quelle gefunden wurde: nichts tun
+      [[ -n "${src}" ]] || return 0
+
+      mkdir -p "${DATA_DIR}/mods"
+
+      # WICHTIG: Nur kopieren, wenn in mods/ noch NICHT vorhanden
+      if [[ ! -f "${DATA_DIR}/mods/${fname}" ]]; then
+        cp "${src}" "${DATA_DIR}/mods/${fname}" || true
+      else
+        echo "[BK] ${fname} bereits in mods/ vorhanden – nichts überschrieben."
       fi
     }
     
