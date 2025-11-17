@@ -29,7 +29,7 @@ spec:
             claimName: overrides-storage
         - name: startserver
           configMap:
-            name: aof7-startserver
+            name: startserver
             defaultMode: 0755
         - name: server-properties
           configMap:
