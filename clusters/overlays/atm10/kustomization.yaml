@@ -4,6 +4,10 @@ namespace: minecraft-atm10
 resources:
   - ../../base
   - namespace.yaml
+  - cm-mcrcon.yaml
+  - cm-server-properties.yaml
+  - cm-user.jvm.args.yaml
+  - cm-startserver.yaml
 secretGenerator:
   - name: mc-env
     envs:
