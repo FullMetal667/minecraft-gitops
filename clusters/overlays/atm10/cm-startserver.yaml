@@ -50,7 +50,7 @@ data:
       fi
     fi
     
-    # Verzeichnisse nur sicherstellen (kein Überschreiben von Inhalten)
+    # Verzeichnisse nur sicherstellen
     mkdir -p "${DATA_DIR}/overrides/mods" "${DATA_DIR}/overrides/config" "${DATA_DIR}/mods" "${DATA_DIR}/config"
     
     # =======================
