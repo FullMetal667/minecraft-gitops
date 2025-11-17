@@ -7,42 +7,30 @@ data:
     #!/usr/bin/env bash
     set -euo pipefail
     
-    # -----------------------------
-    # Basis-Dirs
-    # -----------------------------
-    APP_DIR="${APP_DIR:-/opt/atm10}"
+    APP_DIR="${APP_DIR:-/opt/aof7}"
     DATA_DIR="${DATA_DIR:-/data}"
+    JAR="${JAR:-serverstarter-2.4.0.jar}"
     
-    cd "${DATA_DIR}"
-    
-    # -----------------------------
-    # ATM10 / NeoForge Settings
-    # -----------------------------
-    NEOFORGE_VERSION="${NEOFORGE_VERSION:-21.1.214}"
-    
-    ATM10_JAVA="${ATM10_JAVA:-java}"
-    ATM10_RESTART="${ATM10_RESTART:-true}"
-    ATM10_INSTALL_ONLY="${ATM10_INSTALL_ONLY:-false}"
-    
-    INSTALLER="${INSTALLER:-${DATA_DIR}/neoforge-${NEOFORGE_VERSION}-installer.jar}"
-    NEOFORGE_URL="${NEOFORGE_URL:-https://maven.neoforged.net/releases/net/neoforged/neoforge/${NEOFORGE_VERSION}/neoforge-${NEOFORGE_VERSION}-installer.jar}"
-    
-    ATM10_ARGS_FILE_DEFAULT="libraries/net/neoforged/neoforge/${NEOFORGE_VERSION}/unix_args.txt"
-    ATM10_ARGS_FILE="${ATM10_ARGS_FILE:-${ATM10_ARGS_FILE_DEFAULT}}"
-    
-    # -----------------------------
-    # RCON Settings
-    # -----------------------------
+    # ---- RCON ---- (UNVERÄNDERT)
     RCON_ENABLE="${RCON_ENABLE:-true}"
     RCON_HOST="${RCON_HOST:-127.0.0.1}"
     RCON_PORT="${RCON_PORT:-25575}"
     RCON_PASSWORD="${RCON_PASSWORD:-mc321}"
-    RCON_WAIT_SECS="${RCON_WAIT_SECS:-1800}"
+    RCON_WAIT_SECS="${RCON_WAIT_SECS:-1800}"   # bis zu 30 Minuten warten
     RCON_POLL_INTERVAL="${RCON_POLL_INTERVAL:-5}"
     
-    # -----------------------------
-    # nc / ncat detection
-    # -----------------------------
+    # ---- Backup-Mod Auswahl ----
+    # advanced | none
+    BACKUP_MOD="${BACKUP_MOD:-advanced}"
+    
+    # ---- Advanced Backups (Fabric) ----
+    AB_FILE_ID="${AB_FILE_ID:-7173771}"
+    AB_FILE_NAME="${AB_FILE_NAME:-SimpleBackups-1.21-4.0.23.jar}"
+    AB_DIR1=$(( AB_FILE_ID / 1000 ))
+    AB_DIR2=$(( AB_FILE_ID % 1000 ))
+    ADVANCED_BACKUPS_URL="${ADVANCED_BACKUPS_URL:-https://mediafilez.forgecdn.net/files/${AB_DIR1}/${AB_DIR2}/${AB_FILE_NAME}}"
+    
+    # ---- nc / ncat detection ---- (UNVERÄNDERT)
     NC_BIN="${NC_BIN:-nc}"
     if ! command -v "${NC_BIN}" >/dev/null 2>&1; then
       if command -v ncat >/dev/null 2>&1; then
@@ -50,11 +38,15 @@ data:
       fi
     fi
     
-    # Verzeichnisse nur sicherstellen
     mkdir -p "${DATA_DIR}/overrides/mods" "${DATA_DIR}/overrides/config" "${DATA_DIR}/mods" "${DATA_DIR}/config"
     
     # =======================
-    # Config-Overrides anwenden
+    # Config-Overrides anwenden (ohne Zwischenordner)
+    #   - Quelle:  ${DATA_DIR}/overrides/config/**  (PVC empfohlen)
+    #   - Ziel:    ${DATA_DIR}/config/**
+    #   - CONFIG_OVERRIDE_MODE:
+    #       force (default): immer überschreiben
+    #       fill: nur anlegen, wenn Ziel fehlt
     # =======================
     CONFIG_OVERRIDE_MODE="${CONFIG_OVERRIDE_MODE:-force}"
     apply_config_overrides() {
@@ -62,58 +54,86 @@ data:
       local base_dst="${DATA_DIR}/config"
       [[ -d "${base_src}" ]] || return 0
     
+      # Alle regulären Dateien aus base_src nach base_dst spiegeln
       while IFS= read -r -d '' src; do
-        rel="${src#${base_src}/}"
+        rel="${src#${base_src}/}"                    # relativer Pfad
         dst="${base_dst}/${rel}"
         mkdir -p "$(dirname "${dst}")"
         case "${CONFIG_OVERRIDE_MODE}" in
           force) cp -f "${src}" "${dst}" ;;
           fill)  [[ -f "${dst}" ]] || cp -f "${src}" "${dst}" ;;
-          *)     cp -f "${src}" "${dst}" ;;
+          *)     cp -f "${src}" "${dst}" ;;          # Fallback
         esac
       done < <(find "${base_src}" -type f -print0)
     }
     
-    # =======================
-    # NeoForge installieren
-    # =======================
-    install_neoforge() {
-      if [[ -f "${ATM10_ARGS_FILE}" ]]; then
-        echo "[ATM10] NeoForge bereits installiert (Args-Datei gefunden: ${ATM10_ARGS_FILE})"
+    # --- Helpers: AdvancedBackups Mod bereitstellen ---
+    selected_backup_filename() {
+      case "${BACKUP_MOD}" in
+        advanced) echo "${AB_FILE_NAME}" ;;
+        none|"")  echo "" ;;
+      esac
+    }
+    selected_backup_url() {
+      case "${BACKUP_MOD}" in
+        advanced) echo "${ADVANCED_BACKUPS_URL}" ;;
+        none|"")  echo "" ;;
+      esac
+    }
+    
+    # nur in overrides/mods sicherstellen (Download oder Kopie), noch NICHT in mods kopieren
+    stage_backup_mod() {
+      local fname url src=""
+      fname="$(selected_backup_filename)"
+      url="$(selected_backup_url)"
+      [[ -n "${fname}" ]] || return 0
+    
+      if [[ -f "${DATA_DIR}/overrides/mods/${fname}" ]]; then
         return 0
       fi
     
-      echo "[ATM10] NeoForge nicht installiert, starte Installation für ${NEOFORGE_VERSION}"
-    
-      if [[ ! -f "${INSTALLER}" ]]; then
-        echo "[ATM10] Lade Installer von ${NEOFORGE_URL}"
-        curl -fsSL -o "${INSTALLER}" "${NEOFORGE_URL}"
+      if [[ -f "${APP_DIR}/extras/${fname}" ]]; then
+         src="${APP_DIR}/extras/${fname}"
+      elif [[ -f "${DATA_DIR}/${fname}" ]]; then
+         src="${DATA_DIR}/${fname}"
       fi
     
-      "${ATM10_JAVA}" -jar "${INSTALLER}" -installServer
+      if [[ -z "${src}" && -n "${url}" ]]; then
+        echo "[BK] downloading ${fname} from ${url}"
+        if ! curl -fsSL "${url}" -o "${DATA_DIR}/overrides/mods/${fname}"; then
+          echo "[BK] WARN: download failed for ${fname} (continuing)"
+          return 0
+        fi
+        return 0
+      fi
+    
+      if [[ -n "${src}" ]]; then
+        cp -f "${src}" "${DATA_DIR}/overrides/mods/${fname}" || true
+      fi
+    }
+    
+    # aus overrides (oder anderen Quellen) HART nach mods/ kopieren
+    place_backup_mod() {
+      local fname src=""
+      fname="$(selected_backup_filename)"
+      [[ -n "${fname}" ]] || return 0
+    
+      if [[ -f "${DATA_DIR}/overrides/mods/${fname}" ]]; then
+        src="${DATA_DIR}/overrides/mods/${fname}"
+      elif [[ -f "${APP_DIR}/extras/${fname}" ]]; then
+        src="${APP_DIR}/extras/${fname}"
+      elif [[ -f "${DATA_DIR}/${fname}" ]]; then
+        src="${DATA_DIR}/${fname}"
+      fi
+    
+      if [[ -n "${src}" ]]; then
+        mkdir -p "${DATA_DIR}/mods"
+        cp -f "${src}" "${DATA_DIR}/mods/${fname}" || true
+      fi
     }
     
     # =======================
-    # Java-Check (>= 21)
-    # =======================
-    if ! command -v "${ATM10_JAVA}" >/dev/null 2>&1; then
-      echo "[ATM10] Java nicht gefunden (ATM10_JAVA=${ATM10_JAVA})"
-      exit 1
-    fi
-    
-    JAVA_VERSION_OUT="$("${ATM10_JAVA}" -version 2>&1 | head -n1)"
-    JAVA_MAJOR=0
-    if [[ "${JAVA_VERSION_OUT}" =~ \"([0-9]+)\. ]]; then
-      JAVA_MAJOR="${BASH_REMATCH[1]}"
-    fi
-    
-    if (( JAVA_MAJOR < 21 )); then
-      echo "[ATM10] Minecraft 1.21 benötigt Java 21 – gefunden: ${JAVA_VERSION_OUT}"
-      exit 1
-    fi
-    
-    # =======================
-    # EULA
+    # EULA (UNVERÄNDERT)
     # =======================
     if [ ! -f eula.txt ] || ! grep -q 'eula=true' eula.txt; then
       if [ "${EULA:-}" = "TRUE" ] || [ "${EULA:-}" = "true" ]; then
@@ -129,48 +149,30 @@ data:
       fi
     fi
     
-    # =======================
-    # server.properties Default
-    # =======================
-    if [[ ! -f server.properties ]]; then
-      MOTD_VAL="${MOTD:-All the Mods 10}"
-      {
-        echo "allow-flight=true"
-        echo "motd=${MOTD_VAL}"
-        echo "max-tick-time=180000"
-      } > server.properties
-      echo "[ATM10] Default server.properties geschrieben"
+    # 1) ServerStarter JAR bereitstellen (UNVERÄNDERT)
+    cd "${DATA_DIR}"
+    if [[ ! -f "${JAR}" ]]; then
+      echo "[SS] fetching ${JAR}"
+      curl -fsSL -o "${JAR}" "https://github.com/TeamAOF/ServerStarter/releases/download/v2.4.0/${JAR}"
     fi
     
-    # =======================
-    # NeoForge installieren
-    # =======================
-    install_neoforge
-    
-    if [[ "${ATM10_INSTALL_ONLY}" == "true" ]]; then
-      echo "[ATM10] INSTALL_ONLY=true – Installation abgeschlossen, beende."
-      exit 0
+    # 2) Backup-Mod einmal in overrides/mods primen (falls noch nicht vorhanden)
+    SEL_FILE="$(selected_backup_filename)"
+    if [[ -n "${SEL_FILE}" && ! -f "${DATA_DIR}/overrides/mods/${SEL_FILE}" ]]; then
+      stage_backup_mod || true
     fi
     
-    # =======================
-    # Serverstart
-    # =======================
-    start_server() {
-      echo "[ATM10] Starte NeoForge Server mit:"
-      echo "  ${ATM10_JAVA} @user_jvm_args.txt @${ATM10_ARGS_FILE} nogui"
-      echo "[ATM10] Mods im mods/-Verzeichnis:"
-      ls -1 "${DATA_DIR}/mods" || echo "(keine Dateien gefunden)"
-      "${ATM10_JAVA}" @user_jvm_args.txt @"${ATM10_ARGS_FILE}" nogui &
-      SERVER_PID=$!
-    }
+    # 3) ServerStarter starten (UNVERÄNDERT)
+    echo "[SS] starting ServerStarter ..."
+    java -jar "${JAR}" &
+    SERVER_PID=$!
     
-    start_server
-    
-    # Overrides während Start anlegen
+    # 4) Während des Install-/Sync-Fensters Backup-Mod in mods/ pinnen + Config-Overrides anwenden
     (
       sleep 2
       end_time=$(( $(date +%s) + RCON_WAIT_SECS ))
       while [[ $(date +%s) -lt ${end_time} ]]; do
+        place_backup_mod
         apply_config_overrides
         if command -v "${NC_BIN}" >/dev/null 2>&1 && ${NC_BIN} -z "${RCON_HOST}" "${RCON_PORT}" 2>/dev/null; then
           break
@@ -179,7 +181,7 @@ data:
       done
     ) &
     
-    # RCON-Commands ausführen
+    # 5) Nach RCON-Start commands.txt schießen (UNVERÄNDERT)
     if [[ "${RCON_ENABLE}" == "true" && -s "${DATA_DIR}/commands.txt" ]]; then
       echo "[RCON] waiting for ${RCON_HOST}:${RCON_PORT} (timeout ${RCON_WAIT_SECS}s) ..."
       waited=0
@@ -200,5 +202,6 @@ data:
       fi
     fi
     
+    # 6) Auf Server warten (UNVERÄNDERT)
     wait "${SERVER_PID}"
-    
+
