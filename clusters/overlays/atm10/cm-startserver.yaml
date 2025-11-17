@@ -55,44 +55,47 @@ data:
     # =======================
     # SimpleBackups: Download nach overlays/mods + Kopie nach mods
     # =======================
-    SIMPLEBACKUPS_FILE="${SIMPLEBACKUPS_FILE:-SimpleBackups-1.20.1-3.1.18.jar}"
-    SIMPLEBACKUPS_URL="${SIMPLEBACKUPS_URL:-https://mediafilez.forgecdn.net/files/7151/898/SimpleBackups-1.20.1-3.1.18.jar}"
+    SIMPLEBACKUPS_FILE="${SIMPLEBACKUPS_FILE:-SimpleBackups-1.21-4.0.23.jar}"
+    SIMPLEBACKUPS_URL="${SIMPLEBACKUPS_URL:-https://mediafilez.forgecdn.net/files/7173/771/SimpleBackups-1.21-4.0.23.jar}"
 
     stage_simplebackups_mod() {
-      local dst="${DATA_DIR}/overrides/mods/${SIMPLEBACKUPS_FILE}"
-
-      [[ -n "${SIMPLEBACKUPS_FILE}" ]] || return 0
-
-      # Wenn bereits vorhanden, nichts tun
-      if [[ -f "${dst}" ]]; then
-        return 0
-      fi
-
-      # Falls Jar im /data Root liegt, von dort nach overrides/mods kopieren
-      if [[ -f "${DATA_DIR}/${SIMPLEBACKUPS_FILE}" ]]; then
-        cp -f "${DATA_DIR}/${SIMPLEBACKUPS_FILE}" "${dst}" || true
-        echo "[SimpleBackups] ${SIMPLEBACKUPS_FILE} von /data nach overrides/mods kopiert"
-        return 0
-      fi
-
-      # Andernfalls von URL laden
-      if [[ -n "${SIMPLEBACKUPS_URL}" ]]; then
-        echo "[SimpleBackups] Lade ${SIMPLEBACKUPS_FILE} von ${SIMPLEBACKUPS_URL}"
-        if ! curl -fsSL "${SIMPLEBACKUPS_URL}" -o "${dst}"; then
-          echo "[SimpleBackups] WARN: Download fehlgeschlagen, fahre ohne SimpleBackups fort"
-          return 0
-        fi
-      fi
-    }
-
+          local dst="${DATA_DIR}/overrides/mods/${SIMPLEBACKUPS_FILE}"
+    
+          [[ -n "${SIMPLEBACKUPS_FILE}" ]] || return 0
+    
+          # Wenn bereits vorhanden, nichts tun
+          if [[ -f "${dst}" ]]; then
+            return 0
+          fi
+    
+          # Falls Jar im /data Root liegt, von dort nach overrides/mods kopieren
+          if [[ -f "${DATA_DIR}/${SIMPLEBACKUPS_FILE}" ]]; then
+            cp -f "${DATA_DIR}/${SIMPLEBACKUPS_FILE}" "${dst}" || true
+            echo "[SimpleBackups] ${SIMPLEBACKUPS_FILE} von /data nach overrides/mods kopiert"
+            return 0
+          fi
+    
+          # Andernfalls von URL laden
+          if [[ -n "${SIMPLEBACKUPS_URL}" ]]; then
+            echo "[SimpleBackups] Lade ${SIMPLEBACKUPS_FILE} von ${SIMPLEBACKUPS_URL}"
+            if ! curl -fsSL "${SIMPLEBACKUPS_URL}" -o "${dst}"; then
+              echo "[SimpleBackups] WARN: Download fehlgeschlagen, fahre ohne SimpleBackups fort"
+              return 0
+            fi
+          fi
+        }
+        
     place_simplebackups_mod() {
       local src="${DATA_DIR}/overrides/mods/${SIMPLEBACKUPS_FILE}"
       [[ -n "${SIMPLEBACKUPS_FILE}" ]] || return 0
       [[ -f "${src}" ]] || return 0
 
-      mkdir -p "${DATA_DIR}/mods"
-      cp -f "${src}" "${DATA_DIR}/mods/${SIMPLEBACKUPS_FILE}" || true
-      echo "[SimpleBackups] '${SIMPLEBACKUPS_FILE}' aus overrides/mods nach mods kopiert"
+      # Nur kopieren, wenn er noch nicht da ist
+      if [[ ! -f "${DATA_DIR}/mods/${SIMPLEBACKUPS_FILE}" ]]; then
+        mkdir -p "${DATA_DIR}/mods"
+        cp -f "${src}" "${DATA_DIR}/mods/${SIMPLEBACKUPS_FILE}" || true
+        echo "[SimpleBackups] '${SIMPLEBACKUPS_FILE}' aus overrides/mods nach mods kopiert"
+      fi
     }
 
     # =======================
@@ -168,22 +171,7 @@ data:
     # =======================
     # NeoForge installieren
     # =======================
-    install_neoforge() {
-      if [[ -f "${ATM10_ARGS_FILE}" ]]; then
-        echo "[ATM10] NeoForge bereits installiert (Args-Datei gefunden: ${ATM10_ARGS_FILE})"
-        return 0
-      fi
-
-      echo "[ATM10] NeoForge nicht installiert, starte Installation für ${NEOFORGE_VERSION}"
-
-      if [[ ! -f "${INSTALLER}" ]]; then
-        echo "[ATM10] Lade Installer von ${NEOFORGE_URL}"
-        curl -fsSL -o "${INSTALLER}" "${NEOFORGE_URL}"
-      fi
-
-      "${ATM10_JAVA}" -jar "${INSTALLER}" -installServer
-    }
-
+    
     install_neoforge
 
     if [[ "${ATM10_INSTALL_ONLY}" == "true" ]]; then
@@ -191,8 +179,9 @@ data:
       exit 0
     fi
 
-    # Vor dem Start sicherstellen, dass SimpleBackups in overrides/mods bereit liegt
+    # *** SimpleBackups EINMAL vor Serverstart vorbereiten ***
     stage_simplebackups_mod || true
+    place_simplebackups_mod || true
 
     # =======================
     # Serverstart
@@ -206,12 +195,11 @@ data:
 
     start_server
 
-    # Overrides + SimpleBackups während Start anlegen
+    # Overrides während Start anlegen (KEIN SimpleBackups-Kopieren mehr hier!)
     (
       sleep 2
       end_time=$(( $(date +%s) + RCON_WAIT_SECS ))
       while [[ $(date +%s) -lt ${end_time} ]]; do
-        place_simplebackups_mod
         apply_config_overrides
         if command -v "${NC_BIN}" >/dev/null 2>&1 && ${NC_BIN} -z "${RCON_HOST}" "${RCON_PORT}" 2>/dev/null; then
           break
