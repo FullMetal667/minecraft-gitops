@@ -9,7 +9,11 @@ data:
     
     APP_DIR="${APP_DIR:-/opt/aof7}"
     DATA_DIR="${DATA_DIR:-/data}"
-    JAR="${JAR:-serverstarter-2.4.0.jar}"
+    
+    # ---- ATM10 / NeoForge Version ----
+    NEOFORGE_VERSION="${NEOFORGE_VERSION:-21.1.214}"
+    INSTALLER="neoforge-${NEOFORGE_VERSION}-installer.jar"
+    NEOFORGE_URL="https://maven.neoforged.net/releases/net/neoforged/neoforge/${NEOFORGE_VERSION}/neoforge-${NEOFORGE_VERSION}-installer.jar"
     
     # ---- RCON ---- (UNVERÄNDERT)
     RCON_ENABLE="${RCON_ENABLE:-true}"
@@ -149,59 +153,120 @@ data:
       fi
     fi
     
-    # 1) ServerStarter JAR bereitstellen (UNVERÄNDERT)
+    # ============================================================
+    # ATM10 / NeoForge – Installation & Start (anstelle ServerStarter)
+    # ============================================================
+    
     cd "${DATA_DIR}"
-    if [[ ! -f "${JAR}" ]]; then
-      echo "[SS] fetching ${JAR}"
-      curl -fsSL -o "${JAR}" "https://github.com/TeamAOF/ServerStarter/releases/download/v2.4.0/${JAR}"
+    
+    # Java-Verfügbarkeit prüfen (ATM10_JAVA oder java)
+    if ! command -v "${ATM10_JAVA:-java}" >/dev/null 2>&1; then
+      echo "[ATM10] Minecraft 1.21 requires Java 21 - Java not found (ATM10_JAVA oder java)"
+      exit 1
     fi
     
-    # 2) Backup-Mod einmal in overrides/mods primen (falls noch nicht vorhanden)
+    # NeoForge installieren, falls libraries/ noch nicht existiert
+    if [[ ! -d "libraries" ]]; then
+      echo "[ATM10] Neoforge not installed, installing now."
+      if [[ ! -f "${INSTALLER}" ]]; then
+        echo "[ATM10] No Neoforge installer found, downloading now: ${NEOFORGE_URL}"
+        if command -v wget >/dev/null 2>&1; then
+          echo "[ATM10] DEBUG: (wget) Downloading ${NEOFORGE_URL}"
+          wget -O "${INSTALLER}" "${NEOFORGE_URL}"
+        elif command -v curl >/dev/null 2>&1; then
+          echo "[ATM10] DEBUG: (curl) Downloading ${NEOFORGE_URL}"
+          curl -o "${INSTALLER}" -L "${NEOFORGE_URL}"
+        else
+          echo "[ATM10] Neither wget nor curl were found in the container. Please add one and try again."
+          exit 1
+        fi
+      fi
+    
+      echo "[ATM10] Running Neoforge installer."
+      "${ATM10_JAVA:-java}" -jar "${INSTALLER}" -installServer
+    fi
+    
+    # Standard server.properties, falls nicht vorhanden
+    if [[ ! -e server.properties ]]; then
+      cat > server.properties <<EOF
+    allow-flight=true
+    motd=All the Mods 10
+    max-tick-time=180000
+    EOF
+    fi
+    
+    # Nur installieren, nicht starten?
+    if [[ "${ATM10_INSTALL_ONLY:-false}" == "true" ]]; then
+      echo "[ATM10] INSTALL_ONLY: complete"
+      exit 0
+    fi
+    
+    # Java-Version prüfen (>= 21)
+    JAVA_VERSION="$("${ATM10_JAVA:-java}" -fullversion 2>&1 | awk -F '"' '/version/ {print $2}' | cut -d'.' -f1 || echo 0)"
+    if ! [[ "${JAVA_VERSION}" =~ ^[0-9]+$ ]] || [[ "${JAVA_VERSION}" -lt 21 ]]; then
+      echo "[ATM10] Minecraft 1.21 requires Java 21 - found Java ${JAVA_VERSION}"
+      exit 1
+    fi
+    
+    # Backup-Mod einmal in overrides/mods primen (falls gewünscht und noch nicht vorhanden)
     SEL_FILE="$(selected_backup_filename)"
     if [[ -n "${SEL_FILE}" && ! -f "${DATA_DIR}/overrides/mods/${SEL_FILE}" ]]; then
       stage_backup_mod || true
     fi
     
-    # 3) ServerStarter starten (UNVERÄNDERT)
-    echo "[SS] starting ServerStarter ..."
-    java -jar "${JAR}" &
-    SERVER_PID=$!
+    # ============================================================
+    # Hauptloop: Server starten, Backups/Overrides + RCON wie gehabt
+    # ============================================================
+    while true; do
+      echo "[ATM10] starting server ..."
+      "${ATM10_JAVA:-java}" @user_jvm_args.txt @libraries/net/neoforged/neoforge/${NEOFORGE_VERSION}/unix_args.txt nogui &
+      SERVER_PID=$!
     
-    # 4) Während des Install-/Sync-Fensters Backup-Mod in mods/ pinnen + Config-Overrides anwenden
-    (
-      sleep 2
-      end_time=$(( $(date +%s) + RCON_WAIT_SECS ))
-      while [[ $(date +%s) -lt ${end_time} ]]; do
-        place_backup_mod
-        apply_config_overrides
-        if command -v "${NC_BIN}" >/dev/null 2>&1 && ${NC_BIN} -z "${RCON_HOST}" "${RCON_PORT}" 2>/dev/null; then
-          break
-        fi
+      # Während des Startfensters Backup-Mod pinnen + Config-Overrides anwenden
+      (
         sleep 2
-      done
-    ) &
+        end_time=$(( $(date +%s) + RCON_WAIT_SECS ))
+        while [[ $(date +%s) -lt ${end_time} ]]; do
+          place_backup_mod
+          apply_config_overrides
+          if command -v "${NC_BIN}" >/dev/null 2>&1 && ${NC_BIN} -z "${RCON_HOST}" "${RCON_PORT}" 2>/dev/null; then
+            break
+          fi
+          sleep 2
+        done
+      ) &
     
-    # 5) Nach RCON-Start commands.txt schießen (UNVERÄNDERT)
-    if [[ "${RCON_ENABLE}" == "true" && -s "${DATA_DIR}/commands.txt" ]]; then
-      echo "[RCON] waiting for ${RCON_HOST}:${RCON_PORT} (timeout ${RCON_WAIT_SECS}s) ..."
-      waited=0
-      until command -v "${NC_BIN}" >/dev/null 2>&1 && ${NC_BIN} -z "${RCON_HOST}" "${RCON_PORT}" 2>/dev/null; do
-        sleep "${RCON_POLL_INTERVAL}"
-        waited=$(( waited + RCON_POLL_INTERVAL ))
-        if [[ "${waited}" -ge "${RCON_WAIT_SECS}" ]]; then
-          echo "[RCON] timeout (${RCON_WAIT_SECS}s) – skip commands"
-          break
+      # Nach RCON-Start commands.txt schießen (wie vorher)
+      if [[ "${RCON_ENABLE}" == "true" && -s "${DATA_DIR}/commands.txt" ]]; then
+        echo "[RCON] waiting for ${RCON_HOST}:${RCON_PORT} (timeout ${RCON_WAIT_SECS}s) ..."
+        waited=0
+        until command -v "${NC_BIN}" >/dev/null 2>&1 && ${NC_BIN} -z "${RCON_HOST}" "${RCON_PORT}" 2>/dev/null; do
+          sleep "${RCON_POLL_INTERVAL}"
+          waited=$(( waited + RCON_POLL_INTERVAL ))
+          if [[ "${waited}" -ge "${RCON_WAIT_SECS}" ]]; then
+            echo "[RCON] timeout (${RCON_WAIT_SECS}s) – skip commands"
+            break
+          fi
+        done
+    
+        if command -v "${NC_BIN}" >/dev/null 2>&1 && ${NC_BIN} -z "${RCON_HOST}" "${RCON_PORT}" 2>/dev/null; then
+          sleep 3
+          echo "[RCON] sending commands from commands.txt"
+          sed -e 's#^/##' -e '/^\s*#/d' -e '/^\s*$/d' "${DATA_DIR}/commands.txt" | \
+            /usr/local/bin/mcrcon -H "${RCON_HOST}" -P "${RCON_PORT}" -p "${RCON_PASSWORD}" -s || true
         fi
-      done
-    
-      if command -v "${NC_BIN}" >/dev/null 2>&1 && ${NC_BIN} -z "${RCON_HOST}" "${RCON_PORT}" 2>/dev/null; then
-        sleep 3
-        echo "[RCON] sending commands from commands.txt"
-        sed -e 's#^/##' -e '/^\s*#/d' -e '/^\s*$/d' "${DATA_DIR}/commands.txt" | \
-          /usr/local/bin/mcrcon -H "${RCON_HOST}" -P "${RCON_PORT}" -p "${RCON_PASSWORD}" -s || true
       fi
-    fi
     
-    # 6) Auf Server warten (UNVERÄNDERT)
-    wait "${SERVER_PID}"
+      # Auf Serverprozess warten
+      wait "${SERVER_PID}" || true
+    
+      # Automatischen Restart steuern
+      if [[ "${ATM10_RESTART:-true}" == "false" ]]; then
+        echo "[ATM10] server stopped, automatic restart disabled (ATM10_RESTART=false)"
+        exit 0
+      fi
+    
+      echo "[ATM10] Restarting automatically in 10 seconds (Ctrl+C to stop container)"
+      sleep 10
+    done
 
