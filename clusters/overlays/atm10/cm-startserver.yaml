@@ -55,8 +55,8 @@ data:
     # =======================
     # SimpleBackups: Download nach overrides/mods
     # =======================
-    # Hinweis: hier weiterhin deine URL/Datei – für ATM10/1.21
-    # solltest du perspektivisch eine 1.21-kompatible SimpleBackups-Version nehmen.
+    # Achtung: Jar/URL sind aktuell für 1.20.1 – für ATM10 (1.21.x) solltest du
+    # eine passende SimpleBackups-Version verwenden und hier anpassen.
     SIMPLEBACKUPS_FILE="${SIMPLEBACKUPS_FILE:-SimpleBackups-1.20.1-3.1.18.jar}"
     SIMPLEBACKUPS_URL="${SIMPLEBACKUPS_URL:-https://mediafilez.forgecdn.net/files/7151/898/SimpleBackups-1.20.1-3.1.18.jar}"
 
@@ -88,9 +88,9 @@ data:
     }
 
     # =======================
-    # SimpleBackups: EINMAL vor dem Mod-/Server-Install nach mods kopieren
+    # SimpleBackups: EINMAL vor dem NeoForge-Install nach mods kopieren
     # =======================
-    place_simplebackups_mod() {
+    place_simplebackups_mod_pre_install() {
       local src="${DATA_DIR}/overrides/mods/${SIMPLEBACKUPS_FILE}"
       [[ -n "${SIMPLEBACKUPS_FILE}" ]] || return 0
       [[ -f "${src}" ]] || return 0
@@ -99,7 +99,7 @@ data:
       if [[ ! -f "${DATA_DIR}/mods/${SIMPLEBACKUPS_FILE}" ]]; then
         mkdir -p "${DATA_DIR}/mods"
         cp -f "${src}" "${DATA_DIR}/mods/${SIMPLEBACKUPS_FILE}" || true
-        echo "[SimpleBackups] '${SIMPLEBACKUPS_FILE}' aus overrides/mods nach mods kopiert (vor Install)"
+        echo "[SimpleBackups] '${SIMPLEBACKUPS_FILE}' aus overrides/mods nach mods kopiert (vor install_neoforge)"
       fi
     }
 
@@ -122,6 +122,25 @@ data:
           *)     cp -f "${src}" "${dst}" ;;
         esac
       done < <(find "${base_src}" -type f -print0)
+    }
+
+    # =======================
+    # NeoForge installieren
+    # =======================
+    install_neoforge() {
+      if [[ -f "${ATM10_ARGS_FILE}" ]]; then
+        echo "[ATM10] NeoForge bereits installiert (Args-Datei gefunden: ${ATM10_ARGS_FILE})"
+        return 0
+      fi
+
+      echo "[ATM10] NeoForge nicht installiert, starte Installation für ${NEOFORGE_VERSION}"
+
+      if [[ ! -f "${INSTALLER}" ]]; then
+        echo "[ATM10] Lade Installer von ${NEOFORGE_URL}"
+        curl -fsSL -o "${INSTALLER}" "${NEOFORGE_URL}"
+      fi
+
+      "${ATM10_JAVA}" -jar "${INSTALLER}" -installServer
     }
 
     # =======================
@@ -173,32 +192,13 @@ data:
       echo "[ATM10] Default server.properties geschrieben"
     fi
 
-    # =======================
-    # NeoForge installieren
-    # =======================
-    install_neoforge() {
-      if [[ -f "${ATM10_ARGS_FILE}" ]]; then
-        echo "[ATM10] NeoForge bereits installiert (Args-Datei gefunden: ${ATM10_ARGS_FILE})"
-        return 0
-      fi
-
-      echo "[ATM10] NeoForge nicht installiert, starte Installation für ${NEOFORGE_VERSION}"
-
-      if [[ ! -f "${INSTALLER}" ]]; then
-        echo "[ATM10] Lade Installer von ${NEOFORGE_URL}"
-        curl -fsSL -o "${INSTALLER}" "${NEOFORGE_URL}"
-      fi
-
-      "${ATM10_JAVA}" -jar "${INSTALLER}" -installServer
-    }
-
     # ---------------------------------
-    # Reihenfolge:
-    # 1) SimpleBackups nach overrides/mods + mods (einmal)
-    # 2) NeoForge/Modpack-Install
+    # 1) SimpleBackups nach overrides/mods holen
+    # 2) SimpleBackups VOR install_neoforge nach mods kopieren
+    # 3) NeoForge/ATM10 installieren (zieht normale Mods nach mods/)
     # ---------------------------------
     stage_simplebackups_mod || true
-    place_simplebackups_mod || true
+    place_simplebackups_mod_pre_install || true
 
     install_neoforge
 
@@ -213,6 +213,8 @@ data:
     start_server() {
       echo "[ATM10] Starte NeoForge Server mit:"
       echo "  ${ATM10_JAVA} @user_jvm_args.txt @${ATM10_ARGS_FILE} nogui"
+      echo "[ATM10] Mods im mods/-Verzeichnis:"
+      ls -1 "${DATA_DIR}/mods" || echo "(keine Dateien gefunden)"
       "${ATM10_JAVA}" @user_jvm_args.txt @"${ATM10_ARGS_FILE}" nogui &
       SERVER_PID=$!
     }
@@ -254,4 +256,3 @@ data:
     fi
 
     wait "${SERVER_PID}"
-
