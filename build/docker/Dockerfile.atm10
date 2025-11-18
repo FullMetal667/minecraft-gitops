@@ -13,55 +13,59 @@ RUN make
 # -------- Stage 2: runtime image --------
 FROM registry.access.redhat.com/ubi9/openjdk-21:latest
 SHELL ["/bin/bash","-o","pipefail","-c"]
-
-# Für microdnf & Dateirechte brauchen wir root
 USER 0
 
 LABEL org.opencontainers.image.source="https://github.com/FullMetal667/minecraft-gitops" \
       org.opencontainers.image.title="ATM10 Minecraft Server" \
-      org.opencontainers.image.version="0.1.0" \
+      org.opencontainers.image.version="0.2.61" \
       org.opencontainers.image.vendor="chrisroth667" \
       org.opencontainers.image.licenses="MIT"
 
-# minimal benötigte Tools
-RUN microdnf install -y curl-minimal unzip nmap-ncat which ca-certificates --setopt=install_weak_deps=0 \
+# 👉 KEIN 'curl', sondern 'curl-minimal' verwenden (plus ca-certificates)
+RUN microdnf install -y curl-minimal wget vim unzip nmap-ncat which ca-certificates --setopt=install_weak_deps=0 \
  && microdnf clean all \
  && update-ca-trust
 
-# tini reinholen
+# tini rein (per ADD, braucht kein curl)
 ENV TINI_VERSION=v0.19.0
 ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini-amd64 /usr/local/bin/tini
 RUN chmod +x /usr/local/bin/tini && ln -s /usr/local/bin/tini /usr/bin/tini
 
-# mcrcon aus Stage 1
+# mcrcon rein
 COPY --from=mcrcon-builder --chmod=0755 --chown=0:0 /src/mcrcon/mcrcon /usr/local/bin/mcrcon
+# startscript rein
+COPY atm10/startserver.sh /data/startserver.sh
+COPY atm10/eula.txt      /data/eula.txt
 
-# Startscript + optionale EULA (kannst du auch weglassen, wenn du nur über ENV arbeiten willst)
-COPY atm10/startserver.sh   /data/startserver.sh
-COPY atm10/eula.txt         /data/eula.txt
-
-# Directories
 ENV APP_DIR=/opt/atm10 \
     DATA_DIR=/data
 
 RUN mkdir -p "${APP_DIR}" "${DATA_DIR}"
 
-COPY atm10/ ${APP_DIR}/
+# Optionaler Modpack-Download zur Buildzeit
+ARG FILE_ID
+ARG ZIP
+RUN if [[ -n "${FILE_ID}" && -n "${ZIP}" ]]; then \
+      DIR1=$(( FILE_ID / 1000 )); \
+      DIR2=$(( FILE_ID % 1000 )); \
+      FINAL_URL="https://mediafilez.forgecdn.net/files/${DIR1}/${DIR2}/${ZIP}"; \
+      echo "Downloading: ${FINAL_URL}"; \
+      curl -fL -o "${APP_DIR}/${ZIP}" "${FINAL_URL}"; \
+      unzip -uo "${APP_DIR}/${ZIP}" -d "${DATA_DIR}"; \
+    else \
+      echo "FILE_ID oder ZIP nicht gesetzt – skip download"; \
+    fi
 
-RUN chown -R 1001:0 "${APP_DIR}" "${DATA_DIR}" /data/startserver.sh /usr/local/bin/mcrcon \
+# OpenShift-kompatible Rechte (arbitrary UID)
+RUN chgrp -R 0 "${APP_DIR}" "${DATA_DIR}" /data/startserver.sh /usr/local/bin/mcrcon \
  && chmod -R g=u "${APP_DIR}" "${DATA_DIR}" \
  && chmod g=u /data/startserver.sh /usr/local/bin/mcrcon \
  && find "${APP_DIR}" -type d -exec chmod g+s {} \; \
  && find "${DATA_DIR}" -type d -exec chmod g+s {} \;
 
-# ab hier non-root
-USER 1001
-
 WORKDIR ${DATA_DIR}
 VOLUME ["/data"]
 EXPOSE 25565/tcp
-# EXPOSE 25575/tcp  # falls du RCON später exposen willst
 
 ENTRYPOINT ["/usr/local/bin/tini","--"]
 CMD ["/data/startserver.sh"]
-
