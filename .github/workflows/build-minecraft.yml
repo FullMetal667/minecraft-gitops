@@ -9,6 +9,10 @@ jobs:
   build-and-rollout:
     runs-on: ubuntu-latest
 
+    env:
+      OCP_API_URL: ${{ secrets.OCP_API_URL }}
+      OCP_TOKEN:   ${{ secrets.OCP_TOKEN }}
+
     strategy:
       matrix:
         modpack: [aof7, atm10]
@@ -58,10 +62,12 @@ jobs:
       - name: Login to OpenShift
         if: steps.params-file.outputs.exists == 'true'
         run: |
-          oc login ${{ secrets.OCP_API_URL }} \
-            --token=${{ secrets.OCP_TOKEN }} \
+          echo "Logging in to $OCP_API_URL"
+          oc login "$OCP_API_URL" \
+            --token="$OCP_TOKEN" \
             --insecure-skip-tls-verify=true
-          oc project ${{ secrets.OCP_PROJECT }}
+
+          oc project "minecraft-${{ steps.params.outputs.mod_name }}"
 
       - name: Process build template
         if: steps.params-file.outputs.exists == 'true'
