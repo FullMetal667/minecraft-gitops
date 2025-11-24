@@ -58,18 +58,19 @@ RUN if [[ -n "${FILE_ID}" && -n "${ZIP}" ]]; then \
       unzip -uo "${APP_DIR}/${ZIP}" -d "${DATA_DIR}"; \
       \
       # Client-only Mods entfernen \
-      rm -f "${DATA_DIR}"/mods/*audioimprovements*.jar || true; \
+      rm -f "${DATA_DIR}"/mods/Audio\ Improvements\ v*.jar || true; \
       rm -f "${DATA_DIR}"/mods/*colorwheel*.jar || true; \
       \
-      # Oculus auf dem Server immer disabled halten \
+      # Oculus auf dem Server disabled halten \
       for f in "${DATA_DIR}"/mods/oculus-*.jar; do \
         if [[ -f "$f" ]]; then \
-          mv "$f" "$f.disabled"; \
+          mv "$f" "$f.disabled" || true; \
         fi; \
       done; \
     else \
       echo "FILE_ID oder ZIP nicht gesetzt – skip download"; \
     fi
+
 
 # OpenShift-kompatible Rechte (arbitrary UID)
 RUN chgrp -R 0 "${APP_DIR}" "${DATA_DIR}" /data/start.sh /usr/local/bin/mcrcon \
