@@ -76,7 +76,7 @@ spec:
             - name: overrides
               mountPath: /data/overrides
             - name: backup
-              mountPath: /data/simplebackups
+              mountPath: /data/backups
             - name: start
               mountPath: /data/start.sh
               subPath: start.sh
