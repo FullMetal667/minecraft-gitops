@@ -98,7 +98,7 @@ jobs:
 
           # Annahme: es gibt genau EIN 'images:'-Item mit 'newTag: "<irgendwas>"'
           # Dann reicht:
-          sed -i "s#^\(\s*newTag:\s*\)\".*\"#\1\"${TAG}\"#" "$FILE"
+          sed -i "s#^\(\s*newTag:\s*\).*#\1\"${TAG}\"#" "$FILE"
 
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
