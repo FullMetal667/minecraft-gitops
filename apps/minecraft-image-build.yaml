@@ -21,6 +21,10 @@ parameters:
   - name: CONTEXT_DIR
     description: Pfad zum Dockerfile im Repo
     value: build/docker
+  - name: GIT_SOURCE_SECRET
+    description: Name des Source Secrets für den Git-Zugriff
+    required: false
+    value: github-token
 
   - name: FILE_ID
     description: CurseForge File-ID des Serverpacks
