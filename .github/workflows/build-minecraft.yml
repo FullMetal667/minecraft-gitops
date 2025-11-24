@@ -15,6 +15,8 @@ jobs:
     env:
       OCP_API_URL: ${{ secrets.OCP_API_URL }}
       OCP_TOKEN:   ${{ secrets.OCP_TOKEN }}
+      BEFORE_SHA: ${{ github.event.before }}
+      AFTER_SHA: ${{ github.sha }}
 
     strategy:
       matrix:
@@ -26,23 +28,26 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Check if params file exists for modpack
-        id: params-file
+      - name: Check if params changed for this modpack
+        id: params-changed
         run: |
           FILE="build/params-${{ matrix.modpack }}.env"
-          if [ -f "$FILE" ]; then
-            echo "exists=true" >> $GITHUB_OUTPUT
-            echo "file=$FILE" >> $GITHUB_OUTPUT
+          echo "Checking if $FILE was changed between $BEFORE_SHA and $AFTER_SHA"
+
+          if git diff --name-only "$BEFORE_SHA" "$AFTER_SHA" | grep -q "^$FILE$"; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+            echo "$FILE was changed."
           else
-            echo "exists=false" >> $GITHUB_OUTPUT
+            echo "changed=false" >> $GITHUB_OUTPUT
+            echo "$FILE was NOT changed."
           fi
 
       - name: Skip if no params for this modpack
-        if: steps.params-file.outputs.exists != 'true'
+        if: if: steps.params-file.outputs.exists == 'true' && steps.params-changed.outputs.changed == 'true'
         run: echo "No params for ${{ matrix.modpack }}, skipping."
 
       - name: Load params
-        if: steps.params-file.outputs.exists == 'true'
+        if: if: steps.params-file.outputs.exists == 'true' && steps.params-changed.outputs.changed == 'true'
         id: params
         run: |
           echo "Loading ${{ steps.params-file.outputs.file }}"
@@ -61,11 +66,11 @@ jobs:
           echo "dir=${DIR}" >> $GITHUB_OUTPUT
 
       - name: Install oc
-        if: steps.params-file.outputs.exists == 'true'
+        if: if: steps.params-file.outputs.exists == 'true' && steps.params-changed.outputs.changed == 'true'
         uses: redhat-actions/oc-installer@v1
 
       - name: Login to OpenShift
-        if: steps.params-file.outputs.exists == 'true'
+        if: if: steps.params-file.outputs.exists == 'true' && steps.params-changed.outputs.changed == 'true'
         run: |
           echo "Logging in to $OCP_API_URL"
           oc login "$OCP_API_URL" \
@@ -79,7 +84,7 @@ jobs:
           oc project "$NS"
 
       - name: Process build template
-        if: steps.params-file.outputs.exists == 'true'
+        if: if: steps.params-file.outputs.exists == 'true' && steps.params-changed.outputs.changed == 'true'
         run: |
           set -a
           source "${{ steps.params-file.outputs.file }}"
@@ -98,7 +103,7 @@ jobs:
             | oc apply -n "minecraft-$MOD_NAME" -f -
 
       - name: Start build and wait
-        if: steps.params-file.outputs.exists == 'true'
+        if: if: steps.params-file.outputs.exists == 'true' && steps.params-changed.outputs.changed == 'true'
         run: |
           NS="minecraft-${{ steps.params.outputs.mod_name }}"
           BUILD_NAME="${{ steps.params.outputs.mod_name }}-${{ steps.params.outputs.image_tag }}"
@@ -107,7 +112,7 @@ jobs:
           oc start-build "$BUILD_NAME" -n "$NS" --wait --follow
 
       - name: Update kustomization image tag in Git
-        if: steps.params-file.outputs.exists == 'true'
+        if: if: steps.params-file.outputs.exists == 'true' && steps.params-changed.outputs.changed == 'true'
         run: |
           MOD_NAME="${{ steps.params.outputs.mod_name }}"
           TAG="${{ steps.params.outputs.image_tag }}"
