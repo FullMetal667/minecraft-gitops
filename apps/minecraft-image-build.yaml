@@ -75,7 +75,7 @@ objects:
           - name: DIR
             value: "${DIR}"
         # falls du ein eigenes Dockerfile-Namen hast, hier setzen
-        dockerfilePath: Dockerfile.aof7
+        dockerfilePath: Dockerfile.${MOD_NAME}
     output:
       to:
         kind: DockerImage
@@ -83,9 +83,4 @@ objects:
       pushSecret:
         name: dockerhub-push
     triggers:
-      - type: GitHub
-        github:
-          secretReference:
-            name: github-webhook-secret
       - type: ConfigChange
-

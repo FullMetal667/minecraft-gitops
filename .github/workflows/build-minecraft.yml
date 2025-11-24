@@ -1,59 +1,112 @@
-# .github/workflows/build-minecraft.yml
-name: Build Minecraft Server
+name: Build & Rollout Minecraft from params
 
 on:
-  workflow_dispatch:
-    inputs:
-      server:
-        description: "Welcher Server?"
-        required: true
-        type: choice
-        options:
-          - aof7
-          - atm10
-      version:
-        description: "Version (z.B. 2.5.3)"
-        required: true
-        type: string
+  push:
+    paths:
+      - "build/params-*.env"
 
 jobs:
-  build:
+  build-and-rollout:
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        modpack: [aof7, atm10]
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Select env file
+      - name: Check if params file exists for modpack
+        id: params-file
         run: |
-          if [ "${{ inputs.server }}" = "aof7" ]; then
-            cp clusters/overlays/aof7-2.5.3/mc-env.env .env
-          elif [ "${{ inputs.server }}" = "atm10" ]; then
-            cp clusters/overlays/atm10-5.0/mc-env.env .env
+          FILE="build/params-${{ matrix.modpack }}.env"
+          if [ -f "$FILE" ]; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+            echo "file=$FILE" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
           fi
-          cat .env
 
-      - name: Export env vars
+      - name: Skip if no params for this modpack
+        if: steps.params-file.outputs.exists != 'true'
+        run: echo "No params for ${{ matrix.modpack }}, skipping."
+
+      - name: Load params
+        if: steps.params-file.outputs.exists == 'true'
+        id: params
         run: |
+          echo "Loading ${{ steps.params-file.outputs.file }}"
           set -a
-          source .env
+          source "${{ steps.params-file.outputs.file }}"
           set +a
-          echo "IMAGE_TAG=${MOD_VERSION}" >> $GITHUB_ENV
 
-      - name: Login DockerHub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKERHUB_USER }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          echo "mod_name=${MOD_NAME}" >> $GITHUB_OUTPUT
+          echo "image_tag=${IMAGE_TAG}" >> $GITHUB_OUTPUT
+          echo "git_url=${GIT_URL}" >> $GITHUB_OUTPUT
+          echo "git_revision=${GIT_REVISION}" >> $GITHUB_OUTPUT
+          echo "context_dir=${CONTEXT_DIR}" >> $GITHUB_OUTPUT
+          echo "docker_repo=${DOCKER_REPO}" >> $GITHUB_OUTPUT
+          echo "file_id=${FILE_ID}" >> $GITHUB_OUTPUT
+          echo "zip=${ZIP}" >> $GITHUB_OUTPUT
+          echo "dir=${DIR}" >> $GITHUB_OUTPUT
 
-      - name: Build & push
+      - name: Install oc
+        if: steps.params-file.outputs.exists == 'true'
+        uses: redhat-actions/oc-installer@v1
+
+      - name: Login to OpenShift
+        if: steps.params-file.outputs.exists == 'true'
         run: |
-          docker build \
-            -f build/docker/Dockerfile \
-            --build-arg FILE_ID=${FILE_ID} \
-            --build-arg ZIP="${ZIP}" \
-            --build-arg DIR="${DIR}" \
-            -t docker.io/chrisroth667/${{ inputs.server }}:${IMAGE_TAG} \
-            .
-          docker push docker.io/chrisroth667/${{ inputs.server }}:${IMAGE_TAG}
+          oc login ${{ secrets.OCP_API_URL }} \
+            --token=${{ secrets.OCP_TOKEN }} \
+            --insecure-skip-tls-verify=true
+          oc project ${{ secrets.OCP_PROJECT }}
 
+      - name: Process build template
+        if: steps.params-file.outputs.exists == 'true'
+        run: |
+          oc process -f apps/minecraft-image-build.yaml \
+            --param MOD_NAME=${{ steps.params.outputs.mod_name }} \
+            --param IMAGE_TAG=${{ steps.params.outputs.image_tag }} \
+            --param GIT_URL=${{ steps.params.outputs.git_url }} \
+            --param GIT_REVISION=${{ steps.params.outputs.git_revision }} \
+            --param CONTEXT_DIR=${{ steps.params.outputs.context_dir }} \
+            --param FILE_ID=${{ steps.params.outputs.file_id }} \
+            --param ZIP=${{ steps.params.outputs.zip }} \
+            --param DIR=${{ steps.params.outputs.dir }} \
+            --param DOCKER_REPO=${{ steps.params.outputs.docker_repo }} \
+            | oc apply -f -
+
+      - name: Start build and wait
+        if: steps.params-file.outputs.exists == 'true'
+        run: |
+          BUILD_NAME="${{ steps.params.outputs.mod_name }}-${{ steps.params.outputs.image_tag }}"
+          echo "Starting build $BUILD_NAME"
+          oc start-build "$BUILD_NAME" --wait --follow
+
+      - name: Update kustomization image tag in Git
+        if: steps.params-file.outputs.exists == 'true'
+        run: |
+          MOD_NAME="${{ steps.params.outputs.mod_name }}"
+          TAG="${{ steps.params.outputs.image_tag }}"
+          REPO="${{ steps.params.outputs.docker_repo }}"
+
+          FILE="clusters/overlays/${MOD_NAME}/kustomization.yaml"
+
+          echo "Updating image tag in $FILE to ${TAG}"
+
+          # Annahme: es gibt genau EIN 'images:'-Item mit 'newTag: "<irgendwas>"'
+          # Dann reicht:
+          sed -i "s#^\(\s*newTag:\s*\)\".*\"#\1\"${TAG}\"#" "$FILE"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add "$FILE"
+
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "chore(${MOD_NAME}): bump kustomize image tag to ${TAG}"
+            git push
+          fi
