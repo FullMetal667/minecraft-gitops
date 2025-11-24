@@ -9,6 +9,7 @@ resources:
   - cm-user-jvm-args.yaml
   - cm-startserver.yaml
   - deployment.yaml
+  - cm-variables.yaml
 secretGenerator:
   - name: mc-env
     envs:
