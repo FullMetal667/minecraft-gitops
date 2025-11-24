@@ -23,6 +23,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Check if params file exists for modpack
         id: params-file
@@ -115,8 +117,6 @@ jobs:
 
           echo "Updating image tag in $FILE to ${TAG}"
 
-          # Annahme: es gibt genau EIN 'images:'-Item mit 'newTag: "<irgendwas>"'
-          # Dann reicht:
           sed -i "s#^\(\s*newTag:\s*\).*#\1\"${TAG}\"#" "$FILE"
 
           git config user.name "github-actions[bot]"
@@ -127,5 +127,12 @@ jobs:
             echo "No changes to commit."
           else
             git commit -m "chore(${MOD_NAME}): bump kustomize image tag to ${TAG}"
-            git push
+
+            # Remote-Änderungen holen (z.B. aof7-Commit) und lokal drüber rebasen
+            BRANCH="${GITHUB_REF_NAME#refs/heads/}"
+            echo "Rebasing onto origin/${BRANCH}..."
+            git pull --rebase origin "$BRANCH"
+
+            echo "Pushing changes..."
+            git push origin "$BRANCH"
           fi
