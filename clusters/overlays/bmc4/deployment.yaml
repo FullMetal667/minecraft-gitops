@@ -53,6 +53,10 @@ spec:
           env:
             - name: EULA
               value: "true"
+            - name: JAVA
+              value: "java"
+            - name: SKIP_JAVA_CHECK
+              value: "true"
           envFrom:
             - secretRef:
                 name: mc-env
