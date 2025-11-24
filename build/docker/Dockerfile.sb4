@@ -16,7 +16,7 @@ SHELL ["/bin/bash","-o","pipefail","-c"]
 USER 0
 
 LABEL org.opencontainers.image.source="https://github.com/FullMetal667/minecraft-gitops" \
-      org.opencontainers.image.title="BMC4 Minecraft Server" \
+      org.opencontainers.image.title="sb4 Minecraft Server" \
       org.opencontainers.image.version="0.2.61" \
       org.opencontainers.image.vendor="chrisroth667" \
       org.opencontainers.image.licenses="MIT"
@@ -28,7 +28,7 @@ RUN microdnf install -y curl-minimal wget vim unzip nmap-ncat which ca-certifica
 
 ENV JAVA=java \
     SKIP_JAVA_CHECK=true \
-    APP_DIR=/opt/bmc4 \
+    APP_DIR=/opt/sb4 \
     DATA_DIR=/data
 
 # tini rein (per ADD, braucht kein curl)
@@ -39,9 +39,9 @@ RUN chmod +x /usr/local/bin/tini && ln -s /usr/local/bin/tini /usr/bin/tini
 # mcrcon rein
 COPY --from=mcrcon-builder --chmod=0755 --chown=0:0 /src/mcrcon/mcrcon /usr/local/bin/mcrcon
 # startscript rein
-COPY bmc4/eula.txt      /data/eula.txt
+COPY sb4/eula.txt      /data/eula.txt
 
-ENV APP_DIR=/opt/bmc4 \
+ENV APP_DIR=/opt/sb4 \
     DATA_DIR=/data
 
 RUN mkdir -p "${APP_DIR}" "${DATA_DIR}"
