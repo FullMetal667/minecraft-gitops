@@ -24,9 +24,9 @@ spec:
         - name: overrides
           persistentVolumeClaim:
             claimName: overrides-storage
-        - name: startserver
+        - name: start
           configMap:
-            name: startserver
+            name: start
             defaultMode: 0755
         - name: server-properties
           configMap:
@@ -69,9 +69,9 @@ spec:
               mountPath: /data/overrides
             - name: backup
               mountPath: /data/simplebackups
-            - name: startserver
-              mountPath: /data/startserver.sh
-              subPath: startserver.sh
+            - name: start
+              mountPath: /data/start.sh
+              subPath: start.sh
             - name: server-properties
               mountPath: /data/server.properties
               subPath: server.properties
