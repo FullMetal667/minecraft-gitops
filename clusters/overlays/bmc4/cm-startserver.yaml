@@ -152,10 +152,6 @@ data:
       "$JAVA" ${1}
     }
 
-    # =======================
-    # RCON + Backups Defaults
-    # =======================
-
     # RCON über server.properties aktivieren
     RCON_ENABLE="${RCON_ENABLE:-true}"
     RCON_HOST="${RCON_HOST:-127.0.0.1}"
@@ -164,15 +160,6 @@ data:
     RCON_WAIT_SECS="${RCON_WAIT_SECS:-600}"
     RCON_POLL_INTERVAL="${RCON_POLL_INTERVAL:-5}"
     COMMANDS_FILE="${COMMANDS_FILE:-commands.txt}"
-
-    # nc / ncat detection
-    NC_BIN="${NC_BIN:-nc}"
-    if ! command -v "${NC_BIN}" >/dev/null 2>&1; then
-      if command -v ncat >/dev/null 2>&1; then
-        NC_BIN="ncat"
-      fi
-    fi
-
 
     # Backup-Mod Auswahl: advanced | none
     BACKUP_MOD="${BACKUP_MOD:-advanced}"
@@ -183,6 +170,14 @@ data:
     AB_DIR1=$(( AB_FILE_ID / 1000 ))
     AB_DIR2=$(( AB_FILE_ID % 1000 ))
     ADVANCED_BACKUPS_URL="${ADVANCED_BACKUPS_URL:-https://mediafilez.forgecdn.net/files/${AB_DIR1}/${AB_DIR2}/${AB_FILE_NAME}}"
+
+    # nc / ncat detection
+    NC_BIN="${NC_BIN:-nc}"
+    if ! command -v "${NC_BIN}" >/dev/null 2>&1; then
+      if command -v ncat >/dev/null 2>&1; then
+        NC_BIN="ncat"
+      fi
+    fi
 
     selected_backup_filename() {
       case "${BACKUP_MOD}" in
@@ -293,19 +288,16 @@ data:
     }
 
     send_rcon_commands() {
-      # Nur wenn RCON aktiv ist
       if [[ "${RCON_ENABLE}" != "true" ]]; then
         echo "[RCON] disabled via RCON_ENABLE=${RCON_ENABLE}"
         return 0
       fi
 
-      # Commands-Datei prüfen
       if [[ ! -s "${COMMANDS_FILE}" ]]; then
         echo "[RCON] no commands file '${COMMANDS_FILE}' – skipping"
         return 0
       fi
 
-      # mcrcon vorhanden?
       if ! command -v /usr/local/bin/mcrcon >/dev/null 2>&1; then
         echo "[RCON] /usr/local/bin/mcrcon not found – skipping"
         return 0
@@ -329,7 +321,6 @@ data:
         return 0
       fi
 
-      # kleine Sicherheitspause
       sleep 3
       echo "[RCON] sending commands from ${COMMANDS_FILE}"
 
@@ -340,6 +331,7 @@ data:
           -p "${RCON_PASSWORD}" \
           -s || echo "[RCON] mcrcon returned non-zero (some commands may have failed)"
     }
+
 
 
     # refreshServerJar
@@ -712,6 +704,8 @@ data:
     stage_backup_mod
     place_backup_mod
     configure_rcon_server_properties
+
+    send_rcon_commands &
 
     echo ""
     echo "Starting server..."
