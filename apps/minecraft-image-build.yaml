@@ -64,6 +64,8 @@ objects:
         uri: "${GIT_URL}"
         ref: "${GIT_REVISION}"
       contextDir: "${CONTEXT_DIR}"
+    sourceSecret:
+      name: "${GIT_SOURCE_SECRET}"
     strategy:
       type: Docker
       dockerStrategy:

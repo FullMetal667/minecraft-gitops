@@ -6,4 +6,6 @@ resources:
   - pvc-backup.yaml
   - serviceaccount.yaml
   - secret-mcrcon.yaml
+  - secret-dockerhub-push.yaml
+  - secret-github-token.yaml
   - service.yaml
