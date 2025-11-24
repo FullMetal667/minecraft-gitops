@@ -56,6 +56,17 @@ RUN if [[ -n "${FILE_ID}" && -n "${ZIP}" ]]; then \
       echo "Downloading: ${FINAL_URL}"; \
       curl -fL -o "${APP_DIR}/${ZIP}" "${FINAL_URL}"; \
       unzip -uo "${APP_DIR}/${ZIP}" -d "${DATA_DIR}"; \
+      # Client-only Mods für Server deaktivieren
+      rm -f "${DATA_DIR}"/mods/*colorwheel*.jar || true; \
+      # und sicherstellen, dass Oculus disabled bleibt
+      if compgen -G "${DATA_DIR}/mods/oculus-*.jar.disabled" > /dev/null; then \
+        echo "Oculus ist bereits disabled – ok."; \
+      else \
+        # falls der Modpack-Autor ihn aktiv mitliefert, lieber disablen:
+        for f in "${DATA_DIR}"/mods/oculus-*.jar; do \
+          [[ -f "$f" ]] && mv "$f" "$f.disabled"; \
+        done; \
+      fi; \
     else \
       echo "FILE_ID oder ZIP nicht gesetzt – skip download"; \
     fi
