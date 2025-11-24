@@ -67,7 +67,11 @@ jobs:
             --token="$OCP_TOKEN" \
             --insecure-skip-tls-verify=true
 
-          oc project "minecraft-${{ steps.params.outputs.mod_name }}"
+          NS="minecraft-${{ steps.params.outputs.mod_name }}"
+          echo "Using namespace: $NS"
+
+          # Projekt setzen, damit nachfolgende oc-Befehle im richtigen NS sind
+          oc project "$NS"
 
       - name: Process build template
         if: steps.params-file.outputs.exists == 'true'
