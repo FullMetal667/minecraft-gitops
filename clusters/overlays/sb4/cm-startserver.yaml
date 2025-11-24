@@ -1,0 +1,250 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: startserver
+data:
+  startserver.sh: |
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    APP_DIR="${APP_DIR:-/opt/atm10}"
+    DATA_DIR="${DATA_DIR:-/data}"
+
+    # Marker für einmalige Initialisierung
+    ATM10_INIT_MARKER="${DATA_DIR}/.atm10_initialized"
+
+    # ---- ATM10 / NeoForge Version ----
+    NEOFORGE_VERSION="${NEOFORGE_VERSION:-21.1.214}"
+    INSTALLER="neoforge-${NEOFORGE_VERSION}-installer.jar"
+    NEOFORGE_URL="https://maven.neoforged.net/releases/net/neoforged/neoforge/${NEOFORGE_VERSION}/neoforge-${NEOFORGE_VERSION}-installer.jar"
+
+    # ---- SimpleBackups (über overlays) ----
+    # BACKUP_MOD=advanced | none
+    BACKUP_MOD="${BACKUP_MOD:-advanced}"
+
+    AB_FILE_ID="${AB_FILE_ID:-7173771}"
+    AB_FILE_NAME="${AB_FILE_NAME:-SimpleBackups-1.21-4.0.23.jar}"
+    AB_DIR1=$(( AB_FILE_ID / 1000 ))
+    AB_DIR2=$(( AB_FILE_ID % 1000 ))
+    ADVANCED_BACKUPS_URL="${ADVANCED_BACKUPS_URL:-https://mediafilez.forgecdn.net/files/${AB_DIR1}/${AB_DIR2}/${AB_FILE_NAME}}"
+
+    selected_backup_filename() {
+      case "${BACKUP_MOD}" in
+        advanced) echo "${AB_FILE_NAME}" ;;
+        none|"")  echo "" ;;
+      esac
+    }
+
+    selected_backup_url() {
+      case "${BACKUP_MOD}" in
+        advanced) echo "${ADVANCED_BACKUPS_URL}" ;;
+        none|"")  echo "" ;;
+      esac
+    }
+
+    # nur in overlays/mods sicherstellen (Download oder Kopie), noch NICHT in mods kopieren
+    stage_backup_mod() {
+      local fname url
+      fname="$(selected_backup_filename)"
+      url="$(selected_backup_url)"
+      [[ -n "${fname}" ]] || return 0
+
+      mkdir -p "${DATA_DIR}/overlays/mods"
+
+      # Wenn schon in overlays vorhanden: fertig
+      if [[ -f "${DATA_DIR}/overlays/mods/${fname}" ]]; then
+        return 0
+      fi
+
+      # Wenn das Jar irgendwo anders existiert (z.B. manuell ins DATA_DIR gelegt)
+      if [[ -f "${DATA_DIR}/${fname}" ]]; then
+        cp -n "${DATA_DIR}/${fname}" "${DATA_DIR}/overlays/mods/${fname}" 2>/dev/null || true
+        return 0
+      fi
+
+      # Download aus dem Netz
+      if [[ -n "${url}" ]]; then
+        echo "[BK] downloading ${fname} from ${url}"
+        if ! curl -fsSL "${url}" -o "${DATA_DIR}/overlays/mods/${fname}"; then
+          echo "[BK] WARN: download failed for ${fname} (continuing without backup mod)"
+          rm -f "${DATA_DIR}/overlays/mods/${fname}" || true
+        fi
+      fi
+    }
+
+    # aus overlays HART nach mods/ kopieren – aber NICHTS überschreiben
+    place_backup_mod() {
+      local fname src
+      fname="$(selected_backup_filename)"
+      [[ -n "${fname}" ]] || return 0
+
+      mkdir -p "${DATA_DIR}/mods"
+
+      # Quelle: overlays/mods
+      if [[ -f "${DATA_DIR}/overlays/mods/${fname}" ]]; then
+        src="${DATA_DIR}/overlays/mods/${fname}"
+      else
+        return 0
+      fi
+
+      # wenn im mods/-Verzeichnis schon vorhanden: nicht anfassen
+      if [[ -f "${DATA_DIR}/mods/${fname}" ]]; then
+        echo "[BK] ${fname} bereits in mods/ vorhanden – nichts überschrieben."
+        return 0
+      fi
+
+      cp -n "${src}" "${DATA_DIR}/mods/${fname}" 2>/dev/null || true
+    }
+
+    # ---- RCON ----
+    RCON_ENABLE="${RCON_ENABLE:-true}"
+    RCON_HOST="${RCON_HOST:-127.0.0.1}"
+    RCON_PORT="${RCON_PORT:-25575}"
+    RCON_PASSWORD="${RCON_PASSWORD:-mc321}"
+    RCON_WAIT_SECS="${RCON_WAIT_SECS:-1800}"
+    RCON_POLL_INTERVAL="${RCON_POLL_INTERVAL:-5}"
+
+    # ---- nc / ncat detection ----
+    NC_BIN="${NC_BIN:-nc}"
+    if ! command -v "${NC_BIN}" >/dev/null 2>&1; then
+      if command -v ncat >/dev/null 2>&1; then
+        NC_BIN="ncat"
+      fi
+    fi
+
+    mkdir -p "${DATA_DIR}"
+    cd "${DATA_DIR}"
+
+    # ============================================================
+    # 0) ATM10-Serverpack EINMALIG aus /opt/atm10 nach /data kopieren
+    #    (hier liegen Mods, Config, etc.)
+    # ============================================================
+    if [[ ! -f "${ATM10_INIT_MARKER}" ]]; then
+      if [[ -d "${APP_DIR}" ]]; then
+        echo "[ATM10] Erste Initialisierung von /data aus ${APP_DIR} ..."
+        shopt -s dotglob
+        cp -an "${APP_DIR}/"* "${DATA_DIR}/" 2>/dev/null || true
+        shopt -u dotglob
+      else
+        echo "[ATM10] WARN: APP_DIR=${APP_DIR} existiert nicht – kein Serverpack zum Kopieren."
+      fi
+      touch "${ATM10_INIT_MARKER}"
+    fi
+
+    # =======================
+    # EULA
+    # =======================
+    if [ ! -f eula.txt ] || ! grep -q 'eula=true' eula.txt; then
+      if [ "${EULA:-}" = "TRUE" ] || [ "${EULA:-}" = "true" ]; then
+        {
+          echo "# By changing the setting below to TRUE you are indicating your agreement to the EULA (https://aka.ms/MinecraftEULA)."
+          echo "# $(date -u)"
+          echo "eula=true"
+        } > eula.txt
+        echo "[init] EULA accepted via ENV"
+      else
+        echo "[init] EULA not accepted. Setze ENV EULA=true oder lege /data/eula.txt mit 'eula=true' an."
+        exit 3
+      fi
+    fi
+
+    # =======================
+    # ATM10 / NeoForge – Installation
+    # =======================
+
+    # Java-Verfügbarkeit prüfen
+    if ! command -v "${ATM10_JAVA:-java}" >/dev/null 2>&1; then
+      echo "[ATM10] Minecraft 1.21 requires Java 21 - Java not found (ATM10_JAVA oder java)"
+      exit 1
+    fi
+
+    # NeoForge installieren, falls libraries/ noch nicht existiert
+    if [[ ! -d "libraries" ]]; then
+      echo "[ATM10] Neoforge not installed, installing now."
+      if [[ ! -f "${INSTALLER}" ]]; then
+        echo "[ATM10] No Neoforge installer found, downloading now: ${NEOFORGE_URL}"
+        if command -v wget >/dev/null 2>&1; then
+          echo "[ATM10] DEBUG: (wget) Downloading ${NEOFORGE_URL}"
+          wget -O "${INSTALLER}" "${NEOFORGE_URL}"
+        elif command -v curl >/dev/null 2>&1; then
+          echo "[ATM10] DEBUG: (curl) Downloading ${NEOFORGE_URL}"
+          curl -o "${INSTALLER}" -L "${NEOFORGE_URL}"
+        else
+          echo "[ATM10] Neither wget nor curl were found in the container. Please add one and try again."
+          exit 1
+        fi
+      fi
+
+      echo "[ATM10] Running Neoforge installer."
+      "${ATM10_JAVA:-java}" -jar "${INSTALLER}" -installServer
+    fi
+
+    # Standard server.properties, falls nicht vorhanden
+    if [[ ! -e server.properties ]]; then
+      cat > server.properties <<EOF
+    allow-flight=true
+    motd=All the Mods 10
+    max-tick-time=180000
+    EOF
+    fi
+
+    # Nur installieren, nicht starten?
+    if [[ "${ATM10_INSTALL_ONLY:-false}" == "true" ]]; then
+      echo "[ATM10] INSTALL_ONLY: complete"
+      exit 0
+    fi
+
+    # Java-Version prüfen (>= 21)
+    JAVA_VERSION="$("${ATM10_JAVA:-java}" -fullversion 2>&1 | awk -F '"' '/version/ {print $2}' | cut -d'.' -f1 || echo 0)"
+    if ! [[ "${JAVA_VERSION}" =~ ^[0-9]+$ ]] || [[ "${JAVA_VERSION}" -lt 21 ]]; then
+      echo "[ATM10] Minecraft 1.21 requires Java 21 - found Java ${JAVA_VERSION}"
+      exit 1
+    fi
+
+    # =======================
+    # SimpleBackups einmalig bereitstellen
+    # =======================
+    stage_backup_mod || true
+    place_backup_mod || true
+
+    # =======================
+    # Hauptloop: Server starten + RCON-Commands
+    # =======================
+    while true; do
+      echo "[ATM10] starting server ..."
+      "${ATM10_JAVA:-java}" @user_jvm_args.txt @libraries/net/neoforged/neoforge/${NEOFORGE_VERSION}/unix_args.txt nogui &
+      SERVER_PID=$!
+
+      # Nach RCON-Start commands.txt schießen
+      if [[ "${RCON_ENABLE}" == "true" && -s "${DATA_DIR}/commands.txt" ]]; then
+        echo "[RCON] waiting for ${RCON_HOST}:${RCON_PORT} (timeout ${RCON_WAIT_SECS}s) ..."
+        waited=0
+        until command -v "${NC_BIN}" >/dev/null 2>&1 && ${NC_BIN} -z "${RCON_HOST}" "${RCON_PORT}" 2>/dev/null; do
+          sleep "${RCON_POLL_INTERVAL}"
+          waited=$(( waited + RCON_POLL_INTERVAL ))
+          if [[ "${waited}" -ge "${RCON_WAIT_SECS}" ]]; then
+            echo "[RCON] timeout (${RCON_WAIT_SECS}s) – skip commands"
+            break
+          fi
+        done
+
+        if command -v "${NC_BIN}" >/dev/null 2>&1 && ${NC_BIN} -z "${RCON_HOST}" "${RCON_PORT}" 2>/dev/null; then
+          sleep 3
+          echo "[RCON] sending commands from commands.txt"
+          sed -e 's#^/##' -e '/^\s*#/d' -e '/^\s*$/d' "${DATA_DIR}/commands.txt" | \
+            /usr/local/bin/mcrcon -H "${RCON_HOST}" -P "${RCON_PORT}" -p "${RCON_PASSWORD}" -s || true
+        fi
+      fi
+
+      # Auf Serverprozess warten
+      wait "${SERVER_PID}" || true
+
+      # Automatischen Restart steuern
+      if [[ "${ATM10_RESTART:-true}" == "false" ]]; then
+        echo "[ATM10] server stopped, automatic restart disabled (ATM10_RESTART=false)"
+        exit 0
+      fi
+
+      echo "[ATM10] Restarting automatically in 10 seconds (Ctrl+C to stop container)"
+      sleep 10
+    done
