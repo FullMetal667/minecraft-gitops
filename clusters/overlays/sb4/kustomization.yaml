@@ -18,14 +18,14 @@ patches:
   - path: patch-resources.yaml
     target:
       kind: Deployment
-      name: all-the-mods-10
-      namespace: minecraft-atm10
+      name: ftb-stone-blocks-4
+      namespace: minecraft-sb4
   - path: patch-delete-minecraft-container.yaml
     target:
-      name: all-the-mods-10
-      namespace: minecraft-atm10
+      name: ftb-stone-blocks-4
+      namespace: minecraft-sb4
 images: 
   - name: docker.io/chrisroth667/minecraft
-    newName: docker.io/chrisroth667/atm10
-    newTag: "5.1"
+    newName: docker.io/chrisroth667/sb4
+    newTag: "0.0.0"
 
