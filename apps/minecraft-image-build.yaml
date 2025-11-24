@@ -45,14 +45,6 @@ parameters:
     value: set-a-random-secret
 
 objects:
-- apiVersion: v1
-  kind: Secret
-  metadata:
-    name: github-webhook-secret
-  type: Opaque
-  stringData:
-    WebHookSecretKey: "${WEBHOOK_SECRET}"
-
 - apiVersion: build.openshift.io/v1
   kind: BuildConfig
   metadata:
