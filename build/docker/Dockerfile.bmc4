@@ -26,6 +26,11 @@ RUN microdnf install -y curl-minimal wget vim unzip nmap-ncat which ca-certifica
  && microdnf clean all \
  && update-ca-trust
 
+ENV JAVA=java \
+    SKIP_JAVA_CHECK=true \
+    APP_DIR=/opt/bmc4 \
+    DATA_DIR=/data
+
 # tini rein (per ADD, braucht kein curl)
 ENV TINI_VERSION=v0.19.0
 ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini-amd64 /usr/local/bin/tini
