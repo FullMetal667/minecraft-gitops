@@ -20,7 +20,7 @@ jobs:
 
     strategy:
       matrix:
-        modpack: [aof7, atm10]
+        modpack: [aof7, atm10, bmc4]
 
     steps:
       - name: Checkout
