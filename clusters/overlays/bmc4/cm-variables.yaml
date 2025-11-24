@@ -1,0 +1,27 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: variables
+data:
+  variables.txt: |
+    ###
+    MINECRAFT_VERSION=1.20.1
+    MODLOADER=Forge
+    MODLOADER_VERSION=47.4.10
+    LEGACYFABRIC_INSTALLER_VERSION=1.1.0+1
+    FABRIC_INSTALLER_VERSION=1.1.0
+    QUILT_INSTALLER_VERSION=0.12.1
+    RECOMMENDED_JAVA_VERSION=1.20.1
+    JAVA_ARGS="-Xmx4G -Xms4G"
+    JAVA="java"
+    WAIT_FOR_USER_INPUT=false
+    ADDITIONAL_ARGS=-Dlog4j2.formatMsgNoLookups=true
+    RESTART=true
+    SKIP_JAVA_CHECK=false
+    JDK_VENDOR=graalvm
+    JABBA_INSTALL_URL_SH=https://github.com/Jabba-Team/jabba/raw/main/install.sh
+    JABBA_INSTALL_URL_PS=https://github.com/Jabba-Team/jabba/raw/main/install.ps1
+    JABBA_INSTALL_VERSION=0.13.0
+    SERVERSTARTERJAR_FORCE_FETCH=true
+    SERVERSTARTERJAR_VERSION=latest
+    USE_SSJ=true

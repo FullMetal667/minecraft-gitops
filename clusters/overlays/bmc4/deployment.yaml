@@ -36,6 +36,10 @@ spec:
           configMap:
             name: user-jvm-args
             defaultMode: 0755
+        - name: variables
+          configMap:
+            name: variables
+            defaultMode: 0755
         - name: mcrcon-commands
           configMap:
             name: minecraft-commands
@@ -79,6 +83,9 @@ spec:
             - name: server-properties
               mountPath: /data/server.properties
               subPath: server.properties
+            - name: variables
+              mountPath: /data/variables.txt
+              subPath: variables.txt
             - name: user-jvm-args
               mountPath: /data/user-jvm-args.txt
               subPath: user-jvm-args.txt
