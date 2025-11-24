@@ -76,6 +76,8 @@ jobs:
       - name: Process build template
         if: steps.params-file.outputs.exists == 'true'
         run: |
+          NS="minecraft-${{ steps.params.outputs.mod_name }}"
+
           oc process -f apps/minecraft-image-build.yaml \
             --param MOD_NAME=${{ steps.params.outputs.mod_name }} \
             --param IMAGE_TAG=${{ steps.params.outputs.image_tag }} \
@@ -86,14 +88,16 @@ jobs:
             --param ZIP=${{ steps.params.outputs.zip }} \
             --param DIR=${{ steps.params.outputs.dir }} \
             --param DOCKER_REPO=${{ steps.params.outputs.docker_repo }} \
-            | oc apply -f -
+            | oc apply -n "$NS" -f -
 
       - name: Start build and wait
         if: steps.params-file.outputs.exists == 'true'
         run: |
+          NS="minecraft-${{ steps.params.outputs.mod_name }}"
           BUILD_NAME="${{ steps.params.outputs.mod_name }}-${{ steps.params.outputs.image_tag }}"
-          echo "Starting build $BUILD_NAME"
-          oc start-build "$BUILD_NAME" --wait --follow
+
+          echo "Starting build $BUILD_NAME in namespace $NS"
+          oc start-build "$BUILD_NAME" -n "$NS" --wait --follow
 
       - name: Update kustomization image tag in Git
         if: steps.params-file.outputs.exists == 'true'
