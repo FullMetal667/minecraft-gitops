@@ -16,7 +16,7 @@ SHELL ["/bin/bash","-o","pipefail","-c"]
 USER 0
 
 LABEL org.opencontainers.image.source="https://github.com/FullMetal667/minecraft-gitops" \
-      org.opencontainers.image.title="ATM10 Minecraft Server" \
+      org.opencontainers.image.title="BMC4 Minecraft Server" \
       org.opencontainers.image.version="0.2.61" \
       org.opencontainers.image.vendor="chrisroth667" \
       org.opencontainers.image.licenses="MIT"
@@ -34,7 +34,7 @@ RUN chmod +x /usr/local/bin/tini && ln -s /usr/local/bin/tini /usr/bin/tini
 # mcrcon rein
 COPY --from=mcrcon-builder --chmod=0755 --chown=0:0 /src/mcrcon/mcrcon /usr/local/bin/mcrcon
 # startscript rein
-COPY atm10/eula.txt      /data/eula.txt
+COPY bmc4/eula.txt      /data/eula.txt
 
 ENV APP_DIR=/opt/bmc4 \
     DATA_DIR=/data
