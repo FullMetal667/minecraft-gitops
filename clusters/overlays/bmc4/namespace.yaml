@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: minecraft-bmc4
+  labels:
+    app: minecraft
+    modpack: bmc4
+
