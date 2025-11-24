@@ -58,6 +58,8 @@ RUN if [[ -n "${FILE_ID}" && -n "${ZIP}" ]]; then \
       unzip -uo "${APP_DIR}/${ZIP}" -d "${DATA_DIR}"; \
       # Client-only Mods für Server deaktivieren
       rm -f "${DATA_DIR}"/mods/*colorwheel*.jar || true; \
+      # Audio Improvements Mods für Server deaktivieren
+      rm -f "${DATA_DIR}"/mods/'Audio Improvements v1.2 - Forge 1.20.1.jar' || true; \
       # und sicherstellen, dass Oculus disabled bleibt
       if compgen -G "${DATA_DIR}/mods/oculus-*.jar.disabled" > /dev/null; then \
         echo "Oculus ist bereits disabled – ok."; \
