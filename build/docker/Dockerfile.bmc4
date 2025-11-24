@@ -57,14 +57,15 @@ RUN if [[ -n "${FILE_ID}" && -n "${ZIP}" ]]; then \
       curl -fL -o "${APP_DIR}/${ZIP}" "${FINAL_URL}"; \
       unzip -uo "${APP_DIR}/${ZIP}" -d "${DATA_DIR}"; \
       \
-      # === Client-only Mods für den SERVER entfernen/deaktivieren === \
-      # Audio Improvements -> Client-Mod, fliegt raus
+      # Client-only Mods entfernen \
       rm -f "${DATA_DIR}"/mods/*audioimprovements*.jar || true; \
-      # ColorWheel hast du ja schon rausgenommen, zur Sicherheit:
       rm -f "${DATA_DIR}"/mods/*colorwheel*.jar || true; \
-      # Oculus auf dem Server sicherheitshalber disabled halten
+      \
+      # Oculus auf dem Server immer disabled halten \
       for f in "${DATA_DIR}"/mods/oculus-*.jar; do \
-        [ -f "$f" ] && mv "$f" "$f.disabled"; \
+        if [[ -f "$f" ]]; then \
+          mv "$f" "$f.disabled"; \
+        fi; \
       done; \
     else \
       echo "FILE_ID oder ZIP nicht gesetzt – skip download"; \
