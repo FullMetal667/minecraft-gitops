@@ -5,6 +5,9 @@ on:
     paths:
       - "build/params-*.env"
 
+permissions:
+  contents: write
+
 jobs:
   build-and-rollout:
     runs-on: ubuntu-latest
@@ -20,6 +23,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_PAT }}
 
       - name: Check if params file exists for modpack
         id: params-file
