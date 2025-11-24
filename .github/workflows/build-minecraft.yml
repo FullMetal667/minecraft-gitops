@@ -76,19 +76,21 @@ jobs:
       - name: Process build template
         if: steps.params-file.outputs.exists == 'true'
         run: |
-          NS="minecraft-${{ steps.params.outputs.mod_name }}"
+          set -a
+          source build/params-atm10.env
+          set +a
 
           oc process -f apps/minecraft-image-build.yaml \
-            --param MOD_NAME=${{ steps.params.outputs.mod_name }} \
-            --param IMAGE_TAG=${{ steps.params.outputs.image_tag }} \
-            --param GIT_URL=${{ steps.params.outputs.git_url }} \
-            --param GIT_REVISION=${{ steps.params.outputs.git_revision }} \
-            --param CONTEXT_DIR=${{ steps.params.outputs.context_dir }} \
-            --param FILE_ID=${{ steps.params.outputs.file_id }} \
-            --param ZIP=${{ steps.params.outputs.zip }} \
-            --param DIR=${{ steps.params.outputs.dir }} \
-            --param DOCKER_REPO=${{ steps.params.outputs.docker_repo }} \
-            | oc apply -n "$NS" -f -
+            --param MOD_NAME="$MOD_NAME" \
+            --param IMAGE_TAG="$IMAGE_TAG" \
+            --param GIT_URL="$GIT_URL" \
+            --param GIT_REVISION="$GIT_REVISION" \
+            --param CONTEXT_DIR="$CONTEXT_DIR" \
+            --param FILE_ID="$FILE_ID" \
+            --param ZIP="$ZIP" \
+            --param DIR="$DIR" \
+            --param DOCKER_REPO="$DOCKER_REPO" \
+            | oc apply -n "minecraft-$MOD_NAME" -f -
 
       - name: Start build and wait
         if: steps.params-file.outputs.exists == 'true'

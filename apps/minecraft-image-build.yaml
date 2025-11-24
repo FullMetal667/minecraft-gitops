@@ -80,5 +80,4 @@ objects:
         name: "${DOCKER_REPO}/${MOD_NAME}:${IMAGE_TAG}"
       pushSecret:
         name: dockerhub-push
-    triggers:
-      - type: ConfigChange
+    triggers: []
