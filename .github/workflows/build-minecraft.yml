@@ -77,7 +77,7 @@ jobs:
         if: steps.params-file.outputs.exists == 'true'
         run: |
           set -a
-          source build/params-atm10.env
+          source "${{ steps.params-file.outputs.file }}"
           set +a
 
           oc process -f apps/minecraft-image-build.yaml \
