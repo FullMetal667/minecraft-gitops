@@ -1,8 +1,8 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: all-the-mods-10
-  namespace: minecraft-atm10
+  name: ftb-stone-blocks-4
+  namespace: minecraft-sb4
 spec:
   template:
     spec:
