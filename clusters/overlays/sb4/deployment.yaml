@@ -68,7 +68,7 @@ spec:
               subPath: .env
             - name: world-data
               mountPath: /data/world
-            - name: scipts
+            - name: scripts
               mountPath: /scripts
             - name: overrides
               mountPath: /data/overrides
