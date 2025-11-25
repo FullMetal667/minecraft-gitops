@@ -22,9 +22,13 @@ LABEL org.opencontainers.image.source="https://github.com/FullMetal667/minecraft
       org.opencontainers.image.licenses="MIT"
 
 # 👉 KEIN 'curl', sondern 'curl-minimal' verwenden (plus ca-certificates)
-RUN microdnf install -y curl-minimal packwiz wget vim unzip nmap-ncat which ca-certificates --setopt=install_weak_deps=0 \
+RUN microdnf install -y curl-minimal wget vim unzip nmap-ncat which ca-certificates --setopt=install_weak_deps=0 \
  && microdnf clean all \
  && update-ca-trust
+
+RUN curl -L https://github.com/packwiz/packwiz/releases/latest/download/packwiz-linux-amd64 \
+    -o /usr/local/bin/packwiz && \
+    chmod +x /usr/local/bin/packwiz
 
 ENV JAVA=java \
     SKIP_JAVA_CHECK=true \
