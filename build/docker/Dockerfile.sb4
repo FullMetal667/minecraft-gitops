@@ -60,14 +60,6 @@ RUN if [[ -n "${FILE_ID}" && -n "${ZIP}" ]]; then \
       echo "FILE_ID oder ZIP nicht gesetzt – skip download"; \
     fi
 
-
-# # OpenShift-kompatible Rechte (arbitrary UID)
-# RUN chgrp -R 0 "${APP_DIR}" "${DATA_DIR}" /data/start.sh /usr/local/bin/mcrcon \
-#  && chmod -R g=u "${APP_DIR}" "${DATA_DIR}" \
-#  && chmod g=u /data/start.sh /usr/local/bin/mcrcon \
-#  && find "${APP_DIR}" -type d -exec chmod g+s {} \; \
-#  && find "${DATA_DIR}" -type d -exec chmod g+s {} \;
-
 WORKDIR ${DATA_DIR}
 VOLUME ["/data"]
 EXPOSE 25565/tcp
