@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: minecraft-server
 spec:
-  replicas: 1
+  replicas: 0
   selector:
     matchLabels:
       app: minecraft
@@ -12,10 +12,7 @@ spec:
       labels:
         app: minecraft
     spec:
-      securityContext:
-        runAsUser: 0
-        fsGroup: 0
-        fsGroupChangePolicy: "OnRootMismatch"
+      securityContext: {}
       serviceAccountName: minecraft-sa
       volumes:
         - name: world-data

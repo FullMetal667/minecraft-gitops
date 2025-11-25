@@ -12,10 +12,7 @@ spec:
       labels:
         app: minecraft
     spec:
-      securityContext:
-        runAsUser: 0
-        fsGroup: 0
-        fsGroupChangePolicy: "OnRootMismatch"
+      securityContext: {}
       serviceAccountName: minecraft-sa
       volumes:
         - name: world-data
