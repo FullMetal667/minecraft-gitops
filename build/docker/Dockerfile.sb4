@@ -60,11 +60,9 @@ RUN if [[ -n "${FILE_ID}" && -n "${ZIP}" ]]; then \
       echo "FILE_ID oder ZIP nicht gesetzt – skip download"; \
     fi
 
-RUN chmod +x /data/install.sh
-
 WORKDIR ${DATA_DIR}
 VOLUME ["/data"]
 EXPOSE 25565/tcp
 
 ENTRYPOINT ["/usr/local/bin/tini","--"]
-CMD ["/scripts/install.sh"]
+CMD ["/data/install.sh"]

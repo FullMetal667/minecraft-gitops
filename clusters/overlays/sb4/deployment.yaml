@@ -24,9 +24,9 @@ spec:
         - name: overrides
           persistentVolumeClaim:
             claimName: overrides-storage
-        - name: scripts
-          persistentVolumeClaim:
-            claimName: scripts
+        # - name: scripts
+        #   persistentVolumeClaim:
+        #     claimName: scripts
         - name: install
           configMap:
             name: install
@@ -68,14 +68,14 @@ spec:
               subPath: .env
             - name: world-data
               mountPath: /data/world
-            - name: scripts
-              mountPath: /scripts
+            # - name: scripts
+            #   mountPath: /scripts
             - name: overrides
               mountPath: /data/overrides
             - name: backup
               mountPath: /data/backups
             - name: install
-              mountPath: /scripts/install.sh
+              mountPath: /data/install.sh
               subPath: install.sh
             - name: server-properties
               mountPath: /data/server.properties
