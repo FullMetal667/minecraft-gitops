@@ -41,6 +41,102 @@ data:
       command -v "$1" >/dev/null 2>&1
     }
 
+    INSTALL_DIR=/data
+
+    choose_install_dir() {
+      # 1. explizit gesetztes INSTALL_DIR
+      if [ -n "${INSTALL_DIR}" ]; then
+        if mkdir -p "${INSTALL_DIR}" 2>/dev/null && [ -w "${INSTALL_DIR}" ]; then
+          echo "${INSTALL_DIR}"
+          return 0
+        else
+          echo "[ERR] INSTALL_DIR='${INSTALL_DIR}' ist nicht beschreibbar." >&2
+          return 1
+        fi
+      fi
+
+      # 2. ein paar sinnvolle Defaults durchprobieren
+      for d in /server /data /srv/minecraft; do
+        if mkdir -p "${d}" 2>/dev/null && [ -w "${d}" ]; then
+          echo "${d}"
+          return 0
+        fi
+      done
+
+      # 3. fallback: aktuelles Verzeichnis, falls beschreibbar
+      if [ -w "." ]; then
+        pwd
+        return 0
+      fi
+
+      echo "[ERR] Kein beschreibbares Installationsverzeichnis gefunden. Setze INSTALL_DIR." >&2
+      return 1
+    }
+
+    WORKDIR="$(choose_install_dir)"
+    echo "Using install dir: ${WORKDIR}"
+    cd "${WORKDIR}"
+
+    pack_id="130"
+    version_id="100152"
+
+    base_url="https://github.com/FTBTeam/FTB-Server-Installer/releases/latest/download/ftb-server-"
+
+    os_name=$(uname -s | tr '[:upper:]' '[:lower:]')
+
+    target_name=linux
+    if [ "$os_name" = "linux" ]; then
+      target_name="linux"
+    elif [ "$os_name" = "darwin" ]; then
+      target_name="darwin"
+    elif [ "$os_name" = "freebsd" ]; then
+      target_name="freebsd"
+    else
+      echo "Unsupported operating system: $os_name"
+      exit 1
+    fi
+
+    arch_name=$(uname -m | tr '[:upper:]' '[:lower:]')
+
+    if [ "$arch_name" = "x86_64" ] || [ "$arch_name" = "amd64" ] || [ "$arch_name" = "i386" ]; then
+      arch_name="amd64"
+    elif [ "$arch_name" = "aarch64" ] || [ "$arch_name" = "arm64" ]; then
+      arch_name="arm64"
+    else
+      echo "Unsupported architecture: $arch_name"
+      exit 1
+    fi
+
+    echo "Detected OS: $os_name"
+    echo "Detected Architecture: $arch_name"
+    echo "Pack ID: $pack_id"
+    echo "Version ID: $version_id"
+    echo "Target Name: $target_name"
+
+    download_url="${base_url}${target_name}-${arch_name}"
+    outname="ftb-server-installer_${pack_id}_${version_id}"
+
+    if [ "$pack_id" = "REPLACE_ME" ] || [ "$version_id" = "REPLACE_ME" ]; then
+      outname="ftb-server-installer"
+    fi
+
+    echo "Downloading FTB Server Installer for $os_name ($arch_name) from $download_url"
+    echo "Target file: ${WORKDIR}/${outname}"
+
+    if command -v curl >/dev/null 2>&1; then
+      curl -L "$download_url" -o "$outname" || { echo "Failed to download file"; exit 1; }
+      chmod +x "$outname"
+    elif command -v wget >/dev/null 2>&1; then
+      wget "$download_url" -O "$outname" || { echo "Failed to download file"; exit 1; }
+      chmod +x "$outname"
+    else
+      echo "Neither curl nor wget is installed. Please install one of them to proceed."
+      exit 1
+    fi
+
+    echo "Download complete."
+    echo "You can now run the installer with: ${WORKDIR}/${outname}"
+
     selected_backup_filename() {
       case "${BACKUP_MOD}" in
         advanced) echo "${AB_FILE_NAME}" ;;
