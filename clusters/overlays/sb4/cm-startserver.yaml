@@ -350,3 +350,5 @@ data:
     configure_rcon_server_properties || true
 
     echo "Download complete. You can now run the installer with ./$outname"
+
+    ./$outname

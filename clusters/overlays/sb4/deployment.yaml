@@ -12,7 +12,8 @@ spec:
       labels:
         app: minecraft
     spec:
-      securityContext: {}
+      securityContext:
+        runAsUser: 0
       serviceAccountName: minecraft-sa
       volumes:
         - name: world-data
@@ -24,9 +25,6 @@ spec:
         - name: overrides
           persistentVolumeClaim:
             claimName: overrides-storage
-        # - name: scripts
-        #   persistentVolumeClaim:
-        #     claimName: scripts
         - name: install
           configMap:
             name: install
@@ -68,8 +66,6 @@ spec:
               subPath: .env
             - name: world-data
               mountPath: /data/world
-            # - name: scripts
-            #   mountPath: /scripts
             - name: overrides
               mountPath: /data/overrides
             - name: backup
