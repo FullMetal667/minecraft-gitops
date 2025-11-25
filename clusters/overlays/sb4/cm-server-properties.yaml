@@ -3,7 +3,7 @@ kind: ConfigMap
 metadata:
   name: mc-server-properties
 data:
-  server.properties: |
+  default-server.properties: |
     #Minecraft server properties
     allow-flight=true
     allow-nether=true
