@@ -353,9 +353,14 @@ data:
 
     ./$outname --auto --force
 
-    if [ -x ./start.sh ]; then
-      exec ./start.sh
-    else
-      # Fallback – direkt Java starten, Pfad an dein Setup anpassen
-      exec java @user_jvm_args.txt -jar neoforge-21.1.213-installer.jar nogui
+    if [ ! -f "${DATA_DIR}/libraries/net/neoforged/neoforge/21.1.213/neoforge-21.1.213-server.jar" ]; then
+      echo "[init] running FTB installer..."
+      "${INSTALLER}" \
+        --auto-approve \
+        --path "${DATA_DIR}"
+      echo "[init] installer finished."
     fi
+
+    # 3. Server starten (long-running Process)
+    echo "[run] starting server via run.sh..."
+    exec "${DATA_DIR}/run.sh"
