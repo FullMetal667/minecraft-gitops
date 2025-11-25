@@ -351,4 +351,4 @@ data:
 
     echo "Download complete. You can now run the installer with ./$outname"
 
-    ./$outname --auto
+    ./$outname --auto --force
