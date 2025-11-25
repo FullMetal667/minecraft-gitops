@@ -26,10 +26,6 @@ RUN microdnf install -y curl-minimal wget vim unzip nmap-ncat which ca-certifica
  && microdnf clean all \
  && update-ca-trust
 
-RUN curl -L https://github.com/packwiz/packwiz/releases/latest/download/packwiz-linux-amd64 \
-    -o /usr/local/bin/packwiz && \
-    chmod +x /usr/local/bin/packwiz
-
 ENV JAVA=java \
     SKIP_JAVA_CHECK=true \
     APP_DIR=/opt/sb4 \
@@ -69,4 +65,4 @@ VOLUME ["/data"]
 EXPOSE 25565/tcp
 
 ENTRYPOINT ["/usr/local/bin/tini","--"]
-CMD ["packwiz", "curseforge", "export", "import", "./manifest.json"]
+CMD ["/data/install.sh"]
