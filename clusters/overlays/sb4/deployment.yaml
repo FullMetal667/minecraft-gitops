@@ -27,7 +27,7 @@ spec:
             claimName: overrides-storage
         - name: install
           configMap:
-            name: install
+            name: install-script
             defaultMode: 0755
         - name: server-properties
           configMap:
@@ -74,11 +74,11 @@ spec:
               mountPath: /data/install.sh
               subPath: install.sh
             - name: server-properties
-              mountPath: /data/server.properties
-              subPath: server.properties
+              mountPath: /data/default-server.properties
+              subPath: default-server.properties
             - name: user-jvm-args
-              mountPath: /data/user-jvm-args.txt
-              subPath: user-jvm-args.txt
+              mountPath: /data/user_jvm_args.txt
+              subPath: user_jvm_args.txt
           terminationMessagePath: /dev/termination-log
           terminationMessagePolicy: File
       restartPolicy: Always
