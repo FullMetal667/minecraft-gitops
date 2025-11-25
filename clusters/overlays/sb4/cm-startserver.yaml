@@ -352,3 +352,10 @@ data:
     echo "Download complete. You can now run the installer with ./$outname"
 
     ./$outname --auto --force
+
+    if [ -x ./start.sh ]; then
+      exec ./start.sh
+    else
+      # Fallback – direkt Java starten, Pfad an dein Setup anpassen
+      exec java @user_jvm_args.txt -jar neoforge-21.1.213-installer.jar nogui
+    fi
