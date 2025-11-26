@@ -287,8 +287,7 @@ data:
     if [ ! -x "${WORKDIR}/run.sh" ]; then
       echo "[init] running FTB installer..."
       "${INSTALLER}" \
-        --auto --force \
-        --path "${WORKDIR}"
+        --auto --force
       echo "[init] installer finished."
     else
       echo "[init] run.sh already present – skipping installer."
