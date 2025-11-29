@@ -74,7 +74,7 @@ spec:
               mountPath: /data/install.sh
               subPath: install.sh
             - name: server-properties
-              mountPath: /data/default-server.properties
+              mountPath: /opt/default-server.properties
               subPath: default-server.properties
             - name: user-jvm-args
               mountPath: /data/user_jvm_args.txt

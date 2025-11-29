@@ -298,6 +298,14 @@ data:
     place_backup_mod
     configure_rcon_server_properties || true
 
+    # Default-Server-Properties nach /data kopieren (vor Serverstart)
+    if [ -f /opt/default-server.properties ]; then
+      echo "[init] copying /opt/default-server.properties to /data/default-server.properties"
+      cp /opt/default-server.properties /data/default-server.properties
+    else
+      echo "[init] /opt/default-server.properties not found – skipping copy"
+    fi
+
     # RCON-Commands im Hintergrund, sobald Port up ist
     send_rcon_commands &
 
