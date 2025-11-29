@@ -28,5 +28,5 @@ patches:
 images: 
   - name: docker.io/chrisroth667/minecraft
     newName: docker.io/chrisroth667/bmc4
-    newTag: "v53.1"
+    newTag: "v53.5"
 
