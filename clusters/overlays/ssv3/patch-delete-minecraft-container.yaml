@@ -1,0 +1,11 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: society-sunlit-valley-3
+  namespace: minecraft-ssv4
+spec:
+  template:
+    spec:
+      containers:
+      - name: minecraft
+        $patch: delete

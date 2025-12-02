@@ -1,0 +1,87 @@
+# -------- Stage 1: build mcrcon --------
+FROM debian:stable-slim AS mcrcon-builder
+
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends ca-certificates git build-essential \
+ && update-ca-certificates
+
+WORKDIR /src
+RUN git clone --depth 1 https://github.com/Tiiffi/mcrcon.git
+WORKDIR /src/mcrcon
+RUN make
+
+# -------- Stage 2: runtime image --------
+FROM registry.access.redhat.com/ubi9/openjdk-17:latest
+SHELL ["/bin/bash","-o","pipefail","-c"]
+USER 0
+
+LABEL org.opencontainers.image.source="https://github.com/FullMetal667/minecraft-gitops" \
+      org.opencontainers.image.title="Society: Sunlit Valley Minecraft Server" \
+      org.opencontainers.image.version="0.2.61" \
+      org.opencontainers.image.vendor="chrisroth667" \
+      org.opencontainers.image.licenses="MIT"
+
+# 👉 KEIN 'curl', sondern 'curl-minimal' verwenden (plus ca-certificates)
+RUN microdnf install -y curl-minimal wget vim unzip nmap-ncat which ca-certificates --setopt=install_weak_deps=0 \
+ && microdnf clean all \
+ && update-ca-trust
+
+ENV JAVA=java \
+    SKIP_JAVA_CHECK=true \
+    APP_DIR=/opt/ssv3 \
+    DATA_DIR=/data
+
+# tini rein (per ADD, braucht kein curl)
+ENV TINI_VERSION=v0.19.0
+ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini-amd64 /usr/local/bin/tini
+RUN chmod +x /usr/local/bin/tini && ln -s /usr/local/bin/tini /usr/bin/tini
+
+# mcrcon rein
+COPY --from=mcrcon-builder --chmod=0755 --chown=0:0 /src/mcrcon/mcrcon /usr/local/bin/mcrcon
+# startscript rein
+COPY ssv3/eula.txt      /data/eula.txt
+
+ENV APP_DIR=/opt/ssv3 \
+    DATA_DIR=/data
+
+RUN mkdir -p "${APP_DIR}" "${DATA_DIR}"
+
+# Optionaler Modpack-Download zur Buildzeit
+ARG FILE_ID
+ARG ZIP
+RUN if [[ -n "${FILE_ID}" && -n "${ZIP}" ]]; then \
+      DIR1=$(( FILE_ID / 1000 )); \
+      DIR2=$(( FILE_ID % 1000 )); \
+      FINAL_URL="https://mediafilez.forgecdn.net/files/${DIR1}/${DIR2}/${ZIP}"; \
+      echo "Downloading: ${FINAL_URL}"; \
+      curl -fL -o "${APP_DIR}/${ZIP}" "${FINAL_URL}"; \
+      unzip -uo "${APP_DIR}/${ZIP}" -d "${DATA_DIR}"; \
+      \
+      # Client-only Mods entfernen \
+      rm -f "${DATA_DIR}"/mods/Audio\ Improvements\ v*.jar || true; \
+      rm -f "${DATA_DIR}"/mods/*colorwheel*.jar || true; \
+      \
+      # Oculus auf dem Server disabled halten \
+      for f in "${DATA_DIR}"/mods/oculus-*.jar; do \
+        if [[ -f "$f" ]]; then \
+          mv "$f" "$f.disabled" || true; \
+        fi; \
+      done; \
+    else \
+      echo "FILE_ID oder ZIP nicht gesetzt – skip download"; \
+    fi
+
+
+# # OpenShift-kompatible Rechte (arbitrary UID)
+# RUN chgrp -R 0 "${APP_DIR}" "${DATA_DIR}" /data/start.sh /usr/local/bin/mcrcon \
+#  && chmod -R g=u "${APP_DIR}" "${DATA_DIR}" \
+#  && chmod g=u /data/start.sh /usr/local/bin/mcrcon \
+#  && find "${APP_DIR}" -type d -exec chmod g+s {} \; \
+#  && find "${DATA_DIR}" -type d -exec chmod g+s {} \;
+
+WORKDIR ${DATA_DIR}
+VOLUME ["/data"]
+EXPOSE 25565/tcp
+
+ENTRYPOINT ["/usr/local/bin/tini","--"]
+CMD ["/data/start.sh"]

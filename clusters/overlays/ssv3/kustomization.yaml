@@ -1,0 +1,32 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: minecraft-ssv3
+resources:
+  - ../../base
+  - namespace.yaml
+  - cm-mcrcon.yaml
+  - cm-server-properties.yaml
+  - cm-user-jvm-args.yaml
+  - cm-startserver.yaml
+  - deployment.yaml
+  - cm-variables.yaml
+secretGenerator:
+  - name: mc-env
+    envs:
+      - mc-env.env
+    type: Opaque
+patches:
+  - path: patch-resources.yaml
+    target:
+      kind: Deployment
+      name: society-sunlit-valley-3
+      namespace: minecraft-ssv3
+  - path: patch-delete-minecraft-container.yaml
+    target:
+      name: society-sunlit-valley-3
+      namespace: minecraft-ssv3
+images: 
+  - name: docker.io/chrisroth667/minecraft
+    newName: docker.io/chrisroth667/ssv3
+    newTag: "3.4.2"
+
