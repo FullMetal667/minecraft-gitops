@@ -87,8 +87,8 @@ spec:
               mountPath: /data/variables.txt
               subPath: variables.txt
             - name: user-jvm-args
-              mountPath: /data/user-jvm-args.txt
-              subPath: user-jvm-args.txt
+              mountPath: /data/user_jvm_args.txt
+              subPath: user_jvm_args.txt
           terminationMessagePath: /dev/termination-log
           terminationMessagePolicy: File
       restartPolicy: Always
