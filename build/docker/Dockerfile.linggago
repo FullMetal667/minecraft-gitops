@@ -1,0 +1,40 @@
+FROM registry.access.redhat.com/ubi9/openjdk-17:latest
+
+USER 0
+RUN microdnf -y install python3 python3-pip curl unzip && microdnf clean all
+RUN pip3 install --no-cache-dir requests
+
+# Build context
+WORKDIR /work
+COPY linggango/modpack/ /work/modpack/
+COPY linggango/tools/ /work/tools/
+
+# Zielpfad im Image (immutable)
+ENV MC_HOME=/srv/mc
+RUN mkdir -p ${MC_HOME}/mods ${MC_HOME}/config ${MC_HOME}/defaultconfigs
+
+# Forge installieren (Version anpassen!)
+ARG MC_VERSION=1.20.1
+ARG FORGE_VERSION=47.2.0
+RUN curl -fsSL -o /tmp/forge-installer.jar \
+  https://maven.minecraftforge.net/net/minecraftforge/forge/${MC_VERSION}-${FORGE_VERSION}/forge-${MC_VERSION}-${FORGE_VERSION}-installer.jar \
+  && mkdir -p ${MC_HOME} \
+  && cd ${MC_HOME} \
+  && java -jar /tmp/forge-installer.jar --installServer \
+  && rm -f /tmp/forge-installer.jar
+
+# Mods downloaden (braucht CF_API_KEY als Build-Env!)
+# CF_API_KEY muss in deiner Image-Build-Pipeline als env aus Secret kommen
+RUN python3 /work/tools/download_mods.py
+
+# Overrides (configs/scripts/kubejs/...) ins Image kopieren
+RUN cp -rT /work/modpack/overrides ${MC_HOME}
+
+# EULA im Image ok (kannst du wie bei anderen auch über CM/override machen)
+RUN echo "eula=true" > ${MC_HOME}/eula.txt
+
+# OpenShift arbitrary UID kompatibel
+RUN chgrp -R 0 ${MC_HOME} && chmod -R g+rwX ${MC_HOME}
+
+WORKDIR ${MC_HOME}
+

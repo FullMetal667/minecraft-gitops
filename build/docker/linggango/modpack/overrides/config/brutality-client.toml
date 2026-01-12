@@ -1,0 +1,17 @@
+
+["Brutality Client Config"]
+	#Should the Black Hole change the color of the Sky and Fog
+	shouldBlackHoleChangeSkyColor = true
+	#Should the Blade of the Ruined King change the color of the environment
+	shouldBORKChangeEnvironmentColor = true
+	#Should Throwing animations show Arms in First Person?
+	showFirstPersonArmThrowingAnimation = true
+	#Should Throwing animations show Items in First Person?
+	showFirstPersonItemThrowingAnimation = true
+	#Mana bar X position (0.0 to 1.0, percentage of screen width)
+	#Range: 0.0 ~ 1.0
+	mana_bar_x = 0.8
+	#Mana bar Y position (0.0 to 1.0, percentage of screen height)
+	#Range: 0.0 ~ 1.0
+	mana_bar_y = 0.7
+

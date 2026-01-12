@@ -1,0 +1,42 @@
+{
+  "_documentation": "https://github.com/Luke100000/ImmersiveOptimization/wiki",
+  "enableEntities": true,
+  "enableBlockEntities": true,
+  "enableDistanceCulling": true,
+  "enableTrackingCulling": true,
+  "enableViewportCulling": true,
+  "minDistance": 12,
+  "blocksPerLevel": 128,
+  "blocksPerLevelDistanceCulled": 20,
+  "blocksPerLevelTrackingCulled": 20,
+  "blocksPerLevelViewportCulled": 40,
+  "maxLevel": 10,
+  "blocksPerLevelBlockEntities": 32,
+  "stressedThreshold": 45,
+  "minDecreaseFactor": 0.25,
+  "dimensions": {
+    "minecraft:overworld": true,
+    "minecraft:the_nether": true,
+    "minecraft:the_end": true
+  },
+  "entities": {
+    "minecraft:ender_pearl": false,
+    "fromanotherworld:starship": false,
+    "minecraft:player": false,
+    "valkyrienskies": false,
+    "minecraft:arrow": false,
+    "create": false,
+    "minecraft:ender_dragon": false,
+    "fdbosses:malkuth": false,
+    "minecraft:phantom": false,
+    "mowziesmobs:sculptor": false,
+    "mowziesmobs:boulder_platform": false,
+    "entity.mowziesmobs.boulder_platform": false,
+    "thrown_biomechanical_reactor": true,
+    "hexerei": true,
+    "hexerei:owl": false,
+    "ars_nouveau": false
+  },
+  "version": 2,
+  "name": "immersive_optimization"
+}

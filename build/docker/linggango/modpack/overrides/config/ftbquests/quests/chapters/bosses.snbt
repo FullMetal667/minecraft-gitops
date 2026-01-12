@@ -1,0 +1,2847 @@
+{
+	autofocus_id: "1877819E0EA0C97B"
+	default_hide_dependency_lines: false
+	default_min_width: 250
+	default_quest_shape: "woodtier"
+	filename: "bosses"
+	group: "3C6AB1DE39D4F441"
+	icon: {
+		Count: 1
+		id: "ftbquests:custom_icon"
+		tag: {
+			Icon: "block_factorys_bosses:item/large_sword"
+		}
+	}
+	id: "084C60296473EF4E"
+	images: [
+		{
+			color: 12378111
+			height: 2.0d
+			image: "cataclysm:textures/entity/soul_flame_strike_sigil.png"
+			order: -5
+			rotation: 0.0d
+			width: 2.0d
+			x: 6.0d
+			y: 5.5d
+		}
+		{
+			dependency: "7FA7E7C8E3928D9B"
+			height: 2.0d
+			image: "lethality:textures/entity/hf_meowrasama_slash_1_0.png"
+			rotation: 0.0d
+			width: 2.0d
+			x: 3.5d
+			y: 5.5d
+		}
+		{
+			dependency: "7FA7E7C8E3928D9B"
+			height: 2.0d
+			image: "lethality:textures/entity/hf_meowrasama_slash_1_0.png"
+			order: -1
+			rotation: 90.0d
+			width: 2.0d
+			x: 3.5d
+			y: 5.5d
+		}
+		{
+			dependency: "7FA7E7C8E3928D9B"
+			height: 2.0d
+			image: "lethality:textures/entity/hf_meowrasama_slash_1_1.png"
+			order: -1
+			rotation: 90.0d
+			width: 2.0d
+			x: 3.5d
+			y: 5.5d
+		}
+		{
+			dev: true
+			height: 1.0d
+			hover: ["Questlines belong to me, and is protected by all rights reserved. Do not try to steal without an explicit permission from me."]
+			image: "fancymenu:textures/buddy/gui/button_close_normal.png"
+			rotation: 0.0d
+			width: 1.0d
+			x: -1.0d
+			y: -5.0d
+		}
+		{
+			dependency: "66B7488E1CB76BBE"
+			height: 1.0d
+			image: "hexerei:textures/book/c_upper.png"
+			rotation: -15.0d
+			width: 1.0d
+			x: 0.2678269579398531d
+			y: 1.23790459309798d
+		}
+		{
+			dependency: "66B7488E1CB76BBE"
+			height: 1.0d
+			image: "hexerei:textures/book/a_upper.png"
+			rotation: -15.0d
+			width: 1.0d
+			x: 1.0178269579398531d
+			y: 1.1664760216694177d
+		}
+		{
+			dependency: "66B7488E1CB76BBE"
+			height: 1.0d
+			image: "hexerei:textures/book/n_upper.png"
+			rotation: 0.0d
+			width: 1.0d
+			x: 1.9821126722255684d
+			y: 1.0950474502408412d
+		}
+		{
+			dependency: "66B7488E1CB76BBE"
+			height: 1.0d
+			image: "hexerei:textures/book/y_upper.png"
+			rotation: 15.0d
+			width: 1.0d
+			x: 2.910684100796999d
+			y: 1.8093331645265565d
+		}
+		{
+			dependency: "66B7488E1CB76BBE"
+			height: 1.0d
+			image: "hexerei:textures/book/o_upper.png"
+			rotation: 15.0d
+			width: 1.0d
+			x: 3.553541243654138d
+			y: 2.130761735955126d
+		}
+		{
+			dependency: "66B7488E1CB76BBE"
+			height: 1.0d
+			image: "hexerei:textures/book/u_upper.png"
+			rotation: 15.0d
+			width: 1.0d
+			x: 4.303541243654138d
+			y: 2.4521903073837024d
+		}
+		{
+			dependency: "66B7488E1CB76BBE"
+			height: 1.0d
+			image: "hexerei:textures/book/t_upper.png"
+			rotation: 0.0d
+			width: 1.0d
+			x: 0.16068410079699902d
+			y: 3.380761735955126d
+		}
+		{
+			dependency: "66B7488E1CB76BBE"
+			height: 1.0d
+			image: "hexerei:textures/book/a_upper.png"
+			rotation: 0.0d
+			width: 1.0d
+			x: 1.0535412436541378d
+			y: 3.3450474502408483d
+		}
+		{
+			dependency: "66B7488E1CB76BBE"
+			height: 1.0d
+			image: "hexerei:textures/book/k_upper.png"
+			rotation: 0.0d
+			width: 1.0d
+			x: 1.910684100796992d
+			y: 3.3450474502408483d
+		}
+		{
+			dependency: "66B7488E1CB76BBE"
+			height: 1.0d
+			image: "hexerei:textures/book/e_upper.png"
+			rotation: 0.0d
+			width: 1.0d
+			x: 2.8392555293684296d
+			y: 3.3093331645265636d
+		}
+		{
+			dependency: "66B7488E1CB76BBE"
+			height: 1.0d
+			image: "hexerei:textures/book/d_upper.png"
+			rotation: 15.0d
+			width: 1.0d
+			x: -0.3036016134887092d
+			y: 4.416476021669411d
+		}
+		{
+			dependency: "66B7488E1CB76BBE"
+			height: 1.0d
+			image: "hexerei:textures/book/o_upper.png"
+			rotation: 0.0d
+			width: 1.0d
+			x: 0.3035412436541449d
+			y: 4.666476021669411d
+		}
+		{
+			dependency: "66B7488E1CB76BBE"
+			height: 1.0d
+			image: "hexerei:textures/book/w_upper.png"
+			rotation: 23.0d
+			width: 1.0d
+			x: 1.0d
+			y: 5.0d
+		}
+		{
+			dependency: "66B7488E1CB76BBE"
+			height: 1.0d
+			image: "hexerei:textures/book/n_upper.png"
+			rotation: 30.0d
+			width: 1.0d
+			x: 1.803541243654145d
+			y: 5.345047450240841d
+		}
+		{
+			color: 11141120
+			dependency: "66B7488E1CB76BBE"
+			height: 1.5d
+			image: "hexerei:textures/book/a_upper.png"
+			rotation: 23.0d
+			width: 1.5d
+			x: -1.6607444706315704d
+			y: 5.845047450240841d
+		}
+		{
+			color: 11141120
+			dependency: "66B7488E1CB76BBE"
+			height: 1.5d
+			image: "hexerei:textures/book/g_upper.png"
+			rotation: 23.0d
+			width: 1.5d
+			x: -0.08931589920298677d
+			y: 6.487904593097987d
+		}
+		{
+			color: 11141120
+			dependency: "66B7488E1CB76BBE"
+			height: 1.5d
+			image: "hexerei:textures/book/o_upper.png"
+			rotation: 23.0d
+			width: 1.5d
+			x: 0.9463983865112979d
+			y: 6.809333164526549d
+		}
+		{
+			color: 11141120
+			dependency: "66B7488E1CB76BBE"
+			height: 1.5d
+			image: "hexerei:textures/book/d_upper.png"
+			rotation: 0.0d
+			width: 1.5d
+			x: 2.1249698150827285d
+			y: 7.023618878812272d
+		}
+		{
+			color: 11141120
+			dependency: "66B7488E1CB76BBE"
+			height: 3.0d
+			image: "hexerei:textures/book/question_mark.png"
+			rotation: 34.0d
+			width: 3.0d
+			x: 3.446398386511298d
+			y: 7.095047450240841d
+		}
+		{
+			height: 2.0d
+			image: "customtextures:textures/bosseslogo.png"
+			rotation: 0.0d
+			width: 5.0d
+			x: -1.0d
+			y: -1.0d
+		}
+	]
+	order_index: 4
+	progression_mode: "flexible"
+	quest_links: [ ]
+	quests: [
+		{
+			dependencies: ["73709211BC66AA5B"]
+			description: [
+				"&cDune sentinel&r is a big living cannon that shoots bombs."
+				""
+				"{image:customtextures:textures/dunesentinel.png width:250 height:100 align:center}"
+			]
+			icon: "legendary_monsters:eye_of_sandstorm"
+			id: "19CC31C0230BF412"
+			optional: true
+			rewards: [{
+				id: "0B8C949E8BF458DF"
+				type: "xp_levels"
+				xp_levels: 20
+			}]
+			size: 1.2d
+			subtitle: "Overworld / Deserts"
+			tasks: [{
+				entity: "legendary_monsters:dune_sentinel"
+				icon: {
+					Count: 1
+					ForgeCaps: {
+						"celestisynth:celestisynthitemstackcapabilities": {
+							cs.aquaSkin: 0
+						}
+					}
+					id: "legendary_monsters:sand_cannon"
+					tag: {
+						Damage: 0
+					}
+				}
+				id: "736AF38E16C96DDE"
+				type: "kill"
+				value: 1L
+			}]
+			title: "Kill &cThe Dune Sentinel"
+			x: -1.0d
+			y: 2.0d
+		}
+		{
+			dependencies: ["17A934CFAC3FA28E"]
+			description: [
+				"&cThe Ancient Guardian&r is a heavy-hitting giant monster, that protects these stupid silverfishes."
+				""
+				"Expect a bigger threat than ordinary silverfishes though!"
+				""
+				"{image:customtextures:textures/ancientguardian.png width:250 height:110 align:center}"
+				"{image:customtextures:textures/ancientguardian1.png width:250 height:110 align:center}"
+				"{image:customtextures:textures/ancientguardian2.png width:250 height:110 align:center}"
+			]
+			hide_until_deps_complete: false
+			icon: "legendary_monsters:eye_of_many_ribs"
+			id: "3A64A56DCBFA42C3"
+			optional: true
+			rewards: [{
+				id: "22447C45A7ADDC07"
+				type: "xp_levels"
+				xp_levels: 20
+			}]
+			size: 1.2d
+			subtitle: "Overworld / Spruce biome"
+			tasks: [{
+				entity: "legendary_monsters:ancient_guardian"
+				icon: {
+					Count: 1
+					ForgeCaps: {
+						"celestisynth:celestisynthitemstackcapabilities": {
+							cs.aquaSkin: 0
+						}
+					}
+					id: "legendary_monsters:monstrous_anchor"
+					tag: {
+						Damage: 0
+					}
+				}
+				id: "64592C21ADB7DD37"
+				title: "Slaughter the ancient guardian"
+				type: "kill"
+				value: 1L
+			}]
+			title: "Kill&c The Ancient Guardian"
+			x: -4.0d
+			y: 3.5d
+		}
+		{
+			dependencies: ["12404E9F505EA489"]
+			description: [
+				"&cOvergrown Colossus&r is a old protector of villagers."
+				""
+				"{image:customtextures:textures/overgrowncolossus.png width:250 height:100 align:center}"
+			]
+			icon: "legendary_monsters:eye_of_moss"
+			id: "70B8CE564FAFACA5"
+			optional: true
+			rewards: [{
+				id: "3AB620B22CC2652C"
+				type: "xp"
+				xp: 100
+			}]
+			size: 1.2d
+			subtitle: "Overworld / Jungle"
+			tasks: [{
+				entity: "legendary_monsters:overgrown_colossus"
+				icon: {
+					Count: 1
+					ForgeCaps: {
+						"celestisynth:celestisynthitemstackcapabilities": {
+							cs.aquaSkin: 0
+						}
+					}
+					id: "legendary_monsters:totem_of_moss"
+				}
+				id: "53BB716AE4EF572A"
+				title: "Slaughter Overgrown colossus"
+				type: "kill"
+				value: 1L
+			}]
+			title: "Kill&c Overgrown Colossus"
+			x: 5.0d
+			y: 3.5d
+		}
+		{
+			dependencies: ["19CC31C0230BF412"]
+			description: [
+				"&cFrostbitten Golem&r is a big frozen golem that can be found in snowy and cold biomes. "
+				""
+				"He summons dangerous ice spikes to hurt its enemies."
+				""
+				"{image:customtextures:textures/frostbittengolem.png width:250 height:100 align:center}"
+			]
+			icon: "legendary_monsters:eye_of_frost"
+			icon_scale: 1.2d
+			id: "3DD7492E07932E9A"
+			optional: true
+			rewards: [{
+				id: "26EC06D0DB0A7DED"
+				type: "xp_levels"
+				xp_levels: 15
+			}]
+			size: 1.2d
+			subtitle: "Overworld / Cold biomes"
+			tasks: [{
+				entity: "legendary_monsters:frostbitten_golem"
+				icon: {
+					Count: 1
+					ForgeCaps: {
+						"celestisynth:celestisynthitemstackcapabilities": {
+							cs.aquaSkin: 0
+						}
+					}
+					id: "legendary_monsters:the_great_frost"
+					tag: {
+						Damage: 0
+					}
+				}
+				id: "65A1A2E6D04BC7A2"
+				title: "Slaughter frostbitten golem"
+				type: "kill"
+				value: 1L
+			}]
+			title: "Kill&c Frostbitten Golem"
+			x: -1.0d
+			y: 3.5d
+		}
+		{
+			dependencies: ["3AE5104012516346"]
+			description: [
+				"&cWithered Abomination&r is a experiment from pillagers that turned out to be a failure, left in the depths of nether."
+				""
+				"{image:customtextures:textures/abandon.png width:250 height:100 align:center}"
+			]
+			icon: "legendary_monsters:withered_horn"
+			id: "23A4E443A756EFBF"
+			optional: true
+			rewards: [{
+				id: "6AEBC3103369C30F"
+				type: "xp_levels"
+				xp_levels: 5
+			}]
+			size: 1.2d
+			subtitle: "Nether"
+			tasks: [{
+				entity: "legendary_monsters:withered_abomination"
+				icon: {
+					Count: 1
+					ForgeCaps: {
+						"celestisynth:celestisynthitemstackcapabilities": {
+							cs.aquaSkin: 0
+						}
+					}
+					id: "legendary_monsters:withered_horn"
+				}
+				id: "3CFF5080A4BA97D5"
+				type: "kill"
+				value: 1L
+			}]
+			title: "Kill&c The Withered Abomination"
+			x: -5.5d
+			y: -4.0d
+		}
+		{
+			dependencies: ["46A8E64D8B86BB7B"]
+			description: [
+				"&cLava Eater&r is a big lizard that is immune to fire. "
+				""
+				"{image:customtextures:textures/lavaeater.png width:250 height:100 align:center}"
+			]
+			icon: "legendary_monsters:eye_of_magma"
+			id: "73E06DA3E0E64EDF"
+			optional: true
+			rewards: [{
+				id: "6C951F4093149EDC"
+				type: "xp"
+				xp: 100
+			}]
+			shape: "woodtier"
+			size: 1.2d
+			subtitle: "Nether"
+			tasks: [{
+				entity: "legendary_monsters:lava_eater"
+				icon: "minecraft:magma_block"
+				id: "23036430799E6877"
+				title: "Slaughter his bum"
+				type: "kill"
+				value: 1L
+			}]
+			title: "&4Defeat The Lava Eater"
+			x: -1.0d
+			y: -4.0d
+		}
+		{
+			dependencies: ["17A934CFAC3FA28E"]
+			description: [
+				"&cFrostmaw&r is a legendary golem that protects the cold biomes."
+				""
+				"Using eye of frost can help to find it's location."
+				""
+				"{image:customtextures:textures/frostmaw.png width:250 height:100 align:center}"
+			]
+			id: "10544AC33748DA46"
+			rewards: [{
+				id: "3C60629F7B6F2C6E"
+				item: "mowzies_cataclysm:sun_eye"
+				type: "item"
+			}]
+			size: 1.2d
+			subtitle: "Overworld / Cold biomes"
+			tasks: [{
+				entity: "mowziesmobs:frostmaw"
+				icon: {
+					Count: 1
+					id: "mowziesmobs:ice_crystal"
+					tag: {
+						Damage: 0
+					}
+				}
+				id: "6BDA0212A67A28B8"
+				title: "Defeat Frostmaw"
+				type: "kill"
+				value: 1L
+			}]
+			title: "Kill&c The Frostmaw"
+			x: -4.0d
+			y: 0.5d
+		}
+		{
+			dependencies: ["10544AC33748DA46"]
+			description: [
+				"&cUmvuthi&r is a god-like creature with a cult. Go stop them because why not?"
+				""
+				"{image:customtextures:textures/umvuthi.png width:250 height:100 align:center}"
+			]
+			id: "501B9A970BC3B704"
+			rewards: [{
+				count: 5
+				id: "6FCC325DD5056A54"
+				item: "minecraft:gold_ingot"
+				type: "item"
+			}]
+			size: 1.2d
+			subtitle: "Overworld / Taiga biomes i guess"
+			tasks: [{
+				entity: "mowziesmobs:umvuthi"
+				icon: "mowziesmobs:sol_visage"
+				id: "167E2116FCC451AE"
+				title: "Defeat the sunbird"
+				type: "kill"
+				value: 1L
+			}]
+			title: "Kill&c Umvuthi The Sunbird"
+			x: -4.0d
+			y: -1.0d
+		}
+		{
+			dependencies: ["1877819E0EA0C97B"]
+			description: [
+				"&cFerrous Wroughtnaut&r is a legendary warrior from the past. Go and wake him up for a challenge!"
+				""
+				"&cImportant:&r He can only take damage when attacked from the back."
+				""
+				"Using the Eye of Wrought can help you locate his room."
+				""
+				"{image:customtextures:textures/wrought.png width:250 height:100 align:center}"
+			]
+			id: "212654DFE2633475"
+			rewards: [{
+				id: "6618F07488874C80"
+				item: "minecraft:diamond"
+				type: "item"
+			}]
+			size: 1.2d
+			subtitle: "Overworld / Underground"
+			tasks: [{
+				entity: "mowziesmobs:ferrous_wroughtnaut"
+				icon: "mowziesmobs:wrought_helmet"
+				id: "5922AA1129919D5B"
+				title: "Defeat Ferrous Wroughtnaut"
+				type: "kill"
+				value: 1L
+			}]
+			title: "Kill &cFerrous Wroughtnaut"
+			x: -2.5d
+			y: 0.5d
+		}
+		{
+			description: [
+				"&cThe Swampjaw&r is a natural predator that threatens the entirety of the Swamp Biome."
+				""
+				"It can be lured into an encounter by using a &dFossil Bait&r."
+				""
+				"&c&lImportant!"
+				""
+				"&eIf you want to locate bosses, use the Explorer's Compass!"
+				""
+				"&eDo &e&nNOT&r &eThrow the music discs, as you will need them later in your progression."
+			]
+			icon: "meetyourfight:fossil_bait"
+			id: "1877819E0EA0C97B"
+			min_required_dependencies: 1
+			min_required_tasks: 1
+			rewards: [{
+				id: "7B67A72AA9081993"
+				item: "minecraft:gold_ingot"
+				type: "item"
+			}]
+			shape: "pentagon"
+			size: 1.4d
+			subtitle: "Overworld / Swamps"
+			tasks: [
+				{
+					id: "4C4E617406BF481F"
+					item: {
+						Count: 1
+						ForgeCaps: {
+							"celestisynth:celestisynthitemstackcapabilities": {
+								cs.aquaSkin: 0
+							}
+						}
+						id: "meetyourfight:mossy_tooth"
+					}
+					type: "item"
+				}
+				{
+					id: "4243D20FE72E5BE2"
+					item: "meetyourfight:fossil_bait"
+					type: "item"
+				}
+			]
+			title: "Kill &cThe Swampjaw"
+			x: -1.0d
+			y: 0.5d
+		}
+		{
+			dependencies: ["73709211BC66AA5B"]
+			dependency_requirement: "all_started"
+			description: [
+				"&cDame Fortuna&r is a huge gamble enjoyer.. just like you"
+				""
+				"She can be called using a &dDevil's Ante&r."
+			]
+			icon: "meetyourfight:devils_ante"
+			id: "17A934CFAC3FA28E"
+			min_required_tasks: 1
+			rewards: [{
+				id: "7FA360F1CAD5510E"
+				item: "minecraft:diamond"
+				type: "item"
+			}]
+			size: 1.2d
+			subtitle: "Summonable"
+			tasks: [
+				{
+					id: "2DAEE490F1F92A96"
+					item: {
+						Count: 1
+						ForgeCaps: {
+							"celestisynth:celestisynthitemstackcapabilities": {
+								cs.aquaSkin: 0
+							}
+						}
+						id: "meetyourfight:fortunes_favor"
+					}
+					type: "item"
+				}
+				{
+					id: "63F5A7EDBCE11B1E"
+					item: "meetyourfight:devils_ante"
+					type: "item"
+				}
+			]
+			title: "Kill&c Dame Fortuna"
+			x: -4.0d
+			y: 2.0d
+		}
+		{
+			dependencies: ["501B9A970BC3B704"]
+			description: [
+				"&cThe sandworm&r patiently lurks underneath the blistering sand."
+				""
+				"Bosses get harder from here, be careful!"
+				""
+				""
+				"{ \"text\": \"Sandworm Locator\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"03A428597377BA31\" } }"
+			]
+			icon: {
+				Count: 1
+				id: "block_factorys_bosses:sandworm_dart"
+				tag: {
+					Damage: 0
+				}
+			}
+			id: "31B7B9A079B5467E"
+			min_required_tasks: 1
+			min_width: 1
+			rewards: [
+				{
+					count: 4
+					id: "6AD784B2EB16F827"
+					item: "minecraft:gold_ingot"
+					type: "item"
+				}
+				{
+					count: 10
+					id: "20C8BE822337C1B9"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+			]
+			shape: "irontier"
+			size: 1.2d
+			subtitle: "Overworld / Desert"
+			tasks: [{
+				entity: "block_factorys_bosses:sandworm"
+				icon: "born_in_chaos_v1:lifestealer_skull"
+				id: "1E32004EEF57EFF8"
+				title: "Slay the sandworm"
+				type: "kill"
+				value: 1L
+			}]
+			title: "Kill&c The Sandworm"
+			x: -4.0d
+			y: -2.5d
+		}
+		{
+			dependencies: ["212654DFE2633475"]
+			description: [
+				"&cThe Bellringer&r uhh.. rings bells"
+				""
+				"It can be called using a &dHaunted Bell&r."
+			]
+			icon: "meetyourfight:haunted_bell"
+			icon_scale: 1.2d
+			id: "73709211BC66AA5B"
+			min_required_tasks: 1
+			rewards: [{
+				count: 10
+				id: "5D740982521AEC5E"
+				item: "minecraft:gold_ingot"
+				type: "item"
+			}]
+			size: 1.2d
+			subtitle: "Summonable"
+			tasks: [
+				{
+					id: "3D40EC94EE2DB44F"
+					item: {
+						Count: 1
+						ForgeCaps: {
+							"celestisynth:celestisynthitemstackcapabilities": {
+								cs.aquaSkin: 0
+							}
+						}
+						id: "meetyourfight:phantoplasm"
+					}
+					type: "item"
+				}
+				{
+					id: "4D1B53544AEBB878"
+					item: "meetyourfight:haunted_bell"
+					type: "item"
+				}
+			]
+			title: "Kill &cThe Bellringer"
+			x: -2.5d
+			y: 2.0d
+		}
+		{
+			dependencies: ["501B9A970BC3B704"]
+			description: [
+				"&cTongbi&r is a martial artist that trains his students in his Monastery that can be located using a &eEye of the sculptor."
+				""
+				"You can either fight him or finish his training."
+				""
+				"{image:customtextures:textures/monastery.png width:250 height:100 align:center}"
+				"{image:customtextures:textures/tongbi.png width:250 height:100 align:center}"
+			]
+			icon: "mowzies_cataclysm:tongbi_eye"
+			id: "151982E611B8D136"
+			min_required_tasks: 1
+			optional: true
+			rewards: [
+				{
+					id: "6FC9817AA2CA6960"
+					type: "xp_levels"
+					xp_levels: 15
+				}
+				{
+					count: 3
+					id: "10401B75817B02E2"
+					item: "enigmaticaddons:earth_heart_fragment"
+					type: "item"
+				}
+				{
+					id: "6ADB5CC82079DCEE"
+					item: "artifacts:bunny_hoppers"
+					type: "item"
+				}
+				{
+					count: 10
+					id: "50E3D3E69D130A20"
+					item: "minecraft:gold_ingot"
+					type: "item"
+				}
+			]
+			size: 1.2d
+			subtitle: "Overworld / Anywhere (ig)"
+			tasks: [{
+				id: "391E178ADF525E4A"
+				item: {
+					Count: 1
+					id: "mowziesmobs:earthrend_gauntlet"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			title: "Kill&c Tongbi&r or &6Do his test"
+			x: -5.5d
+			y: -1.0d
+		}
+		{
+			dependencies: ["31B7B9A079B5467E"]
+			dependency_requirement: "one_completed"
+			description: [
+				"&cRosalyne, Blade of Dusk&r is an awful princess who perished in the endless depths of a sea of thorny bushes. "
+				""
+				"She can be unsealed using a Dusk Key&r found in a chest whitin her sanctuary&r located in flower biomes&r."
+			]
+			icon: "meetyourfight:violet_bloom"
+			id: "28A1B5EFA65E5F6E"
+			min_required_tasks: 1
+			rewards: [{
+				count: 4
+				id: "0DC6E190500E90D4"
+				item: "minecraft:diamond"
+				type: "item"
+			}]
+			shape: "irontier"
+			size: 1.2d
+			subtitle: "Summonable"
+			tasks: [
+				{
+					entity: "meetyourfight:rosalyne"
+					icon: {
+						Count: 1
+						id: "ftbquests:custom_icon"
+						tag: {
+							Icon: "irons_spellbooks:textures/gui/spell_icons/wither_skull.png"
+						}
+					}
+					id: "50FA434A75DEEFFD"
+					title: "Rosalyne, Blade Of Dusk"
+					type: "kill"
+					value: 1L
+				}
+				{
+					id: "16EF76D192F519D4"
+					item: "meetyourfight:dusk_key"
+					type: "item"
+				}
+			]
+			title: "Kill&c Rosalyne, Blade of Dusk"
+			x: -2.5d
+			y: -2.5d
+		}
+		{
+			dependencies: ["31B7B9A079B5467E"]
+			description: [
+				"&cThe Skeletosaurus&r is a big.. skeleton but also a dinosaur "
+				""
+				"{image:customtextures:textures/skeleton.png width:250 height:100 align:center}"
+			]
+			icon: "legendary_monsters:eye_of_bones"
+			id: "3AE5104012516346"
+			min_required_tasks: 1
+			optional: true
+			rewards: [{
+				id: "3C7E7D644AD1CF3D"
+				type: "xp_levels"
+				xp_levels: 5
+			}]
+			shape: "woodtier"
+			size: 1.2d
+			subtitle: "Nether"
+			tasks: [{
+				id: "05D96ED789441DAC"
+				item: {
+					Count: 1
+					ForgeCaps: {
+						"celestisynth:celestisynthitemstackcapabilities": {
+							cs.aquaSkin: 0
+						}
+					}
+					id: "legendary_monsters:dinosaur_bone"
+				}
+				type: "item"
+			}]
+			title: "Kill&c The Skeletosaurus"
+			x: -5.5d
+			y: -2.5d
+		}
+		{
+			dependencies: ["28A1B5EFA65E5F6E"]
+			description: [
+				"&cThe Corpse Warlock&r represents the orchestra of death, manipulating life as it wish. "
+				""
+				"Towards the goal of forming a powerful army, he has taken place within the Nether&r and built a Bloody Altar&r for Its plan."
+				""
+				"The &dEye of Bloody Altar&r is a coveted treasure to find this criminal."
+				""
+				"{image:customtextures:textures/corpse.png width:250 height:100 align:center}"
+			]
+			icon: "eeeabsmobs:bloody_altar_eye"
+			id: "46A8E64D8B86BB7B"
+			min_required_tasks: 1
+			min_width: 1
+			rewards: [
+				{
+					count: 4
+					id: "23D424F426101C37"
+					item: "minecraft:gold_ingot"
+					type: "item"
+				}
+				{
+					count: 4
+					id: "01070FB6A6DC265B"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					count: 4
+					id: "08E30C26272BDFDE"
+					item: "minecraft:diamond"
+					type: "item"
+				}
+				{
+					count: 3
+					id: "3027A5CC8079FF97"
+					item: "farmersdelight:smoked_ham"
+					type: "item"
+				}
+			]
+			shape: "irontier"
+			size: 1.2d
+			subtitle: "Nether"
+			tasks: [{
+				entity: "eeeabsmobs:corpse_warlock"
+				icon: "block_factorys_bosses:corpse"
+				id: "76CF13F0A2D0E770"
+				title: "&cCorpse Warlock"
+				type: "kill"
+				value: 1L
+			}]
+			title: "Kill&c The Corpse Warlock"
+			x: -1.0d
+			y: -2.5d
+		}
+		{
+			dependencies: ["46A8E64D8B86BB7B"]
+			description: [
+				"&cThe Dead King&r is a long forgotten reign which remains within the Catacombs&r deep undergrounds. "
+				""
+				"Using a &6Wayward Compass&r can help you find its corpse."
+				""
+				"It is resting endlessly, unless someone decides to wake him up..."
+				""
+				"{image:customtextures:textures/deadking.png width:250 height:100 align:center}"
+			]
+			icon: {
+				Count: 1
+				id: "ftbquests:custom_icon"
+				tag: {
+					Icon: "born_in_chaos_v1:item/shattered_skull"
+				}
+			}
+			icon_scale: 1.1d
+			id: "4158A5819FE865DF"
+			min_required_tasks: 1
+			min_width: 1
+			rewards: [
+				{
+					id: "0A739ABC188B4183"
+					type: "xp_levels"
+					xp_levels: 10
+				}
+				{
+					count: 12
+					id: "0C399F5B0517A525"
+					item: "irons_spellbooks:arcane_essence"
+					type: "item"
+				}
+			]
+			shape: "irontier"
+			size: 1.2d
+			subtitle: "Overworld / Underground"
+			tasks: [{
+				entity: "irons_spellbooks:dead_king"
+				icon: "born_in_chaos_v1:shattered_skull"
+				id: "426F1B3970E4390E"
+				title: "&cThe Dead King"
+				type: "kill"
+				value: 1L
+			}]
+			title: "Kill&c The Dead King"
+			x: 0.5d
+			y: -2.5d
+		}
+		{
+			dependencies: ["237056413A870612"]
+			description: [
+				"&cThe Wither&r is a natural apex predator sealed away because of it's greediness."
+				""
+				"Recommended to spawn the wither at least one thousand&r blocks away from your base."
+				""
+				"{image:customtextures:textures/wither.png width:250 height:100 align:center}"
+			]
+			icon: "minecraft:wither_skeleton_skull"
+			id: "218A1EC80DE60194"
+			min_required_tasks: 1
+			rewards: [{
+				id: "3CDDD034773E4042"
+				table_id: 8699295573854160387L
+				title: "&4&lGlorious"
+				type: "random"
+			}]
+			size: 1.2d
+			subtitle: "Summonable"
+			tasks: [
+				{
+					entity: "minecraft:wither"
+					id: "7EA2CAC4F9158938"
+					title: "&cThe Wither"
+					type: "kill"
+					value: 1L
+				}
+				{
+					count: 4L
+					id: "0015B07FA052E07D"
+					item: {
+						Count: 1
+						id: "itemfilters:or"
+						tag: {
+							items: [
+								{
+									Count: 1b
+									id: "minecraft:soul_soil"
+								}
+								{
+									Count: 1b
+									id: "minecraft:soul_sand"
+								}
+							]
+						}
+					}
+					title: "4x Soul sand or Soul soil"
+					type: "item"
+				}
+				{
+					count: 3L
+					id: "1904CF0002D345D4"
+					item: { Count: 3, id: "minecraft:wither_skeleton_skull" }
+					type: "item"
+				}
+			]
+			title: "Kill&c The Wither"
+			x: 3.5d
+			y: -2.5d
+		}
+		{
+			dependencies: ["31B7B9A079B5467E"]
+			description: [
+				"&cThe Warden&r rests deep under the ground."
+				""
+				"It resides a strange and worrying fauna that reacts to sounds. Don't make too much noise or you might wake it up."
+				""
+				"{image:customtextures:textures/ancientcity.png width:250 height:100 align:center}"
+			]
+			icon: "terramity:warden_soul"
+			id: "11A438ECC04E7533"
+			min_required_tasks: 1
+			optional: true
+			progression_mode: "flexible"
+			require_sequential_tasks: false
+			rewards: [
+				{
+					id: "5DC74B4BF06B4FB9"
+					type: "xp_levels"
+					xp_levels: 5
+				}
+				{
+					id: "716C177EB674B516"
+					item: "cataclysm:necklace_of_the_desert"
+					type: "item"
+				}
+			]
+			shape: "irontier"
+			size: 1.2d
+			subtitle: "Overworld / Underground / Ancient City"
+			tasks: [{
+				entity: "minecraft:warden"
+				id: "61DC1376BD08C93E"
+				title: "&cKill&r &bWarden"
+				type: "kill"
+				value: 1L
+			}]
+			title: "Kill&c The Warden"
+			x: -4.0d
+			y: -4.0d
+		}
+		{
+			dependencies: ["218A1EC80DE60194"]
+			description: [
+				"&cThe Nameless Guardian&r is a huge brute force reliant knight that survived through ages, serving the immortal."
+				""
+				"Use Eye of Guling&r to locate its palace."
+				""
+				"{image:customtextures:textures/guardian.png width:250 height:100 align:center}"
+			]
+			icon: "eeeabsmobs:guling_eye"
+			icon_scale: 1.2d
+			id: "698F9CC807ACCC14"
+			min_required_tasks: 1
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "5E9C5F13937B393F"
+				table_id: 4068213888760668096L
+				type: "random"
+			}]
+			shape: "goldtier"
+			size: 1.2d
+			subtitle: "Overworld / Underground"
+			tasks: [{
+				entity: "eeeabsmobs:nameless_guardian"
+				icon: {
+					Count: 1
+					id: "eeeabsmobs:guardian_axe"
+					tag: {
+						CodeAddFlag: 1b
+						Damage: 0
+						Unbreakable: 1b
+					}
+				}
+				id: "2F013747EBF8730D"
+				title: "&cNameless Guardian"
+				type: "kill"
+				value: 1L
+			}]
+			title: "Kill&c The Nameless Guardian"
+			x: 3.5d
+			y: -4.0d
+		}
+		{
+			dependencies: ["698F9CC807ACCC14"]
+			description: [
+				"&cThe Posessed Paladin&r, a fallen man which corpse was captured by an evil soul."
+				""
+				"It is found in the Abandoned Crypt&r and can be located using an Eye of Ghost&r."
+				""
+				"{image:customtextures:textures/paladin.png width:250 height:100 align:center}"
+			]
+			icon: "legendary_monsters:eye_of_ghost"
+			id: "084E78C259CC208B"
+			min_required_tasks: 1
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "5DAE8148BFBDFEDB"
+				table_id: 2501998888776764148L
+				type: "random"
+			}]
+			shape: "goldtier"
+			size: 1.2d
+			subtitle: "Overworld / Any Biome"
+			tasks: [{
+				id: "27025AA8D1DA93D9"
+				item: {
+					Count: 1
+					ForgeCaps: {
+						"celestisynth:celestisynthitemstackcapabilities": {
+							cs.aquaSkin: 0
+						}
+					}
+					id: "legendary_monsters:corrupted_soul"
+				}
+				type: "item"
+			}]
+			title: "Kill&c The Posessed Paladin"
+			x: 5.0d
+			y: -4.0d
+		}
+		{
+			dependencies: ["084E78C259CC208B"]
+			description: [
+				"&cThe Cumulonimbus&r is a powerful entity that resides in the Cloud Temple&r. It has the power to alter the weather as it pleases. "
+				""
+				"It can be located using an Eye of Air&r."
+				""
+				"{image:customtextures:textures/cumulonimbus.png width:250 height:100 align:center}"
+			]
+			icon: "legendary_monsters:eye_of_air"
+			id: "54B2129015E7BA44"
+			min_required_tasks: 1
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "290C798879437236"
+				table_id: 2501998888776764148L
+				type: "random"
+			}]
+			shape: "goldtier"
+			size: 1.2d
+			subtitle: "Overworld / High altitude"
+			tasks: [{
+				entity: "legendary_monsters:cloud_golem"
+				icon: {
+					Count: 1
+					id: "ftbquests:custom_icon"
+					tag: {
+						Icon: "subtle_effects:textures/particle/potion_cloud.png"
+					}
+				}
+				id: "021ED29B5FF888E7"
+				title: "&cCumulonimbus"
+				type: "kill"
+				value: 1L
+			}]
+			title: "Kill&c The Cumulonimbus"
+			x: 5.0d
+			y: -2.5d
+		}
+		{
+			dependencies: ["54B2129015E7BA44"]
+			description: [
+				"&cThe Scylla&r Rests above the sea and within the sky in a floating palace called Acropolis."
+				""
+				"The Eye of Storm&r may lead you to this sacred place."
+				""
+				"{image:customtextures:textures/acropolis.png width:250 height:100 align:center}"
+			]
+			icon: "cataclysm:storm_eye"
+			id: "3B65B70FC89BFC93"
+			min_required_tasks: 1
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "6A3309D2DEEB2BD1"
+				table_id: 8699295573854160387L
+				type: "random"
+			}]
+			shape: "diamondtier"
+			size: 1.2d
+			subtitle: "Overworld / Ocean"
+			tasks: [{
+				entity: "cataclysm:scylla"
+				icon: "cataclysm:ceraunus"
+				id: "24CF20BEE7156CB3"
+				title: "&cScylla"
+				type: "kill"
+				value: 1L
+			}]
+			title: "Kill&c Scylla"
+			x: 6.5d
+			y: -2.5d
+		}
+		{
+			dependencies: ["3B65B70FC89BFC93"]
+			description: [
+				"&cThe Netherite Monstrosity&r is a huge monster that used to help humans gather resources in nether, before shutting down for no reason.. since it's off, this is a free kill!"
+				""
+				"Use an Eye of Monstrous&r to locate his palace."
+				""
+				"{image:customtextures:textures/netheritemont.png width:250 height:100 align:center}"
+			]
+			icon: "cataclysm:netherite_effigy"
+			id: "199DC3A3AD90A47B"
+			min_required_tasks: 1
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "06E970305CD89C02"
+				table_id: 8699295573854160387L
+				type: "random"
+			}]
+			shape: "diamondtier"
+			size: 1.2d
+			subtitle: "Nether"
+			tasks: [{
+				entity: "cataclysm:netherite_monstrosity"
+				icon: "cataclysm:netherite_effigy"
+				id: "0F64B8BF53DA0DFA"
+				title: "&cNetherite Monstrosity"
+				type: "kill"
+				value: 1L
+			}]
+			title: "Kill&c The Netherite Monstrosity"
+			x: 8.0d
+			y: -2.5d
+		}
+		{
+			dependencies: ["199DC3A3AD90A47B"]
+			description: [
+				"&cThe &cLord Pumpking Head&r is a huge fraud that got him killed years ago, maybe bring him back with a ritual?"
+				"or just break the pumpkin :)"
+				""
+				"&8I can't really put links in the quests anymore so i suggest going in locator manually and look for infernal pumpkin."
+				""
+				"{image:customtextures:textures/pumpkin.png width:250 height:100 align:center}"
+			]
+			icon: "born_in_chaos_v1:infernal_evil_pumpkin_s"
+			id: "499BBB799EF97990"
+			min_required_tasks: 1
+			optional: true
+			rewards: [{
+				id: "11384E57CF930343"
+				type: "xp"
+				xp: 100
+			}]
+			shape: "irontier"
+			size: 1.2d
+			subtitle: "Overworld / Summonable aswell"
+			tasks: [
+				{
+					entity: "born_in_chaos_v1:lord_pumpkinhead"
+					icon: "born_in_chaos_v1:infernal_evil_pumpkin"
+					id: "1CDC6735D97FB43C"
+					title: "&cLord Pumpkinhead"
+					type: "kill"
+					value: 1L
+				}
+				{
+					id: "3D93D7C2757A89DB"
+					item: "born_in_chaos_v1:transmuting_elixir"
+					type: "item"
+				}
+			]
+			title: "Kill&c The Lord Pumpkinhead"
+			x: 9.5d
+			y: -2.5d
+		}
+		{
+			dependencies: ["53FCD20FDB42074E"]
+			description: [
+				"A powerful beast that they call the &cForsaken&r."
+				""
+				"To perform such a ritual, they must be 4."
+				""
+				"Be sure to check----"
+				""
+				"{ \"text\": \"Forlorn Hollows\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"4405287D0ACF3DCB\" } }"
+			]
+			icon: "alexscaves:pure_darkness"
+			id: "1C576310634FFB8C"
+			min_required_tasks: 1
+			optional: true
+			rewards: [{
+				id: "490FDFB2B30C87D7"
+				type: "xp_levels"
+				xp_levels: 5
+			}]
+			shape: "diamondtier"
+			size: 1.2d
+			subtitle: "Overworld / Forlorn Hollows"
+			tasks: [{
+				entity: "alexscaves:forsaken"
+				icon: "alexscaves:forsaken_idol"
+				id: "4801B68A21D1BA53"
+				title: "&cForsaken"
+				type: "kill"
+				value: 1L
+			}]
+			title: "Kill&c The Forsaken"
+			x: 9.5d
+			y: -1.0d
+		}
+		{
+			dependencies: ["199DC3A3AD90A47B"]
+			description: [
+				"&cThe &cInfernal Dragon&r, descendant of the immensely feared guardian of the End dimension."
+				""
+				""
+				"{ \"text\": \"Infernal Dragon Locator\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"4B68F4E8EDCC51A4\" } }"
+				""
+				"{image:customtextures:textures/dragontower.png width:250 height:100 align:center}"
+			]
+			icon: "block_factorys_bosses:dragon_skull"
+			id: "53FCD20FDB42074E"
+			min_required_tasks: 1
+			rewards: [{
+				id: "2A286FDCFEE528EB"
+				type: "xp_levels"
+				xp_levels: 5
+			}]
+			shape: "diamondtier"
+			size: 1.2d
+			subtitle: "Overworld / Mountains"
+			tasks: [{
+				entity: "block_factorys_bosses:infernal_dragon"
+				icon: "block_factorys_bosses:dragon_skull"
+				id: "46BEFCA6C5D41DA6"
+				title: "&cInfernal Dragon"
+				type: "kill"
+				value: 1L
+			}]
+			title: "Kill&c The Infernal Dragon"
+			x: 8.0d
+			y: -1.0d
+		}
+		{
+			dependencies: ["3B65B70FC89BFC93"]
+			description: [
+				"&cThe Luxtructosaurus&r was on top of the foodchain until, you arrive."
+				""
+				"Throwing a Ominous Catalyst&r into an active Volcanic Core&r could lead to yet another disaster."
+			]
+			hide_text_until_complete: false
+			icon: "alexscaves:tectonic_shard"
+			id: "415AE751E7940266"
+			min_required_tasks: 1
+			optional: true
+			rewards: [{
+				id: "0522F7E512876F31"
+				type: "xp_levels"
+				xp_levels: 5
+			}]
+			shape: "irontier"
+			size: 1.2d
+			subtitle: "Overworld / Primordial Caves"
+			tasks: [
+				{
+					entity: "alexscaves:luxtructosaurus"
+					icon: {
+						Count: 1
+						id: "ftbquests:custom_icon"
+						tag: {
+							Icon: "alexscaves:item/dinosaur_nugget_1"
+						}
+					}
+					id: "4DF05B262BDA64DD"
+					title: "&cLuxtructosaurus"
+					type: "kill"
+					value: 1L
+				}
+				{
+					id: "4E2F666F60BA2F8B"
+					item: "alexscaves:ominous_catalyst"
+					type: "item"
+				}
+			]
+			title: "Kill&c The Luxtructosaurus"
+			x: 6.5d
+			y: -4.0d
+		}
+		{
+			dependencies: ["53FCD20FDB42074E"]
+			description: [
+				"&cThe Trial Guardian&r is the protector of the huge trial chamber in your world, take him down for the goodie goodies."
+				""
+				"Use locator quest to locate it"
+				""
+				"{image:customtextures:textures/trialspire.png width:250 height:100 align:center}"
+			]
+			icon: "terramity:guardians_hand"
+			id: "1DEA9C4237E4E772"
+			min_required_tasks: 1
+			progression_mode: "flexible"
+			rewards: [{
+				id: "1FD9475ED2F98FA7"
+				type: "xp_levels"
+				xp_levels: 5
+			}]
+			shape: "diamondtier"
+			size: 1.2d
+			subtitle: "Overworld / Ocean"
+			tasks: [
+				{
+					entity: "terramity:trial_guardian"
+					icon: {
+						Count: 1
+						id: "ftbquests:custom_icon"
+						tag: {
+							Icon: "born_in_chaos_v1:item/lifestealer_skull_item"
+						}
+					}
+					id: "71C40CD44DE957A1"
+					title: "&cTrial Guardian"
+					type: "kill"
+					value: 1L
+				}
+				{
+					id: "42602FE8069BF0E3"
+					item: "terramity:spire_key"
+					type: "item"
+				}
+			]
+			title: "Kill&c The Trial Guardian"
+			x: 8.0d
+			y: 0.5d
+		}
+		{
+			dependencies: ["1DEA9C4237E4E772"]
+			description: [
+				"&cObsidilith&r is a huge \"tanky\" golem that once was a pet of the ender dragon itself, some say he enjoyed that status but hey we don't talk about that."
+				""
+				"Use &eEye of Ender&r to locate it"
+				""
+				"{image:customtextures:textures/obsidilith.png width:250 height:100 align:center}"
+			]
+			icon: "bosses_of_mass_destruction:obsidian_heart"
+			id: "3F7769C34FBC9673"
+			min_required_tasks: 1
+			progression_mode: "flexible"
+			rewards: [{
+				id: "672A08D3414B45EB"
+				type: "xp_levels"
+				xp_levels: 5
+			}]
+			shape: "diamondtier"
+			size: 1.2d
+			subtitle: "End"
+			tasks: [{
+				entity: "bosses_of_mass_destruction:obsidilith"
+				icon: "artifacts:obsidian_skull"
+				id: "718C96BE038A059C"
+				title: "&cObsidilith"
+				type: "kill"
+				value: 1L
+			}]
+			title: "Kill&c Obsidilith"
+			x: 8.0d
+			y: 2.0d
+		}
+		{
+			dependencies: ["44A6B81B8860744E"]
+			description: [
+				"&cThe Void Blossom&r is a corrupted overgrown plant."
+				""
+				"Located deep undergrounds&r, use a &eVoid Lily&r to locate it"
+				""
+				"{image:customtextures:textures/blossom.png width:250 height:100 align:center}"
+			]
+			icon: "bosses_of_mass_destruction:void_thorn"
+			id: "12404E9F505EA489"
+			min_required_tasks: 1
+			rewards: [
+				{
+					id: "6DE0F9AE1B7CB2C1"
+					type: "xp_levels"
+					xp_levels: 5
+				}
+				{
+					exclude_from_claim_all: true
+					id: "7F4A26E06B16B613"
+					table_id: 2501998888776764148L
+					type: "random"
+				}
+			]
+			shape: "diamondtier"
+			size: 1.2d
+			subtitle: "Overworld / Underground"
+			tasks: [{
+				entity: "bosses_of_mass_destruction:void_blossom"
+				icon: "goety:corpse_blossom"
+				id: "103B381AEDF47DF3"
+				title: "&cVoid Blossom"
+				type: "kill"
+				value: 1L
+			}]
+			title: "Kill&c Void Blossom"
+			x: 6.5d
+			y: 3.5d
+		}
+		{
+			dependencies: ["3F7769C34FBC9673"]
+			description: [
+				"&cThe Night Lich&r is the tooth fairy of this world, he's pretty much a fraud though, take him down."
+				""
+				"With soul stars you can locate it's presence."
+				""
+				"{image:customtextures:textures/nightlich.png width:250 height:100 align:center}"
+			]
+			icon: "bosses_of_mass_destruction:ancient_anima"
+			id: "44A6B81B8860744E"
+			min_required_tasks: 1
+			rewards: [{
+				id: "5E5DEF973E688C59"
+				type: "xp_levels"
+				xp_levels: 5
+			}]
+			shape: "diamondtier"
+			size: 1.2d
+			subtitle: "Overworld / Cold Biomes / Night"
+			tasks: [{
+				entity: "bosses_of_mass_destruction:lich"
+				icon: "born_in_chaos_v1:lifestealer_skull"
+				id: "3F49F2AF09EC8988"
+				title: "&cNight Lich"
+				type: "kill"
+				value: 1L
+			}]
+			title: "Kill&c The Night Lich"
+			x: 6.5d
+			y: 2.0d
+		}
+		{
+			dependencies: ["12404E9F505EA489"]
+			description: [
+				"&cThe Nether Gauntlet&r used to bring justice in nether until.. the wither arrived"
+				""
+				"{ \"text\": \"Nether Gauntlet Locator\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"5F4A5CFD1BDA2DAF\" } }"
+				""
+				"{image:customtextures:textures/gauntletout.png width:250 height:100 align:center}"
+				"{image:customtextures:textures/gauntlet.png width:250 height:100 align:center}"
+			]
+			icon: "bosses_of_mass_destruction:blazing_eye"
+			id: "7BE325F21B79E110"
+			min_required_tasks: 1
+			rewards: [{
+				id: "4F43FF644C0BAB88"
+				item: "jjbamusic:disc_to_be_continued"
+				type: "item"
+			}]
+			shape: "diamondtier"
+			size: 1.2d
+			subtitle: "Nether"
+			tasks: [{
+				entity: "bosses_of_mass_destruction:gauntlet"
+				icon: "born_in_chaos_v1:lifestealer_skull"
+				id: "591A480C430955F7"
+				title: "&cNether Gauntlet"
+				type: "kill"
+				value: 1L
+			}]
+			title: "Kill&c The Nether Gauntlet"
+			x: 8.0d
+			y: 3.5d
+		}
+		{
+			dependencies: ["27BF2E3F794A8645"]
+			description: [
+				"To remain the greatest, Ignis and the &cUnderworld Knight&r continued to fight for years on end. However, Even Ignis was no match for him after all. (&8The size difference explains it..&r)"
+				""
+				"The knight is not even waiting for someone to challenge his strength anymore. He knows he's &cthe &cstrongest&r."
+				""
+				"{image:customtextures:textures/underworldknight1.png width:200 height:100 align:center}"
+				"{image:customtextures:textures/underworldknight2.png width:200 height:100 align:center}"
+				"{image:customtextures:textures/underworldknight.png width:200 height:100 align:center}"
+				""
+				"{image:customtextures:textures/underworldout.png width:250 height:100 align:center}"
+			]
+			icon: {
+				Count: 1
+				id: "ftbquests:custom_icon"
+				tag: {
+					Icon: "block_factorys_bosses:item/knight"
+				}
+			}
+			id: "7FA7E7C8E3928D9B"
+			min_required_tasks: 1
+			rewards: [
+				{
+					exclude_from_claim_all: true
+					id: "72BA1FD22A50FBED"
+					table_id: 8699295573854160387L
+					type: "random"
+				}
+				{
+					id: "754BA3A44FC8A127"
+					item: "fintastic:shunji_music_disc"
+					type: "item"
+				}
+				{
+					id: "4F69F2AEED67B3DA"
+					item: "lethality:flowey"
+					type: "item"
+				}
+				{
+					count: 12
+					id: "367C5BBDB0497F02"
+					item: "terramity:nyxium_block"
+					type: "item"
+				}
+				{
+					count: 12
+					id: "031AC8882D030AE6"
+					item: "armageddon_mod:bloody_block"
+					type: "item"
+				}
+				{
+					count: 12
+					id: "67D16BFE18D3FC3A"
+					item: "terramity:iridescent_shard_block"
+					type: "item"
+				}
+				{
+					id: "54B8B040B221C12B"
+					item: {
+						Count: 1
+						id: "terramity:sword_of_the_imprisoned"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "23494ACE13B4A32A"
+					item: "terramity:swag_glasses"
+					type: "item"
+				}
+				{
+					count: 4
+					id: "7B303BEA18700A9A"
+					item: "lethality:annihilation_alloy"
+					type: "item"
+				}
+			]
+			shape: "gear"
+			size: 2.0d
+			subtitle: "Nether"
+			tasks: [{
+				entity: "block_factorys_bosses:underworld_knight"
+				icon: {
+					Count: 1
+					id: "ftbquests:custom_icon"
+					tag: {
+						Icon: "block_factorys_bosses:item/knight_angry"
+					}
+				}
+				id: "7C61E0DC51ED1F7E"
+				title: "&cUnderworld Knight"
+				type: "kill"
+				value: 1L
+			}]
+			title: "Kill&b The Underworld Knight"
+			x: 6.0d
+			y: 5.5d
+		}
+		{
+			dependencies: ["7BE325F21B79E110"]
+			description: [
+				"{image:customtextures:textures/endersent.png width:250 height:100 align:center}"
+				"{image:customtextures:textures/chorusling.png width:250 height:100 align:center}"
+				"{image:customtextures:textures/mutantmen.png width:250 height:100 align:center}"
+				"{image:customtextures:textures/shulkermimin.png width:250 height:100 align:center}"
+			]
+			icon: "enigmaticlegacy:eye_of_nebula"
+			id: "124B15AB9053C786"
+			rewards: [
+				{
+					id: "4E0584848C0DCA67"
+					type: "xp"
+					xp: 100
+				}
+				{
+					id: "440A0E769182C70D"
+					item: "jjbamusic:disc_bloody_stream"
+					type: "item"
+				}
+			]
+			shape: "rsquare"
+			size: 1.2d
+			subtitle: "End / Some Are Overworld"
+			tasks: [
+				{
+					entity: "legendary_monsters:endersent"
+					icon: {
+						Count: 1
+						id: "legendary_monsters:chorus_blade"
+						tag: {
+							Damage: 0
+						}
+					}
+					id: "31DEA4F32EBCA7B8"
+					title: "&cEndersent"
+					type: "kill"
+					value: 1L
+				}
+				{
+					entity: "mutantmonsters:mutant_enderman"
+					icon: {
+						Count: 1
+						id: "mutantmonsters:endersoul_hand"
+						tag: {
+							Damage: 0
+						}
+					}
+					id: "5EBD550BD5799169"
+					title: "&cMutant Enderman"
+					type: "kill"
+					value: 1L
+				}
+				{
+					entity: "legendary_monsters:shulker_mimic"
+					icon: {
+						Count: 1
+						id: "legendary_monsters:shulker_shield"
+						tag: {
+							Damage: 0
+						}
+					}
+					id: "23E8C209CA1BE262"
+					title: "&cShulker Mimic"
+					type: "kill"
+					value: 1L
+				}
+				{
+					entity: "legendary_monsters:chorusling"
+					icon: "born_in_chaos_v1:lifestealer_skull"
+					id: "558C01E7F9ED23A5"
+					title: "&cChorusling"
+					type: "kill"
+					value: 1L
+				}
+			]
+			title: "Kill&c Void Entities"
+			x: 9.5d
+			y: 3.5d
+		}
+		{
+			dependencies: ["124B15AB9053C786"]
+			description: [
+				"&cShadow Wizards&r are planning something, go kill em real quick."
+				""
+				"Using an &6Occult Fabric&r on the &6Offering Pedestal&r to spawn them."
+				""
+				"{image:customtextures:textures/cathedral.png width:250 height:100 align:center}"
+			]
+			icon: {
+				Count: 1
+				id: "terramity:gundalfs_hat_helmet"
+				tag: {
+					Damage: 0
+				}
+			}
+			id: "3C68F6A962653272"
+			min_required_tasks: 1
+			min_width: 1
+			rewards: [
+				{
+					id: "37415A67A40C5A51"
+					table_id: 8699295573854160387L
+					title: "&l&4Glorious"
+					type: "random"
+				}
+				{
+					id: "25F231A0A5FECC79"
+					item: "cataclysm:mech_eye"
+					type: "item"
+				}
+			]
+			shape: "diamond"
+			size: 1.2d
+			subtitle: "Nether / On Bedrock"
+			tasks: [{
+				entity: "terramity:gundalf"
+				icon: "born_in_chaos_v1:lifestealer_skull"
+				id: "51DA11056AE04CFA"
+				title: "&cArchmage Gundalf"
+				type: "kill"
+				value: 1L
+			}]
+			title: "Kill&c The Shadow Wizards"
+			x: 9.5d
+			y: 2.0d
+		}
+		{
+			dependencies: ["3C68F6A962653272"]
+			description: [
+				"&cThe Harbinger&r is a human-made robot that was supposed to rival the wither."
+				""
+				"The Eye of Mech&r can help you find It's location."
+				""
+				"{image:customtextures:textures/humanwither.png width:250 height:100 align:center}"
+			]
+			icon: "cataclysm:mech_eye"
+			id: "2A35F4DAC7B6CF2A"
+			min_required_tasks: 1
+			rewards: [{
+				id: "5D7E1A1D214DCC12"
+				table_id: 8699295573854160387L
+				title: "&l&4Glorious"
+				type: "random"
+			}]
+			shape: "diamond"
+			size: 1.2d
+			subtitle: "Overworld"
+			tasks: [{
+				entity: "cataclysm:the_harbinger"
+				icon: "born_in_chaos_v1:lifestealer_skull"
+				id: "78EBA641631297E8"
+				title: "&cThe Harbinger"
+				type: "kill"
+				value: 1L
+			}]
+			title: "Kill&c The Harbinger"
+			x: 10.5d
+			y: 1.5d
+		}
+		{
+			dependencies: ["2A35F4DAC7B6CF2A"]
+			description: [
+				"&cEnder Guardian&r tries to protect ruined citadel."
+				"Can be found using the &6Eye of Void.&r"
+				""
+				"{image:customtextures:textures/guardain.png width:250 height:100 align:center}"
+			]
+			icon: "cataclysm:void_eye"
+			id: "7958902B691540C4"
+			min_required_tasks: 1
+			rewards: [{
+				id: "7BF720ABCDB6478C"
+				table_id: 8699295573854160387L
+				title: "&l&4Glorious"
+				type: "random"
+			}]
+			shape: "diamond"
+			size: 1.2d
+			subtitle: "End"
+			tasks: [{
+				entity: "cataclysm:ender_guardian"
+				icon: "born_in_chaos_v1:lifestealer_skull"
+				id: "28F3BF7D2F2AD29B"
+				title: "&cEnder Guardian"
+				type: "kill"
+				value: 1L
+			}]
+			title: "Kill&c The Ender Guardian"
+			x: 11.5d
+			y: 1.0d
+		}
+		{
+			dependencies: ["7958902B691540C4"]
+			description: [
+				"&cThe Ancient Remnant&r survived that one meteor, is that enough?"
+				""
+				"Can be found sleeping in the &eCursed Pyramid&r, It can be found using the &6Eye of Desert&r."
+				""
+				"To wake it up get a &enecklace of the desert&r"
+				""
+				"{image:customtextures:textures/pyramid.png width:250 height:100 align:center}"
+			]
+			hide_dependency_lines: false
+			icon: "cataclysm:desert_eye"
+			id: "418B954780DD19CB"
+			min_required_tasks: 1
+			rewards: [{
+				id: "42715177751A71E1"
+				table_id: 8699295573854160387L
+				title: "&l&4Glorious"
+				type: "random"
+			}]
+			shape: "diamond"
+			size: 1.2d
+			subtitle: "Overworld / Desert"
+			tasks: [{
+				entity: "cataclysm:ancient_remnant"
+				icon: "born_in_chaos_v1:lifestealer_skull"
+				id: "6FBCC5A8527B6D1E"
+				title: "&cAncient Remnant"
+				type: "kill"
+				value: 1L
+			}]
+			title: "Kill&c The Ancient Remnant"
+			x: 12.0d
+			y: 2.0d
+		}
+		{
+			dependencies: ["418B954780DD19CB"]
+			description: [
+				"&cThe Leviathan&r, will remind you of subnautica."
+				""
+				"It can be found into the Sunken City&r using the Eye of Abyss&r Lure it with &6Abyssal Sacrifice&r that is inside of the &6Altar of Abyss.&r"
+				""
+				"{image:customtextures:textures/sunken.png width:250 height:100 align:center}"
+				"{image:customtextures:textures/sunkeninside.png width:250 height:100 align:center}"
+				"{image:customtextures:textures/sunkeninside2.png width:250 height:100 align:center}"
+			]
+			icon: "cataclysm:abyss_eye"
+			id: "7044D2F80D2E9ED5"
+			min_required_tasks: 1
+			rewards: [{
+				id: "728D60FF30494347"
+				table_id: 8699295573854160387L
+				title: "&l&4Glorious"
+				type: "random"
+			}]
+			shape: "diamond"
+			size: 1.2d
+			subtitle: "Overworld / Below Ocean"
+			tasks: [{
+				entity: "cataclysm:the_leviathan"
+				icon: "born_in_chaos_v1:lifestealer_skull"
+				id: "2A48D149BE480F50"
+				title: "&cThe Leviathan"
+				type: "kill"
+				value: 1L
+			}]
+			title: "Kill&c The Leviathan"
+			x: 11.5d
+			y: 3.0d
+		}
+		{
+			dependencies: ["4E79F98D4B6DF6DF"]
+			description: [
+				"&cIgnis&r is waiting for a opponent, he trained for his all life. How about just show him that his life is pretty much worthless."
+				"&l"
+				"He can be located using the &dEye of Flame&r and confronted by placing &dBurning Ashes&r inside the &dAltar.&r"
+				""
+				"{image:customtextures:textures/ignisarena.png width:250 height:100 align:center}"
+			]
+			icon: "cataclysm:flame_eye"
+			id: "27BF2E3F794A8645"
+			min_required_tasks: 1
+			rewards: [{
+				id: "38D05DDC9809DE74"
+				table_id: 8699295573854160387L
+				title: "&l&4Glorious"
+				type: "random"
+			}]
+			shape: "gear"
+			size: 1.2d
+			subtitle: "Nether / Burning Arena"
+			tasks: [{
+				entity: "cataclysm:ignis"
+				icon: {
+					Count: 1
+					id: "ftbquests:custom_icon"
+					tag: {
+						Icon: "block_factorys_bosses:item/skull"
+					}
+				}
+				id: "6E4D6BD4EDDD102F"
+				title: "&l&cIgnis"
+				type: "kill"
+				value: 1L
+			}]
+			title: "Kill&4&l Ignis"
+			x: 8.0d
+			y: 5.5d
+		}
+		{
+			dependencies: ["7044D2F80D2E9ED5"]
+			description: [
+				"Banished in the depth of the &eFrosted Prison&r, &bMaledictus&r was sealed within a &6Cursed Tombstone&r by the god itself."
+				""
+				"Though, a punishment that seems to have bestowed incredible powers to a supposed damned individual."
+				""
+				"Releasing him may be the final nail in the coffin. Find him using the &eEye of Curse. &r"
+				""
+				"{image:customtextures:textures/frostedprison.png width:250 height:100 align:center}"
+				"{image:customtextures:textures/maledictus.png width:250 height:100 align:center}"
+			]
+			icon: "cataclysm:cursed_eye"
+			id: "6A721B304A70A1B8"
+			min_required_tasks: 1
+			rewards: [{
+				id: "3F9C87C927DD4557"
+				table_id: 8699295573854160387L
+				title: "&l&4Glorious"
+				type: "random"
+			}]
+			shape: "gear"
+			size: 1.2d
+			subtitle: "Overworld / Cold Biomes"
+			tasks: [{
+				entity: "cataclysm:maledictus"
+				icon: {
+					Count: 1
+					id: "ftbquests:custom_icon"
+					tag: {
+						Icon: "cataclysm:item/remnant_skull"
+					}
+				}
+				id: "1CA5CF8C1B2D52AB"
+				title: "&l&cMaledictus"
+				type: "kill"
+				value: 1L
+			}]
+			title: "Kill&b The Maledictus"
+			x: 11.5d
+			y: 4.0d
+		}
+		{
+			dependencies: ["6A721B304A70A1B8"]
+			description: [
+				"&cThe Nightwarden&r once owned the literal ender dragon, now rests inside a citadel, trying to get rid of his sins."
+				""
+				"Go to the End dimension, locate the Void Cathedral using an &eEye of Nothingness&r and look upstairs for a Excrucis. This should allow us to awake him."
+				""
+				"{image:customtextures:textures/endcathedral.png width:250 height:100 align:center}"
+				"{image:customtextures:textures/coolinside.png width:250 height:100 align:center}"
+				"{image:customtextures:textures/upstairs.png width:250 height:100 align:center}"
+			]
+			icon: "traveloptics:eye_of_nothingness"
+			id: "7587CE5F525620F9"
+			rewards: [{
+				id: "314609BC62CFA3A1"
+				table_id: 8699295573854160387L
+				title: "&l&4Glorious"
+				type: "random"
+			}]
+			shape: "gear"
+			size: 1.2d
+			subtitle: "End / Void Cathedral"
+			tasks: [{
+				entity: "traveloptics:the_nightwarden"
+				icon: "born_in_chaos_v1:lifestealer_skull"
+				id: "7EA7F4487AA326CC"
+				title: "&cNightwarden"
+				type: "kill"
+				value: 1L
+			}]
+			title: "Kill&d The Nightwarden"
+			x: 11.5d
+			y: 5.5d
+		}
+		{
+			dependencies: ["7FA7E7C8E3928D9B"]
+			description: ["Obtaining such weapon. Will it bring the attention of something..?"]
+			hide_until_deps_complete: true
+			icon: "born_in_chaos_v1:supreme_measure"
+			icon_scale: 1.2d
+			id: "66B7488E1CB76BBE"
+			min_width: 400
+			progression_mode: "linear"
+			rewards: [{
+				id: "7AC4CE9C7AE35750"
+				item: "born_in_chaos_v1:supreme_measure"
+				type: "item"
+			}]
+			shape: "gear"
+			size: 1.2d
+			tasks: [
+				{
+					consume_items: true
+					id: "6F43CC6158DA9570"
+					item: {
+						Count: 1
+						id: "armageddon_mod:lance_of_the_veil"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					consume_items: true
+					id: "4FF7F666B7989814"
+					item: {
+						Count: 1
+						id: "armageddon_mod:the_duskfire_blade"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					consume_items: true
+					id: "327D742E9647589A"
+					item: {
+						Count: 1
+						id: "lethality:nightmare_sword"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					consume_items: true
+					count: 2L
+					id: "23B55D7532F2E025"
+					item: "kubejs:linggangoonium_ingot"
+					type: "item"
+				}
+			]
+			title: "&4&lSupreme Weapon"
+			x: 3.5d
+			y: 5.5d
+		}
+		{
+			dependencies: ["4158A5819FE865DF"]
+			description: [
+				"&cThe Black Charro&r is an extremely old macho man!"
+				""
+				"That's it."
+				""
+				"{ \"text\": \"Charro Locator\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"09AAF962D291AAF8\" } }"
+				""
+				"{image:customtextures:textures/charro.png width:250 height:100 align:center}"
+			]
+			icon: "mythsandlegends:ethereal_flame"
+			icon_scale: 1.5d
+			id: "237056413A870612"
+			rewards: [{
+				id: "431DA3FAF0BE0B6A"
+				type: "xp"
+				xp: 5
+			}]
+			size: 1.2d
+			subtitle: "Overworld"
+			tasks: [{
+				entity: "mythsandlegends:black_charro"
+				icon: {
+					Count: 1
+					id: "ftbquests:custom_icon"
+					tag: {
+						Icon: "born_in_chaos_v1:item/shattered_skull"
+					}
+				}
+				id: "1A3D5280D2B79872"
+				title: "Slay The Black Charro"
+				type: "kill"
+				value: 1L
+			}]
+			title: "Slay &cThe Black Charro&r"
+			x: 2.0d
+			y: -2.5d
+		}
+		{
+			dependencies: ["4158A5819FE865DF"]
+			description: [
+				"&cThe Warborn Aegis&r a wither skeleton evolved into something smarter and bigger."
+				""
+				"Take it down before it evolves more and becomes a trouble!"
+				""
+				"{image:customtextures:textures/warborn.png width:250 height:100 align:center}"
+			]
+			icon: {
+				Count: 1
+				id: "ftbquests:custom_icon"
+				tag: {
+					Icon: "mythsandlegends:item/warborn_aegis"
+				}
+			}
+			icon_scale: 1.5d
+			id: "0A45BAD544F6FB4F"
+			optional: true
+			rewards: [
+				{
+					id: "16530A284EF88BFA"
+					item: "minecraft:wither_skeleton_skull"
+					type: "item"
+				}
+				{
+					id: "2738F60050B73029"
+					item: "minecraft:wither_rose"
+					type: "item"
+				}
+			]
+			size: 1.2d
+			subtitle: "Nether"
+			tasks: [{
+				entity: "mythsandlegends:warborn_aegis"
+				icon: {
+					Count: 1
+					id: "ftbquests:custom_icon"
+					tag: {
+						Icon: "born_in_chaos_v1:item/shattered_skull"
+					}
+				}
+				id: "26B9EBC56375512D"
+				title: "Kill &cThe Warborn Aegis"
+				type: "kill"
+				value: 1L
+			}]
+			x: 0.5d
+			y: -4.0d
+		}
+		{
+			dependencies: ["54B2129015E7BA44"]
+			description: [
+				"&cThe Chesed&r is a really old artifact that is clearly a alien technology."
+				""
+				"Myth says it still works after all those decades."
+				""
+				"Use eye of chesed to locate "
+				""
+				"{image:customtextures:textures/chesed.png width:250 height:100 align:center}"
+			]
+			icon: {
+				Count: 1
+				id: "ftbquests:custom_icon"
+				tag: {
+					Icon: "fdbosses:textures/gui/skills/chesed/final.png"
+				}
+			}
+			id: "3A5FA9732B57F040"
+			optional: true
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "46949B18AC65A7A7"
+				table_id: 4068213888760668096L
+				type: "random"
+			}]
+			shape: "goldtier"
+			size: 1.2d
+			subtitle: "Underground / Caves"
+			tasks: [{
+				entity: "fdbosses:chesed"
+				icon: {
+					Count: 1
+					id: "ftbquests:custom_icon"
+					tag: {
+						Icon: "fdbosses:textures/gui/skills/chesed/mightiness.png"
+					}
+				}
+				id: "7805D03BBBF26A63"
+				title: "Slay &cThe Chesed&r"
+				type: "kill"
+				value: 1L
+			}]
+			x: 5.0d
+			y: -1.0d
+		}
+		{
+			dependencies: ["199DC3A3AD90A47B"]
+			description: [
+				"&cMalkuth&r is definition of balance, ice and fire, ying yang."
+				""
+				"He can adapt to any damage in seconds but can only do it with a delay."
+				""
+				"Locate eye of Malkuth to locate him!"
+				""
+				"{image:customtextures:textures/malkuth.png width:250 height:100 align:center}"
+				"{image:customtextures:textures/malkuthin.png width:255 height:100 align:center}"
+			]
+			icon: {
+				Count: 1
+				id: "ftbquests:custom_icon"
+				tag: {
+					Icon: "fdbosses:textures/gui/skills/malkuth/tsars_wrath.png"
+				}
+			}
+			id: "1CFAEC25C1E01B8C"
+			optional: true
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "517959144C8173DE"
+				table_id: 8699295573854160387L
+				type: "random"
+			}]
+			shape: "diamondtier"
+			size: 1.2d
+			subtitle: "Overworld"
+			tasks: [{
+				advancement: "fdbosses:qliphoth_awakening/malkuth"
+				criterion: ""
+				id: "14243F5A7C2BBD19"
+				title: "&cKill&r The Malkuth"
+				type: "advancement"
+			}]
+			title: "&cKill&r Malkuth"
+			x: 8.0d
+			y: -4.0d
+		}
+		{
+			dependencies: ["66B7488E1CB76BBE"]
+			description: ["&0&l&kblablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablabla&r"]
+			hide_dependency_lines: true
+			hide_until_deps_complete: true
+			icon: {
+				Count: 1
+				id: "ftbquests:custom_icon"
+				tag: {
+					Icon: "fzzy_config:textures/gui/sprites/widget/decoration/question.png"
+				}
+			}
+			icon_scale: 1.4d
+			id: "3BBF3D5DF06CCC6D"
+			progression_mode: "linear"
+			rewards: [{
+				command: "/msg @p The world is watching you."
+				elevate_perms: true
+				icon: {
+					Count: 1
+					id: "ftbquests:custom_icon"
+					tag: {
+						Icon: "customtextures:textures/anklets.png"
+					}
+				}
+				id: "4087F1B1DF05BEF5"
+				silent: true
+				title: "The world is watching you."
+				type: "command"
+			}]
+			shape: "none"
+			size: 1.2d
+			subtitle: "&4&l&kblablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablablablablablaablablabl"
+			tasks: [{
+				id: "226D999D056149A7"
+				title: "the hell u sayin twin??"
+				type: "checkmark"
+			}]
+			title: "?"
+			x: 3.5d
+			y: 4.0d
+		}
+		{
+			dependencies: ["3BBF3D5DF06CCC6D"]
+			description: ["Summon &l&4Apollyon?"]
+			hide_dependency_lines: true
+			hide_dependent_lines: true
+			hide_until_deps_complete: true
+			icon: {
+				Count: 1
+				id: "ftbquests:custom_icon"
+				tag: {
+					Icon: "born_in_chaos_v1:item/cursing_eye"
+				}
+			}
+			icon_scale: 1.5d
+			id: "01B7A8A9D9F737CE"
+			progression_mode: "linear"
+			rewards: [
+				{
+					auto: "enabled"
+					command: "/execute in minecraft:the_nether run teleport ~ ~ ~"
+					elevate_perms: true
+					icon: {
+						Count: 1
+						id: "ftbquests:custom_icon"
+						tag: {
+							Icon: "vintagevibes:block/polished_garnet"
+						}
+					}
+					id: "7D33F6B35D5C661C"
+					silent: true
+					title: "&l&0Summon"
+					type: "command"
+				}
+				{
+					id: "5A4090E2C830054E"
+					item: "terramity:warp_whistle"
+					type: "item"
+				}
+			]
+			shape: "none"
+			size: 1.5d
+			subtitle: "&l666 666 666"
+			tasks: [{
+				id: "06809427D1418402"
+				title: "The world is watching you."
+				type: "checkmark"
+			}]
+			title: "&4&ktralala&r&4&lApollyon&k&4tralala&r"
+			x: 1.5088738732642923d
+			y: 2.237053711052738d
+		}
+		{
+			dependencies: ["1DEA9C4237E4E772"]
+			id: "4D0C8DAA46A481CC"
+			optional: true
+			rewards: [{
+				id: "7760433405519CFF"
+				type: "xp"
+				xp: 50
+			}]
+			shape: "irontier"
+			size: 1.2d
+			subtitle: "Used to summon the captain cornelia"
+			tasks: [{
+				id: "2235C44089BF7B0C"
+				item: "aquamirae:shell_horn"
+				type: "item"
+			}]
+			title: "Captain's Horn"
+			x: 6.5d
+			y: 0.5d
+		}
+		{
+			dependencies: ["4D0C8DAA46A481CC"]
+			description: [
+				"Mother of pillagers they say..?"
+				""
+				"Use &6Shell Horn&r to call her out."
+			]
+			icon: {
+				Count: 1
+				id: "ftbquests:custom_icon"
+				tag: {
+					Icon: "aquamirae:item/three_bolt_helmet"
+				}
+			}
+			id: "08F03B215CC0BCB8"
+			optional: true
+			rewards: [{
+				id: "4A4FF205B3A3DA18"
+				type: "xp"
+				xp: 50
+			}]
+			shape: "irontier"
+			size: 1.2d
+			subtitle: "Overworld / Ocean..ish"
+			tasks: [{
+				entity: "aquamirae:captain_cornelia"
+				id: "3DC6E378E646E8DA"
+				title: "Kill The &5Ghost of Captain Cornelia"
+				type: "kill"
+				value: 1L
+			}]
+			title: "Kill &cThe Captain Cornelia"
+			x: 5.0d
+			y: 0.5d
+		}
+		{
+			dependencies: ["08F03B215CC0BCB8"]
+			id: "7B090EAB0BEBE907"
+			optional: true
+			rewards: [{
+				id: "21B12945C89ECE5A"
+				type: "xp"
+				xp: 50
+			}]
+			shape: "irontier"
+			size: 1.2d
+			subtitle: "Allows you to dive underwater and explore it easily!"
+			tasks: [
+				{
+					id: "5902FF99CAA8510D"
+					item: {
+						Count: 1
+						ForgeCaps: {
+							"cold_sweat:item_insulation": {
+								Insulation: [ ]
+							}
+						}
+						id: "aquamirae:three_bolt_helmet"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "333603A050697310"
+					item: {
+						Count: 1
+						ForgeCaps: {
+							"cold_sweat:item_insulation": {
+								Insulation: [ ]
+							}
+						}
+						id: "aquamirae:three_bolt_suit"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "170E670C6858854B"
+					item: {
+						Count: 1
+						ForgeCaps: {
+							"cold_sweat:item_insulation": {
+								Insulation: [ ]
+							}
+						}
+						id: "aquamirae:three_bolt_leggings"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "57D0700A47135864"
+					item: {
+						Count: 1
+						ForgeCaps: {
+							"cold_sweat:item_insulation": {
+								Insulation: [ ]
+							}
+						}
+						id: "aquamirae:three_bolt_boots"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+			]
+			title: "The Three-Bolt &rArmor Set"
+			x: 3.5d
+			y: 0.5d
+		}
+		{
+			dependencies: ["01B7A8A9D9F737CE"]
+			hide_dependency_lines: true
+			hide_until_deps_complete: true
+			icon: {
+				Count: 1
+				id: "ftbquests:custom_icon"
+				tag: {
+					Icon: "celestisynth:textures/particle/keres_omen.png"
+				}
+			}
+			id: "0DEAA75BB070ACDB"
+			progression_mode: "linear"
+			rewards: [{
+				auto: "enabled"
+				command: "/summon goety_revelation:summon_apollyon"
+				elevate_perms: true
+				icon: {
+					Count: 1
+					id: "ftbquests:custom_icon"
+					tag: {
+						Icon: "terramity:item/hexing_circle_item"
+					}
+				}
+				id: "1ACE2A7BC2125EEC"
+				silent: true
+				title: "&l&4Apollyon"
+				type: "command"
+			}]
+			shape: "none"
+			size: 1.2d
+			tasks: [{
+				elapsedTime: 60L
+				id: "00775CF4DDD7276D"
+				title: "Apollyon is coming."
+				type: "questsadditions:time"
+			}]
+			title: "&4&k36&r&l&4he is here&4&k63"
+			x: 2.5d
+			y: 4.0d
+		}
+		{
+			dependencies: ["7587CE5F525620F9"]
+			description: ["{image:customtextures:textures/void.png width:250 height:100 align:center}"]
+			hide_until_deps_complete: false
+			icon: {
+				Count: 1
+				id: "ftbquests:custom_icon"
+				tag: {
+					Icon: "darkdoppelganger:item/doppelganger_ring"
+				}
+			}
+			icon_scale: 1.2d
+			id: "4E79F98D4B6DF6DF"
+			require_sequential_tasks: false
+			rewards: [
+				{
+					id: "351E1C1C01FCE9E7"
+					type: "xp"
+					xp: 2
+				}
+				{
+					id: "2BCB5C0681C34EE1"
+					table_id: 8699295573854160387L
+					title: "&4&lGlorious"
+					type: "random"
+				}
+			]
+			shape: "gear"
+			size: 1.2d
+			subtitle: "Throw the orb to the void."
+			tasks: [
+				{
+					entity: "goety:doppelganger"
+					icon: {
+						Count: 1
+						id: "ftbquests:custom_icon"
+						tag: {
+							Icon: "darkdoppelganger:item/doppelganger_ring"
+						}
+					}
+					id: "301E39957ABB13B4"
+					title: "&cKill&r The Doppelganger"
+					type: "kill"
+					value: 1L
+				}
+				{
+					id: "353A50410A272C1C"
+					item: "darkdoppelganger:shadow_orb"
+					type: "item"
+				}
+			]
+			title: "Kill &cThe Doppelgänger"
+			x: 10.0d
+			y: 5.5d
+		}
+		{
+			dependencies: ["6A721B304A70A1B8"]
+			description: [
+				"&9The Immortal&r is one of the oldest creatures. With many experience, he is a tough foe."
+				""
+				"He used to fight alongside ender dragon but was sealed away by &bUnderworld Knight&r because of his actions of trying to become immortal."
+				""
+				"Some say he did succeed in becoming immortal.."
+				""
+				"{image:customtextures:textures/immortal.png width:250 height:100 align:center}"
+			]
+			hide_until_deps_complete: true
+			icon: {
+				Count: 1
+				id: "ftbquests:custom_icon"
+				tag: {
+					Icon: "goety:item/focus/soulskull_spell"
+				}
+			}
+			icon_scale: 1.2d
+			id: "043BBC5B6DC56FEE"
+			optional: true
+			progression_mode: "linear"
+			rewards: [{
+				id: "20BB8B82194D2AE4"
+				item: {
+					Count: 1
+					id: "eeeabsmobs:guardian_core"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			shape: "gear"
+			size: 1.2d
+			subtitle: "Summonable"
+			tasks: [{
+				id: "39C03FE8CEE41507"
+				title: "Alright"
+				type: "checkmark"
+			}]
+			title: "Kill &9The Immortal"
+			x: 13.5d
+			y: 4.0d
+		}
+		{
+			dependencies: ["043BBC5B6DC56FEE"]
+			description: ["Use the guardian core to wake him up!"]
+			hide_until_deps_complete: true
+			icon: {
+				Count: 1
+				id: "ftbquests:custom_icon"
+				tag: {
+					Icon: "railways:block/palettes/netherite/boiler_gullet"
+				}
+			}
+			icon_scale: 1.5d
+			id: "584355C70CC85239"
+			optional: true
+			progression_mode: "linear"
+			rewards: [{
+				command: "/summon eeeabsmobs:immortal"
+				elevate_perms: true
+				icon: {
+					Count: 1
+					id: "ftbquests:custom_icon"
+					tag: {
+						Icon: "eeeabsmobs:textures/effects/immortal_magic_circle/speed.png"
+					}
+				}
+				id: "6F406159952BF52B"
+				silent: true
+				title: "Summon Immortal"
+				type: "command"
+			}]
+			shape: "rsquare"
+			size: 1.2d
+			subtitle: "Unsealing"
+			tasks: [{
+				elapsedTime: 25L
+				id: "67927AE2AD4E93BE"
+				title: "Time left until ritual complete"
+				type: "questsadditions:time"
+			}]
+			title: "Ongoing Ritual"
+			x: 15.5d
+			y: 4.0d
+		}
+		{
+			dependencies: ["5F3C7FCC546CA1E1"]
+			description: [
+				"This creation was developed by the same individuals who created &cThe Harbinger.&r This time, their intention was to use it against The Harbinger, but unfortunately, they lost control of this entity as well."
+				""
+				"{image:customtextures:textures/redstonegolem.png width:250 height:100 align:center}"
+			]
+			icon: {
+				Count: 1
+				id: "ftbquests:custom_icon"
+				tag: {
+					Icon: "createoreexcavation:item/raw_redstone"
+				}
+			}
+			id: "7A3560E7A02110C6"
+			rewards: [{
+				id: "1375C91A8B3C0878"
+				type: "xp"
+				xp: 100
+			}]
+			size: 1.2d
+			subtitle: "Underground"
+			tasks: [{
+				entity: "goety:redstone_monstrosity"
+				icon: {
+					Count: 1
+					id: "ftbquests:custom_icon"
+					tag: {
+						Icon: "armageddon_mod:item/wither_skull_no3"
+					}
+				}
+				id: "6CAB98DAC4116B3F"
+				title: "Kill &cRedstone Monstrosity"
+				type: "kill"
+				value: 1L
+			}]
+			x: -5.5d
+			y: 2.0d
+		}
+		{
+			dependencies: ["10544AC33748DA46"]
+			description: [
+				"This entity attacks anyone who dares to disrupt the &cRedstone Monstrosity's&r comfort."
+				""
+				"It is located in the exact same place where the Redstone Monstrosity resides."
+				""
+				"Use the Explorer's Compass to locate the Redstone Mines structure!"
+			]
+			icon: {
+				Count: 1
+				id: "ftbquests:custom_icon"
+				tag: {
+					Icon: "minecraft:item/redstone"
+				}
+			}
+			id: "5F3C7FCC546CA1E1"
+			rewards: [{
+				id: "4395543ECA1A4DD4"
+				type: "xp"
+				xp: 100
+			}]
+			size: 1.2d
+			subtitle: "Underground"
+			tasks: [{
+				entity: "goety:hostile_redstone_golem"
+				icon: {
+					Count: 1
+					id: "ftbquests:custom_icon"
+					tag: {
+						Icon: "armageddon_mod:item/wither_skull_no2"
+					}
+				}
+				id: "3E88087C70CFC628"
+				title: "Kill &cRedstone Golem"
+				type: "kill"
+				value: 1L
+			}]
+			x: -5.5d
+			y: 0.5d
+		}
+	]
+	title: "Bosses"
+}

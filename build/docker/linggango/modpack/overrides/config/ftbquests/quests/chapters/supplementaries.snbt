@@ -1,0 +1,2960 @@
+{
+	autofocus_id: "0A6178D82A037278"
+	default_hide_dependency_lines: true
+	default_quest_shape: "pentagon"
+	filename: "supplementaries"
+	group: "3C6AB1DE39D4F441"
+	icon: {
+		Count: 1
+		id: "ftbquests:custom_icon"
+		tag: {
+			Icon: "quark:item/trowel"
+		}
+	}
+	id: "7D0D3B5FB6048EFF"
+	images: [
+		{
+			height: 1.0d
+			hover: ["Redstone"]
+			image: "minecraft:item/redstone"
+			rotation: 0.0d
+			width: 1.0d
+			x: 8.5d
+			y: -16.0d
+		}
+		{
+			height: 1.0d
+			hover: ["Other"]
+			image: "fancymenu:textures/warning_framed_24x24.png"
+			order: 1
+			rotation: 0.0d
+			width: 1.0d
+			x: -11.0d
+			y: -15.5d
+		}
+		{
+			height: 1.0d
+			hover: ["Items"]
+			image: "legendary_monsters:item/long_stick_half"
+			rotation: 0.0d
+			width: 1.0d
+			x: -4.5d
+			y: -16.0d
+		}
+		{
+			height: 15.0d
+			image: "customtextures:textures/additionslogo.png"
+			rotation: 0.0d
+			width: 30.0d
+			x: -0.5d
+			y: -9.0d
+		}
+		{
+			height: 1.0d
+			hover: ["Items"]
+			image: "legendary_monsters:item/long_stick_half"
+			rotation: 0.0d
+			width: 1.0d
+			x: 2.0d
+			y: -16.0d
+		}
+		{
+			dev: true
+			height: 1.0d
+			hover: ["Questlines belong to me, and is protected by All Rights Reserved. Do not try to steal without an explicit permission from me."]
+			image: "fancymenu:textures/buddy/gui/button_close_normal.png"
+			rotation: 0.0d
+			width: 1.0d
+			x: -1.0d
+			y: -16.0d
+		}
+	]
+	order_index: 6
+	quest_links: [ ]
+	quests: [
+		{
+			description: [
+				"Shot blocks will place themselves wherever they land if the position is suitable."
+				"{image:fzzy_config:textures/gui/sprites/widget/popup/divider.png width:200 height:15 align:center}"
+				"A &aSlingshot&r enchanted with &3Stasis&r will be able to shoot in a straight line without being affected by gravity and will additionally gain a white block outline that will indicate where the projectile will land."
+				"{image:fzzy_config:textures/gui/sprites/widget/popup/divider.png width:200 height:15 align:center}"
+				"Can be enchanted with &3Quick Charge&r, &3Multi Shot&r and &3Stasis&r."
+			]
+			id: "424D9A1DF04F1901"
+			rewards: [
+				{
+					id: "17812AE1146AB39E"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "371C23CC6858E339"
+					type: "xp"
+					xp: 25
+				}
+			]
+			subtitle: "A tool that can shoot blocks!"
+			tasks: [{
+				id: "5B2662EA947C9E17"
+				item: {
+					Count: 1
+					id: "supplementaries:slingshot"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			title: "Slingshot"
+			x: -7.0d
+			y: -12.5d
+		}
+		{
+			description: [
+				"The explosion will only deal damage to mobs without destroying any blocks, with the exception of blocks that can be removed by water like tall grass."
+				"When exploding they can ignite nearby &eCreepers&r."
+				"{image:fzzy_config:textures/gui/sprites/widget/popup/divider.png width:200 height:15 align:center}"
+				"&aBlue Bombs&r are a more powerful version of &aBombs&r and will afflict weakness debuff."
+			]
+			icon: "supplementaries:bomb"
+			id: "0AF6615A80843315"
+			rewards: [
+				{
+					id: "26947331357D57FA"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "27223619205DEF70"
+					type: "xp"
+					xp: 25
+				}
+			]
+			subtitle: "A consumable projectile that will explode wherever it lands."
+			tasks: [
+				{
+					id: "43400CEEAD8F448B"
+					item: "supplementaries:bomb"
+					type: "item"
+				}
+				{
+					id: "28C1AE87005B1062"
+					item: "supplementaries:bomb_blue"
+					type: "item"
+				}
+			]
+			title: "Bomb"
+			x: -7.0d
+			y: -11.5d
+		}
+		{
+			description: ["Shot &aRope Arrows&r will retain all the &aRopes&r they didn't place so remember to pick them back up"]
+			icon: {
+				Count: 1
+				id: "ftbquests:custom_icon"
+				tag: {
+					Icon: "supplementaries:item/rope_arrow"
+				}
+			}
+			id: "1B166E965623872B"
+			rewards: [
+				{
+					id: "4A027C3B46AD2FA5"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "66F103F708DEFD65"
+					type: "xp"
+					xp: 25
+				}
+			]
+			subtitle: "Once shot it will try to deploy a rope coil wherever it lands."
+			tasks: [{
+				id: "649707ECBCBA5B8F"
+				item: {
+					Count: 1
+					id: "supplementaries:rope_arrow"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			x: -2.0d
+			y: -12.5d
+		}
+		{
+			description: [
+				"Its main use is to quickly switch between &aArrows&r. To do so use the item and it will open an ingame GUI."
+				"Alternatively &6Shift&r + &6Right-Click&r also cycles through selected &aArrows&r without opening a GUI."
+				"Alternatively you can access it using a keybind."
+				"{image:fzzy_config:textures/gui/sprites/widget/popup/divider.png width:200 height:15 align:center}"
+				"&eArrows&r and &aitem Arrows &ryou pick up will go in your &aQuiver&r if it contains non full stacks of the same kind."
+			]
+			id: "28A02E6D1E4F5D8E"
+			rewards: [
+				{
+					id: "1560659EA0643381"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "19CEDECAD1E4092B"
+					type: "xp"
+					xp: 25
+				}
+			]
+			subtitle: "Stores multiple arrows and allows you to quickly change them."
+			tasks: [{
+				id: "7CD8B6F514A219D3"
+				item: {
+					Count: 1
+					ForgeCaps: {
+						Parent: {
+							Items: [ ]
+							SelectedSlot: 0
+							Size: 6
+						}
+					}
+					id: "supplementaries:quiver"
+				}
+				type: "item"
+			}]
+			x: -6.0d
+			y: -12.5d
+		}
+		{
+			description: [
+				"Can be bound to a specific &epet&r (or &eHorse&r) by &6Right-clicking&r it on the animal in question."
+				"A bounded &aFlute&r will only call the &epet&r that it was bound to."
+				"When used will play a random song."
+				"If renamed to the name of an existing song it will play that all the time."
+			]
+			id: "797194AB19CFE439"
+			rewards: [
+				{
+					id: "64EFC50D8C01CE92"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "1C596E9B1ACB999F"
+					type: "xp"
+					xp: 25
+				}
+			]
+			shape: "goldtier"
+			subtitle: "Can be played to summon nearby non sitting owned pets."
+			tasks: [{
+				id: "783B3F5FD28E7D5F"
+				item: {
+					Count: 1
+					id: "supplementaries:flute"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			x: -5.0d
+			y: -12.5d
+		}
+		{
+			description: [
+				"If enchanted with &3Stasis&r it gains the ability to place &aSoap Bubble Blocks&r in mid air wherever you aim."
+				"{image:fzzy_config:textures/gui/sprites/widget/popup/divider.png width:200 height:15 align:center}"
+				"The blocks will remain in the air for a while or until they are stepped on."
+				"&aSoap Blocks&r can be replaced with other blocks, which is useful when building."
+			]
+			icon: {
+				Count: 1
+				id: "ftbquests:custom_icon"
+				tag: {
+					Icon: "supplementaries:item/bubble_blower"
+				}
+			}
+			id: "4DF782D7E2E59DAF"
+			rewards: [
+				{
+					id: "16E54F1B2C50FCF8"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "1744BD1E3B8C4C34"
+					type: "xp"
+					xp: 25
+				}
+			]
+			subtitle: "A fun novelty item which you can use to blow soap bubbles at your friends."
+			tasks: [{
+				id: "1A2088CD077C9388"
+				item: {
+					Count: 1
+					id: "supplementaries:bubble_blower"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			x: -3.0d
+			y: -12.5d
+		}
+		{
+			description: [
+				"Can be used on any &aSign&r to change its font to a fancy Antiquable font."
+				"Can be crafted with a &aMap&r to turn it into a &aAntique Map&r, giving it a treasure map like look."
+				"Can be crafted with an &aOriginal Written Book&r to turn it into a &aTattered book&r. &aTattered books&r cant be copied and will use the Antiquable font."
+			]
+			id: "5ED9CA7C6BFDA5FE"
+			rewards: [
+				{
+					id: "7ECA8C43AACD5CBD"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "2F0ABF2829B8811F"
+					type: "xp"
+					xp: 25
+				}
+			]
+			subtitle: "Changes the font of objects it interacts with."
+			tasks: [{
+				id: "108E1116E7187CEB"
+				item: "supplementaries:antique_ink"
+				type: "item"
+			}]
+			x: -4.0d
+			y: -12.5d
+		}
+		{
+			id: "4B36949CD065FCBB"
+			rewards: [
+				{
+					id: "6791F8CCC0727058"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "5FE0466A413F0FD5"
+					type: "xp"
+					xp: 25
+				}
+			]
+			shape: "goldtier"
+			subtitle: "Rotate any kind of rotateable block."
+			tasks: [{
+				id: "3EDCFC36B32ADA4F"
+				item: {
+					Count: 1
+					id: "supplementaries:wrench"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			x: -7.0d
+			y: -14.5d
+		}
+		{
+			description: [
+				"Can be used directly on all those in world."
+				"{image:fzzy_config:textures/gui/sprites/widget/popup/divider.png width:200 height:15 align:center}"
+				"Can be used on &aCopper like blocks&r to clean away any waxing and oxidation in one use."
+				"{image:fzzy_config:textures/gui/sprites/widget/popup/divider.png width:200 height:15 align:center}"
+				"Can be used on &epets&r and &eSheeps&r to un wash them."
+				"{image:fzzy_config:textures/gui/sprites/widget/popup/divider.png width:200 height:15 align:center}"
+				"Can also wash away &aBlackboards&r, &aAntique Globes&r and &aMaps&r, &aSticky Pistons&r and &aTipped Spikes&r."
+			]
+			id: "4E79F6590377F266"
+			rewards: [
+				{
+					id: "260BC1CFA877A23B"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "0DA94E9D9FD94A4A"
+					type: "xp"
+					xp: 25
+				}
+			]
+			subtitle: "Revert items to their default or white state."
+			tasks: [{
+				id: "557F57C10890920E"
+				item: "supplementaries:soap"
+				type: "item"
+			}]
+			x: -6.0d
+			y: -14.5d
+		}
+		{
+			description: [
+				"Similar to &aCakes&r they can only be eaten when placed."
+				"{image:fzzy_config:textures/gui/sprites/widget/popup/divider.png width:200 height:15 align:center}"
+				"Can be placed in a pile of up to 8."
+				"{image:fzzy_config:textures/gui/sprites/widget/popup/divider.png width:200 height:15 align:center}"
+				"&aHoney&r can be poured on them (either via &aFaucet&r or by &6Right-clicking&r with a &aHoney Bottle&r)."
+				"{image:fzzy_config:textures/gui/sprites/widget/popup/divider.png width:200 height:15 align:center}"
+				"They can also accept other toppings such as &aChocolate&r and &aSyrup&r."
+				"{image:fzzy_config:textures/gui/sprites/widget/popup/divider.png width:200 height:15 align:center}"
+				"&aPancakes&r with honey, chocolate or syrup will give a short speed effect when eaten."
+				"{image:fzzy_config:textures/gui/sprites/widget/popup/divider.png width:200 height:15 align:center}"
+				"&8You can also insert a Pancake in a Jukebox for some sick tunes!&r"
+			]
+			id: "3EB5ACA017BACC0B"
+			rewards: [
+				{
+					id: "2079496733DDADF7"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "005A615F0B6FA3C7"
+					type: "xp"
+					xp: 25
+				}
+			]
+			subtitle: "Yummy."
+			tasks: [{
+				id: "318687E5EB4083C3"
+				item: "supplementaries:pancake"
+				type: "item"
+			}]
+			title: "Pancake"
+			x: -3.0d
+			y: -14.5d
+		}
+		{
+			description: [
+				"Work only with &aSafes&r, &aNetherite Doors&r, &aNetherite Trapdoors&r and&a Lock Blocks&r"
+				"{image:fzzy_config:textures/gui/sprites/widget/popup/divider.png width:200 height:15 align:center}"
+				"To lock a block first rename the &aKey&r to your desired password, the click on the unbounded block."
+				"To clear the ownership simply &6Shift&r + &6Right-Click&r with the correct &aKey&r on the locked block."
+				"To open a locked block you won't need to have the correct &aKey&r in hand, it just needs to be in your inventory or &2Curio&r slot."
+				"{image:fzzy_config:textures/gui/sprites/widget/popup/divider.png width:200 height:15 align:center}"
+				"Can be used in a &aDispenser&r to open key lockable blocks. Useful with lock blocks"
+			]
+			id: "7FFFF7F7DF3BE4FB"
+			min_width: 400
+			rewards: [
+				{
+					id: "279A227714096F76"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "5C73D1C7537485B5"
+					type: "xp"
+					xp: 25
+				}
+			]
+			shape: "goldtier"
+			subtitle: "Used to lock Safes, Netherite Doors, Netherite Trapdoors and Lock Blocks."
+			tasks: [{
+				id: "2F8A6D8A30E29F25"
+				item: "supplementaries:key"
+				type: "item"
+			}]
+			title: "Key"
+			x: 1.5d
+			y: -14.5d
+		}
+		{
+			description: ["By default the &aNetherite Door&r is accessible to anyone until first locked."]
+			icon: "supplementaries:netherite_door"
+			id: "50DE6E1A25DBEAC4"
+			rewards: [
+				{
+					id: "394D73BF4C8AE43B"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "1B9A194D230756BD"
+					type: "xp"
+					xp: 25
+				}
+			]
+			shape: "netheritetier"
+			subtitle: "Can be locked with keys. Once this is done only a key owner can interact with the door."
+			tasks: [{
+				id: "25CADEE389DA54D9"
+				type: "checkmark"
+			}]
+			title: "Netherite Door"
+			x: 0.5d
+			y: -13.5d
+		}
+		{
+			description: ["Acts as a sort of upgraded &aShulker Box&r that is fire resistant."]
+			icon: "supplementaries:safe"
+			id: "1ADC88063B7ADCB3"
+			rewards: [
+				{
+					id: "56FDD9D02DFB0266"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "5CD4C72715EC2A38"
+					type: "xp"
+					xp: 25
+				}
+			]
+			shape: "netheritetier"
+			subtitle: "Can be locked with a key. Once this is done their content will only be available to players that have the correct key."
+			tasks: [{
+				id: "12F5CEA2A79C4C96"
+				type: "checkmark"
+			}]
+			title: "Safe"
+			x: -0.5d
+			y: -13.5d
+		}
+		{
+			description: ["By default the &aNetherite Trapdoor&r is accessible to anyone until first locked."]
+			icon: "supplementaries:netherite_trapdoor"
+			id: "14AC1F399D13B863"
+			rewards: [
+				{
+					id: "1180F165B6E4D037"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "77C23C2BFB312739"
+					type: "xp"
+					xp: 25
+				}
+			]
+			shape: "netheritetier"
+			subtitle: "Can be locked with keys. Once this is done only a key owner can interact with the trapdoor."
+			tasks: [{
+				id: "41F727253A171CB7"
+				type: "checkmark"
+			}]
+			title: "Netherite Trapdoor"
+			x: 1.5d
+			y: -13.5d
+		}
+		{
+			description: ["Once it interacts with a player that holds the correct &aKey&r it will emit a redstone pulse."]
+			icon: "supplementaries:lock_block"
+			id: "11F68289FDE2CE10"
+			rewards: [
+				{
+					id: "198893B52937A6C6"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "0B3EB97AB2BEC66B"
+					type: "xp"
+					xp: 25
+				}
+			]
+			shape: "irontier"
+			subtitle: "Can be locked with a key similar to safes and netherite doors."
+			tasks: [{
+				id: "1E71D08DEB2D765F"
+				type: "checkmark"
+			}]
+			title: "Lock Block"
+			x: -6.0d
+			y: -13.5d
+		}
+		{
+			description: [
+				"Pretty intuitive to use, you just power one and it will power its adjacent cogs, up to 14 blocks away, just like with &aRedstone Dust&r. "
+				"{image:fzzy_config:textures/gui/sprites/widget/popup/divider.png width:200 height:15 align:center}"
+				"The real use for this is to be able to make compact vertical redstone signaling."
+			]
+			id: "58275DB6DF066451"
+			rewards: [
+				{
+					id: "3C04A90312BC132B"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "2D0561E7A6911992"
+					type: "xp"
+					xp: 25
+				}
+			]
+			subtitle: "Acts as a form of upgraded redstone in solid block form."
+			tasks: [{
+				id: "594DFCDEF381F0C4"
+				item: "supplementaries:cog_block"
+				type: "item"
+			}]
+			title: "Cog Block"
+			x: 3.5d
+			y: -13.5d
+		}
+		{
+			description: [
+				"During rain, it emits a signal with a power of 1."
+				"During thundering - with a power of 2."
+				"Also provide strong power to the block below."
+			]
+			id: "44E7ADBFDC06294C"
+			rewards: [
+				{
+					id: "2010475BA9D8CEAD"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "28D5E500DB3206B1"
+					type: "xp"
+					xp: 25
+				}
+			]
+			subtitle: "Swing depending on the current weather and output a redstone signal, the strength of which depends on the current weather."
+			tasks: [{
+				id: "2F9B34012426EC4D"
+				item: "supplementaries:wind_vane"
+				type: "item"
+			}]
+			title: "Wind Vane"
+			x: 8.5d
+			y: -14.5d
+		}
+		{
+			description: [
+				"The Hour hand indicates the current in-game hour while the minute hand ticks every irl second."
+				"{image:fzzy_config:textures/gui/sprites/widget/popup/divider.png width:200 height:15 align:center}"
+				"Its output can be read with a comparator which will give off a signal from 0 to 15 that is proportional to the in-game time which is from 0 to 24."
+				"Gives off a block update detectable by an observer each time an in-game hour passes."
+				"{image:fzzy_config:textures/gui/sprites/widget/popup/divider.png width:200 height:15 align:center}"
+				"Clicking on it will display the current time."
+				"Like all clocks does not work in the nether."
+			]
+			id: "6A111AA679FD828A"
+			rewards: [
+				{
+					id: "009682231B08E893"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "60A527B4D8C86FF7"
+					type: "xp"
+					xp: 25
+				}
+			]
+			shape: "goldtier"
+			subtitle: "Displays the current in-game time."
+			tasks: [{
+				id: "3AC00ADB01033339"
+				item: "supplementaries:clock_block"
+				type: "item"
+			}]
+			x: 8.5d
+			y: -12.5d
+		}
+		{
+			description: [
+				"Can be powered with redstone, by right-clicking or by stepping on."
+				"When powered will push air infront of it with frequency that is proportional to its redstone power. All the effects here described are affected by this."
+				"{image:fzzy_config:textures/gui/sprites/widget/popup/divider.png width:200 height:15 align:center}"
+				"When pushing air it will push entities that are infront of it away, up to a 5 blocks distance."
+				"Speeds up furnace-like blocks that are right next to it."
+				"Refreshes fire blocks in-front of it. Fire blocks that are up to a 2 blocks distance will be kept alive indefinitely."
+				"Can speed up copper aging if placed right next to one."
+				"If placed in front of a wet sponge that is in contact with a soap block they are able to blow bubbles!"
+			]
+			id: "56EED3C96B90A092"
+			min_width: 400
+			rewards: [
+				{
+					id: "79FD677066B842FD"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "149B827DD5D05609"
+					type: "xp"
+					xp: 25
+				}
+			]
+			shape: "goldtier"
+			subtitle: "Push air infront of it."
+			tasks: [{
+				id: "7B1252FADDD553FA"
+				item: "supplementaries:bellows"
+				type: "item"
+			}]
+			title: "Bellows"
+			x: 10.5d
+			y: -13.5d
+		}
+		{
+			description: [
+				"Twice powerfull as the vanilla &aPiston-Slime Block setup&r."
+				"It can also push you up if you were to fall on it from a certain height when it's already extended."
+				"Cannot push blocks like a normal &aPiston&r, only &eentities&r."
+				"Allows &eentities&r that stand on an extended one to jump slightly higher."
+			]
+			id: "699182EA223BDA47"
+			rewards: [
+				{
+					id: "7500EF097E74486D"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "4CD683C365E7D85D"
+					type: "xp"
+					xp: 25
+				}
+			]
+			subtitle: "It extends like a piston and will propel any entities that lie ontop of it in the direction it's moving."
+			tasks: [{
+				id: "5C626117CEE20426"
+				item: "supplementaries:spring_launcher"
+				type: "item"
+			}]
+			title: "Spring Launcher"
+			x: 9.5d
+			y: -14.5d
+		}
+		{
+			description: [
+				"Works with indirect power when it faces a redstone wire."
+				"Useful to reliably transmit analog power without dispersion."
+				"A signal takes 1 game tick to travel through a relayer."
+			]
+			id: "099A91A1E8AF562E"
+			rewards: [
+				{
+					id: "70F8773447149DB6"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "4595FB023EA1B724"
+					type: "xp"
+					xp: 25
+				}
+			]
+			subtitle: "Observer like block whose purpose is to copy whatever signal it has in front to its back."
+			tasks: [{
+				id: "1A726A61E60DE5DB"
+				item: "supplementaries:relayer"
+				type: "item"
+			}]
+			title: "Relayer"
+			x: 4.5d
+			y: -13.5d
+		}
+		{
+			id: "0A6178D82A037278"
+			rewards: [
+				{
+					id: "2467649E6CF21E45"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "395E40A4A7B32BA2"
+					type: "xp"
+					xp: 25
+				}
+			]
+			subtitle: "Displays a number or a symbol depending on what the received signal strength."
+			tasks: [{
+				id: "04E1DC93F5492476"
+				item: "supplementaries:crystal_display"
+				type: "item"
+			}]
+			title: "Crystal Display"
+			x: 0.0d
+			y: -12.5d
+		}
+		{
+			description: [
+				"Can be renamed in an &aAnvil&r to change the name that will be displayed in chat. Rename it \"\" to get rid of it completely."
+				"There must be space before the block to send messages."
+			]
+			id: "498C3B31F012D5CD"
+			rewards: [
+				{
+					id: "28621869EFCBCB70"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "600869F0FF6A336C"
+					type: "xp"
+					xp: 25
+				}
+			]
+			subtitle: "Send a message in chat to all players in a certain radius when activated."
+			tasks: [{
+				id: "54A2027EABDAB856"
+				item: "supplementaries:speaker_block"
+				type: "item"
+			}]
+			title: "Speaker Block"
+			x: 10.5d
+			y: -14.5d
+		}
+		{
+			description: ["It's on by default."]
+			id: "52B6BBD4B11D3FC7"
+			rewards: [
+				{
+					id: "68D846690EB8F24A"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "5763BECDB4F3BF79"
+					type: "xp"
+					xp: 25
+				}
+			]
+			shape: "irontier"
+			subtitle: "Gives off a light output that is inversely proportional to its current redstone power."
+			tasks: [{
+				id: "2F764F2125CDFABB"
+				item: "supplementaries:redstone_illuminator"
+				type: "item"
+			}]
+			title: "Redstone Illuminator"
+			x: 9.5d
+			y: -12.5d
+		}
+		{
+			description: [
+				"Can be turned on/off by redstone signal or by pressing RMB."
+				"{image:fzzy_config:textures/gui/sprites/widget/popup/divider.png width:200 height:15 align:center}"
+				"If placed next to a fluid containing block show a visual fluid tray right below it if it's active."
+				"Can extract items from the inventory below and spill them right below its nozzle with a one second interval."
+				"Once it's connected to a fluid containing block behind it can pour those fluids in any possible fluid container block below it. This will only be possible in 250mb increment."
+				"{image:fzzy_config:textures/gui/sprites/widget/popup/divider.png width:200 height:15 align:center}"
+				"Can also interact with blocks below such as concrete powder, dirt (turns to mud) and sugar block."
+				"Can dump fluids in sponges effectively voiding them. The same can already be done with lava cauldrons making them ideal \"trash can\" solutions."
+			]
+			id: "535E4493E31C40F9"
+			min_width: 400
+			rewards: [
+				{
+					id: "18DB76AA02E98C1A"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "6B3D3FEF1A575AC4"
+					type: "xp"
+					xp: 25
+				}
+			]
+			shape: "irontier"
+			subtitle: "Powerful multi purpose block."
+			tasks: [{
+				id: "35F54C1A9D74B541"
+				item: "supplementaries:faucet"
+				type: "item"
+			}]
+			title: "Faucet"
+			x: 10.5d
+			y: -12.5d
+		}
+		{
+			description: [
+				"Once powered it will initiate a rotation action which will take time depending on the signal strength it is receiving."
+				"The rotation action will continue regardless if the block is powered or not and it's indicated by a red light on the block itself."
+				"Rotation frequency (or speed for entities) depends on the redstone power the block has."
+				"Rotation period starts at 4 ticks for 15 power and increases linerily until it reaches 60 ticks at 1 power."
+				"{image:fzzy_config:textures/gui/sprites/widget/popup/divider.png width:200 height:15 align:center}"
+				"Toggling the block by right clicking will reverse the rotation direction."
+				"Can shuffle inventory content when rotating any inventory block over the horizonta axis."
+				"Also constantly rotates entities that are standing on it (only works when facing upwards)."
+			]
+			id: "5610804960A23D97"
+			min_width: 400
+			rewards: [
+				{
+					id: "2308C87E90549911"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "1FE86099AD03E6B5"
+					type: "xp"
+					xp: 25
+				}
+			]
+			subtitle: "Rotates blocks."
+			tasks: [{
+				id: "74592BEDFE8F2223"
+				item: "supplementaries:turn_table"
+				type: "item"
+			}]
+			title: "Turn Table"
+			x: 6.5d
+			y: -13.5d
+		}
+		{
+			description: ["Basically a an analog lever."]
+			icon: "supplementaries:crank"
+			id: "4047BA82FAC2DFE2"
+			rewards: [
+				{
+					id: "1BC9A92B0FBCCDA6"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "429109AB5E04A4E3"
+					type: "xp"
+					xp: 25
+				}
+			]
+			subtitle: "Provides a variable redstone signal that depends on its turn ratio."
+			tasks: [
+				{
+					id: "1CF84950187C7951"
+					item: "supplementaries:crank"
+					type: "item"
+				}
+				{
+					id: "745CB870BB2CDD4A"
+					item: "create:analog_lever"
+					type: "item"
+				}
+			]
+			title: "Crank"
+			x: 1.0d
+			y: -12.5d
+		}
+		{
+			description: ["If unlit it will have its properties reversed."]
+			id: "2E758D49C2595CDB"
+			rewards: [
+				{
+					id: "45F54E2FA41DBB96"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "7ECFCC9B852C0E9B"
+					type: "xp"
+					xp: 25
+				}
+			]
+			subtitle: "A mix between a sconce and a lever."
+			tasks: [{
+				id: "018D4FEE2D194A3E"
+				item: "supplementaries:sconce"
+				type: "item"
+			}]
+			title: "Sconce"
+			x: 2.0d
+			y: -12.5d
+		}
+		{
+			dependency_requirement: "all_started"
+			description: [
+				"Has a single inventory slot which can accept any chain or rope like block."
+				"{image:fzzy_config:textures/gui/sprites/widget/popup/divider.png width:200 height:15 align:center}"
+				"When a turn table rotates the block (providing it's connected to the right axis) it will start deploying or retracting the items it's holding in its inventory, depending if it's getting rotated clock-wise or counter clock-wise."
+				"When rotated it will also rotate all the pulleys adjacent to it that are facing the same axis."
+				"{image:fzzy_config:textures/gui/sprites/widget/popup/divider.png width:200 height:15 align:center}"
+				"Pulleys can be chained together. This means that all chains and ropes being pulled/pushed by a pulley will have the chance to be accepted by a receiving pulley. When this happens they will also have the chance to be placed horizontally which is usually not possible. This effect has a 6 blocks range. Keep in mind that pulleys will always prioritize the down direction or a direction where a rope /chain is already present when unwinding."
+				"Just like ropes, pulling up or down chains and ropes with a pulley will also bring up and down the last block attached to the chain."
+				"{image:fzzy_config:textures/gui/sprites/widget/popup/divider.png width:200 height:15 align:center}"
+				"Pairs well with Turn Table."
+				"Can also be rotated by using a crank."
+				"{image:fzzy_config:textures/gui/sprites/widget/popup/divider.png width:200 height:15 align:center}"
+				"&cIt cannot be powered by redstone.&r"
+			]
+			id: "12A0F1A43BB756F4"
+			min_width: 400
+			rewards: [
+				{
+					id: "248B78AE8FC0D5E2"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "21117648D00838C1"
+					type: "xp"
+					xp: 25
+				}
+			]
+			subtitle: "Throws down a rope or chain."
+			tasks: [{
+				id: "623C13293450D5C7"
+				item: "supplementaries:pulley_block"
+				type: "item"
+			}]
+			title: "Pulley Block"
+			x: 7.5d
+			y: -13.5d
+		}
+		{
+			description: [
+				"Can be filled with any kind of sand, dust or powder or even slime and honey."
+				"Downward time depends on the material used."
+				"Can give a comparator output that depends on the remaining time."
+				"Can be reset by either rotating twice with a turn table or by shift clicking."
+			]
+			id: "335E7C3E45C4B2F5"
+			rewards: [
+				{
+					id: "4FBB1FB03CB388AC"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "4924BC35E0B844E1"
+					type: "xp"
+					xp: 25
+				}
+			]
+			shape: "goldtier"
+			subtitle: "Once filled will slowly start falling downward."
+			tasks: [{
+				id: "28A8FD085446D3E3"
+				item: "supplementaries:hourglass"
+				type: "item"
+			}]
+			title: "Hourglass"
+			x: 11.5d
+			y: -12.5d
+		}
+		{
+			description: [
+				"Can store up to 12 cookie like items."
+				"Just like cages it can store and capture small mobs."
+				"Jars can store up to 12 bottles (or 3k mb) of fluids."
+				"Can drink directly from jars, both in item and block form."
+			]
+			id: "5227EAB65D2DDAD7"
+			rewards: [
+				{
+					id: "6DC54B354E6E0194"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "12BBC9BF8EC46A17"
+					type: "xp"
+					xp: 25
+				}
+			]
+			subtitle: "Can store cookie like items and fluid."
+			tasks: [{
+				id: "7366967748B7553B"
+				item: "supplementaries:jar"
+				type: "item"
+			}]
+			x: -11.5d
+			y: -13.5d
+		}
+		{
+			description: ["Can be placed next to a wet sponge which is in contact with a bellow to make the setup emit bubble particles."]
+			id: "35EE5A9C6E88F632"
+			rewards: [
+				{
+					id: "09D38B3945A70124"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "7C1AB8C5886A87B7"
+					type: "xp"
+					xp: 25
+				}
+			]
+			subtitle: "Makes entities that walk on it \"slip\"."
+			tasks: [{
+				id: "59D271DCBFDB88BE"
+				item: "supplementaries:soap_block"
+				type: "item"
+			}]
+			title: "Soap Block"
+			x: -10.5d
+			y: -8.5d
+		}
+		{
+			description: ["This means that a powered door cannot be opened or closed regardless of its state."]
+			icon: "supplementaries:gold_door"
+			id: "00193A021E51809B"
+			rewards: [
+				{
+					id: "6EAD36C0E70A0957"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "76356A32B8FB3A54"
+					type: "xp"
+					xp: 25
+				}
+			]
+			shape: "goldtier"
+			subtitle: "When powered by redstone will disable any interaction with any player."
+			tasks: [
+				{
+					id: "7051CD0698D58BCB"
+					item: "supplementaries:gold_door"
+					type: "item"
+				}
+				{
+					id: "315218BB83327AA8"
+					item: "supplementaries:gold_trapdoor"
+					type: "item"
+				}
+			]
+			title: "Golden Doors and Trapdoors"
+			x: -10.5d
+			y: -11.5d
+		}
+		{
+			description: [
+				"When eaten it will make baby animals age faster and will set adults in love. Uses the vanilla cooldown."
+				"Can be placed down with dispensers."
+			]
+			id: "383B835C8F3856AB"
+			rewards: [
+				{
+					id: "1803BC7C7EF1FDC7"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "32451112842DA53A"
+					type: "xp"
+					xp: 25
+				}
+			]
+			shape: "goldtier"
+			subtitle: "A layered block that serves as a way to automatically feed animals."
+			tasks: [{
+				id: "128CC20F3648B5F5"
+				item: "supplementaries:fodder"
+				type: "item"
+			}]
+			title: "Fodder"
+			x: -11.5d
+			y: -11.5d
+		}
+		{
+			description: [
+				"When pushed by a piston it can scrape agains any full face iron-like block to produce sparks."
+				"If a flammable block is nearby it will catch fire! This allows to have a on demand durationless flint and steel."
+				"Opposite also works which means you can move an iron block agains a flint block instead."
+				"These interactions also work with Quark magnets."
+			]
+			id: "45E6458B285449BD"
+			rewards: [
+				{
+					id: "79CE858D40B264A3"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "7B8A960A879DCBAE"
+					type: "xp"
+					xp: 25
+				}
+			]
+			subtitle: "A decorative and storage block that can provide a use for your extra flints."
+			tasks: [{
+				id: "53206DFAD7487C87"
+				item: "supplementaries:flint_block"
+				type: "item"
+			}]
+			x: -9.5d
+			y: -12.5d
+		}
+		{
+			description: [
+				"Once an item is taken or removed from a pedestal the block will give out a observer detectable update. (This can be prevented if one swaps the item with a sack)."
+				"If an end crystal is placed on a pedestal the block will give off an enchanting power equal to 3 bookshelves. This means that with 5 of such blocks you'll be able to max out an enchanting table."
+			]
+			id: "592E74E7C40A121B"
+			rewards: [
+				{
+					id: "4DCA2B8820E51153"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "292A5A8DD636C829"
+					type: "xp"
+					xp: 25
+				}
+			]
+			subtitle: "Beautifully displays the object placed on it."
+			tasks: [{
+				id: "2E0EC2A80A6016C0"
+				item: "supplementaries:pedestal"
+				type: "item"
+			}]
+			title: "Pedestal"
+			x: -12.5d
+			y: -13.5d
+		}
+		{
+			description: [
+				"When it's displaying a written book it will only show one page at the time."
+				"The text resolution that is getting displayed depends on the amount of text in a page. Add whitespaces to make it render smaller."
+				"Once given a redstone pulse it will turn the currently displayed page onto the next one."
+				"Can be waxed to prevent interactions."
+			]
+			id: "329FFB73701E1F1A"
+			rewards: [
+				{
+					id: "5264D7130E36BA8D"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "1E33DBC26C405DCA"
+					type: "xp"
+					xp: 25
+				}
+			]
+			subtitle: "Can hold and display either a written book, a map or a banner pattern."
+			tasks: [{
+				id: "1BB5FA028113113E"
+				item: "supplementaries:notice_board"
+				type: "item"
+			}]
+			title: "Notice Board"
+			x: -9.0d
+			y: -14.5d
+		}
+		{
+			description: [
+				"Allows to make every block into a framed one. To do so simply click on it with said block."
+				"An option to frame an already placed block when clicking on it with this item."
+				"{image:fzzy_config:textures/gui/sprites/widget/popup/divider.png width:200 height:15 align:center}"
+				"Using an axe on a framed block will break the frame but not the block contained inside."
+			]
+			icon: "supplementaries:daub_cross_brace"
+			id: "3917E8900E28B30B"
+			rewards: [
+				{
+					id: "7A6E1F08F1A773E4"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "48DC4D5660F34DCA"
+					type: "xp"
+					xp: 25
+				}
+			]
+			subtitle: "Can visually hold any solid block inside."
+			tasks: [
+				{
+					id: "5529728D57D6EDA9"
+					item: "supplementaries:timber_frame"
+					type: "item"
+				}
+				{
+					id: "3712B38C07A13A1B"
+					item: "supplementaries:timber_brace"
+					type: "item"
+				}
+				{
+					id: "23016739A8561080"
+					item: "supplementaries:timber_cross_brace"
+					type: "item"
+				}
+				{
+					id: "14BD91C7310F68F6"
+					item: "supplementaries:daub_frame"
+					type: "item"
+				}
+				{
+					id: "7ADA1B0AE061C875"
+					item: "supplementaries:daub_brace"
+					type: "item"
+				}
+				{
+					id: "23C374040A73BDC8"
+					item: "supplementaries:daub_cross_brace"
+					type: "item"
+				}
+			]
+			title: "Framed blocks"
+			x: -10.5d
+			y: -12.5d
+		}
+		{
+			description: [
+				"Just like scaffolding they can only go that far out horizontally from their closest support until they are no longer supported."
+				"Vertical ropes have no hitbox and can be climbed."
+				"Horizontal ropes do have a hitbox and can be walked on, albeit at a slower paste."
+				"{image:fzzy_config:textures/gui/sprites/widget/popup/divider.png width:200 height:15 align:center}"
+				"Placing a rope against an existing vertical one will result in the rope getting extended downwards."
+				"Ropes can be placed and will dynamically wrap themselves against many fence like blocks such as walls, beams and posts."
+				"{image:fzzy_config:textures/gui/sprites/widget/popup/divider.png width:200 height:15 align:center}"
+				"Falling down ropes will not slow you down but still prevent fall damange."
+				"Can be broken by a projectile."
+			]
+			id: "72C008AA321DD359"
+			min_width: 400
+			rewards: [
+				{
+					id: "3A93A31E3FA6CCAF"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "78A4C52B7EC14960"
+					type: "xp"
+					xp: 25
+				}
+			]
+			subtitle: "A building block that makes movement easier, especially in mines."
+			tasks: [{
+				id: "648C03DCDD1CF31B"
+				item: "supplementaries:rope"
+				type: "item"
+			}]
+			title: "Rope"
+			x: -11.5d
+			y: -12.5d
+		}
+		{
+			description: [
+				"Sacks are heavy and when carrying more than 2 the player will have the overencumbered effect applied."
+				"Is a gravity block and will deal damage when it falls on an entity. Damage depends on sack content."
+			]
+			id: "1E412A1E0D9C4138"
+			rewards: [
+				{
+					id: "1A89B1A0308E4FC0"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "1C02C8DB107A2883"
+					type: "xp"
+					xp: 25
+				}
+			]
+			subtitle: "Acts as an early game shulker box with 9 slots."
+			tasks: [{
+				id: "570C2865D878E09E"
+				item: "supplementaries:sack"
+				type: "item"
+			}]
+			title: "Sack"
+			x: -12.5d
+			y: -12.5d
+		}
+		{
+			description: [
+				"Can also be directly edited without the GUI by holding a dye item."
+				"Will keep its drawing when broken."
+				"Blackboards can be duplicated just like banners."
+				"Can be cleared by using a wet sponge or soap."
+				"Can be waxed to prevent interactions."
+				"Can accept glow ink."
+			]
+			id: "1CE03451460FA13D"
+			rewards: [
+				{
+					id: "67811881B683EF85"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "18BFF31118C19846"
+					type: "xp"
+					xp: 25
+				}
+			]
+			subtitle: "Can be written on to create interesting pattern."
+			tasks: [{
+				id: "41069D0F1F258DDE"
+				item: "supplementaries:blackboard"
+				type: "item"
+			}]
+			title: "Blackboard"
+			x: -10.5d
+			y: -13.5d
+		}
+		{
+			description: ["Also prevent the crop from being trampled."]
+			id: "7B50ACBE3A229713"
+			rewards: [
+				{
+					id: "43D718AE6B796EEE"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "641BE5E046FDEB53"
+					type: "xp"
+					xp: 25
+				}
+			]
+			subtitle: "Can support any plant or crop without the need of water."
+			tasks: [{
+				id: "320CD5CEC51006F1"
+				item: "supplementaries:planter"
+				type: "item"
+			}]
+			title: "Planter"
+			x: -10.0d
+			y: -14.5d
+		}
+		{
+			description: ["Landing on it negates all fall damage."]
+			id: "2C6072220454E774"
+			rewards: [
+				{
+					id: "5668327AC0899E55"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "531C9FA0A6A22658"
+					type: "xp"
+					xp: 25
+				}
+			]
+			subtitle: "Extremely fluffy!"
+			tasks: [{
+				id: "175186FD12F9E00D"
+				item: "supplementaries:feather_block"
+				type: "item"
+			}]
+			x: -11.0d
+			y: -14.5d
+		}
+		{
+			description: ["Once packed only you and the recipient will be able to open it and access its content."]
+			icon: "supplementaries:present_black"
+			id: "09B72093F7345C0E"
+			rewards: [
+				{
+					id: "1E3AE23EF2CCE427"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "2FEB7248D201D213"
+					type: "xp"
+					xp: 25
+				}
+			]
+			shape: "goldtier"
+			subtitle: "A container block which can hold 1 item stack."
+			tasks: [{
+				id: "34D4C2228586ECF7"
+				item: "supplementaries:present"
+				type: "item"
+			}]
+			title: "Present"
+			x: -9.5d
+			y: -13.5d
+		}
+		{
+			description: ["When powered with redstone it will wave."]
+			id: "2348785EA316D398"
+			rewards: [
+				{
+					id: "2137D1C3CE0B4E42"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "144DB6F473353467"
+					type: "xp"
+					xp: 25
+				}
+			]
+			subtitle: "Can hold an item in hand."
+			tasks: [{
+				id: "56159CF7EF132640"
+				item: "supplementaries:statue"
+				type: "item"
+			}]
+			x: -11.5d
+			y: -8.5d
+		}
+		{
+			description: [
+				"Can hold and display 3 lines of text."
+				"Cats will occasionally sit on it."
+				"One single item can be hidden below it. To do so shift click on any face except the top one."
+			]
+			id: "4DFC015406B24BD2"
+			rewards: [
+				{
+					id: "1478E8BD03FD953E"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "4E3EF05A4A66F8BB"
+					type: "xp"
+					xp: 25
+				}
+			]
+			subtitle: "Welcome home."
+			tasks: [{
+				id: "6C45AF5021712662"
+				item: "supplementaries:doormat"
+				type: "item"
+			}]
+			x: -8.5d
+			y: -13.0d
+		}
+		{
+			description: [
+				"They can be pushed with pistons or contraptions and will deal &4extra damage&r if they hit something while extending."
+				"Can be infused with &9lingering potions&r. To do so either craft them, click on them or pour the potion using a faucet."
+				"They can only accept negative lingering potions and have infinite charge."
+				"{image:fzzy_config:textures/gui/sprites/widget/popup/divider.png width:200 height:15 align:center}"
+				"Bamboo spikes counts as &6player kills&r, meaning when a mob is killed by bamboo spikes it drops loot and XP as if it were killed by a player."
+			]
+			id: "455AB40E9A8F4641"
+			rewards: [
+				{
+					id: "15EB3C3006126952"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "46F77F8B86062AFB"
+					type: "xp"
+					xp: 25
+				}
+			]
+			shape: "goldtier"
+			subtitle: "Spikes that will slow and damage all mobs that walk on them."
+			tasks: [{
+				id: "77AA88C9474350E6"
+				item: "supplementaries:bamboo_spikes"
+				type: "item"
+			}]
+			x: -9.5d
+			y: -8.5d
+		}
+		{
+			description: [
+				"Right- or left-click a mob while holding the cage to capture it."
+				"Right click to release a captured mob."
+				"Shift + right-click to place down the cage."
+				"{image:fzzy_config:textures/gui/sprites/widget/popup/divider.png width:200 height:15 align:center}"
+				"Captured mobs will not age nor be interactable. Chickens can still lay eggs while captured."
+			]
+			id: "2126B066AD3B25AB"
+			rewards: [
+				{
+					id: "0CE2416EE92B21EB"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "53C407091D8AA288"
+					type: "xp"
+					xp: 25
+				}
+			]
+			subtitle: "Can be used to capture small animals and mobs."
+			tasks: [{
+				id: "4AD93B79FD0C4E0D"
+				item: "supplementaries:cage"
+				type: "item"
+			}]
+			x: -12.0d
+			y: -14.5d
+		}
+		{
+			description: [
+				"Items can be inserted into it via automation (Hopper, Dropper, etc)."
+				"{image:fzzy_config:textures/gui/sprites/widget/popup/divider.png width:200 height:15 align:center}"
+				"The Chute can be disabled with a redstone signal or by placing a block under it."
+				"The Chute can drop items through hollow logs."
+			]
+			id: "76FDD87E007F1B21"
+			rewards: [
+				{
+					id: "4FF46351D8C717B2"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "63A76D5002F8DFE2"
+					type: "xp"
+					xp: 25
+				}
+			]
+			subtitle: "any items inserted are instantly dropped under it, always precisely in the center"
+			tasks: [{
+				id: "15E4D6F6113A22F3"
+				item: "quark:chute"
+				type: "item"
+			}]
+			title: "Chute"
+			x: 8.5d
+			y: -13.5d
+		}
+		{
+			description: [
+				"To get items into a pipe simply use a Hopper, Dropper, or any other insertion means you may have handy."
+				"Copper Pipes are rudimentary and don't include any filtering or pathing for items. The way items flow in pipes is based in a small set of rules:"
+				"{@pagebreak}"
+				"&6&oApply the following rules in order&r&r"
+				"1. Items will move down if possible."
+				"2. Items will move forward if possible."
+				"3. At an intersection, items will randomly flow left or right."
+				"4. Items will not go upwards unless that's the only possibility."
+				"5. Items attempting to enter a full container will bounce back (Items bouncing back from pipes remember which direction they came into the pipe, and will avoid that direction)."
+				"6. Items will not flow into disabled (powered) pipes."
+				"7. Items will fall out of pipes with momentum and enter pipes with open ends."
+				"{image:fzzy_config:textures/gui/sprites/widget/popup/divider.png width:200 height:15 align:center}"
+				"&aTips:&r"
+				"Comparators can read how many items are in a pipe."
+				"A pipe with 15 or more items inside at once will break."
+			]
+			icon: "quark:pipe"
+			id: "26A7082E910B0A0F"
+			rewards: [
+				{
+					id: "3131B511F081733C"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "3D9A6372F64A754F"
+					type: "xp"
+					xp: 25
+				}
+			]
+			shape: "goldtier"
+			subtitle: "As you would expect, they transport items from point A to point B"
+			tasks: [
+				{
+					id: "25C8CAE2A47E7115"
+					item: "quark:pipe"
+					type: "item"
+				}
+				{
+					id: "3BE6CAF7B5FCE614"
+					item: "quark:encased_pipe"
+					type: "item"
+				}
+			]
+			title: "Copper Pipes"
+			x: 7.0d
+			y: -11.5d
+		}
+		{
+			description: [
+				"A metallic block is defined as block made of Iron or Copper Ingots or made of things made of Iron or Copper Ingots."
+				"{image:fzzy_config:textures/gui/sprites/widget/popup/divider.png width:200 height:15 align:center}"
+				"When powered, the front (red) side of the Magnet will push blocks forward like a piston, whereas the back side will pull blocks towards it."
+				"{image:fzzy_config:textures/gui/sprites/widget/popup/divider.png width:200 height:15 align:center}"
+				"When multiple Magnets are exerting force upon the same block, the one with the biggest force wins. A magnet's force upon a block is the redstone level applied to it, minus the distance."
+				"{image:fzzy_config:textures/gui/sprites/widget/popup/divider.png width:200 height:15 align:center}"
+				"When a Hopper is moved by a magnet, it'll drop one of its items directly in front of it. If this item is a seed, it'll plant it either directly in front or one block down."
+				"{image:fzzy_config:textures/gui/sprites/widget/popup/divider.png width:200 height:15 align:center}"
+				"When a Stonecutter is moved by a magnet, it'll break any block above it. Very hard blocks such as Obsidian can't be broken like this."
+				"{image:fzzy_config:textures/gui/sprites/widget/popup/divider.png width:200 height:15 align:center}"
+				"When a Cauldron is moved, the items inside will move with it."
+			]
+			id: "22E9C40B8A7AC79E"
+			rewards: [
+				{
+					id: "4083609DEFABF485"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "6DB3F0D0C8F43CC1"
+					type: "xp"
+					xp: 25
+				}
+			]
+			shape: "goldtier"
+			subtitle: "Technical blocks that can move metallic blocks"
+			tasks: [{
+				id: "63AC53B76F993BFE"
+				item: "quark:magnet"
+				type: "item"
+			}]
+			title: "Magnets"
+			x: 7.5d
+			y: -12.5d
+		}
+		{
+			description: ["The signal is higher the closer to the center of the block the player is looking."]
+			id: "747CFEFEA86A681B"
+			rewards: [
+				{
+					id: "064F3E6A52EC8B44"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "2A95FBCC23E3B446"
+					type: "xp"
+					xp: 25
+				}
+			]
+			subtitle: "Emits a redstone signal if a player is looking directly at it"
+			tasks: [{
+				id: "55A7C7C5D5758ED6"
+				item: "quark:ender_watcher"
+				type: "item"
+			}]
+			title: "Ender Watcher"
+			x: 7.5d
+			y: -14.5d
+		}
+		{
+			description: [
+				"Gravisand will not fall unless primed with redstone. However, if gravisand receives a signal, and can not fall, it'll instead float up."
+				"Additionally, gravisand will propagate the signal to any adjacent gravisand blocks, causing them to fall or float as well."
+				"{image:fzzy_config:textures/gui/sprites/widget/popup/divider.png width:200 height:15 align:center}"
+				"It constantly outputs a comparator signal of 15."
+			]
+			id: "72723A62472D91D2"
+			rewards: [
+				{
+					id: "5E05D0BD0753E7FE"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "73EA65A6DBA3B6B8"
+					type: "xp"
+					xp: 25
+				}
+			]
+			subtitle: "Gravisand will not fall unless primed with redstone"
+			tasks: [{
+				id: "7939B4B2B03C79FB"
+				item: "quark:gravisand"
+				type: "item"
+			}]
+			title: "Gravisand"
+			x: 6.5d
+			y: -14.5d
+		}
+		{
+			description: [
+				"Pistons pushing an Iron Rod will have it work as a drill of sorts, breaking any blocks in front in the direction the rod is facing. "
+				"{image:fzzy_config:textures/gui/sprites/widget/popup/divider.png width:200 height:15 align:center}"
+				"Can break anything the piston can push."
+			]
+			id: "0040F6B662E76583"
+			rewards: [
+				{
+					id: "5375E844C1107EAB"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "54B9100D1C087F75"
+					type: "xp"
+					xp: 25
+				}
+			]
+			shape: "irontier"
+			subtitle: "Works as a drill of sorts, breaking any blocks in front of it"
+			tasks: [{
+				id: "267776B96DFCA9BE"
+				item: "quark:iron_rod"
+				type: "item"
+			}]
+			title: "Iron Rod"
+			x: 6.5d
+			y: -12.5d
+		}
+		{
+			description: [
+				"Gold Buttons emit a very short pulse - 2 redstone ticks."
+				"Iron Buttons emit a very long pulse - 5 seconds."
+			]
+			icon: "quark:gold_button"
+			id: "7C593FDECA412DD2"
+			rewards: [
+				{
+					id: "5C23B796FD673E39"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "3A975A064F5CA30F"
+					type: "xp"
+					xp: 25
+				}
+			]
+			shape: "goldtier"
+			subtitle: "Emit signals of different lengths"
+			tasks: [
+				{
+					id: "4D8EB169AC66BD73"
+					item: "quark:gold_button"
+					type: "item"
+				}
+				{
+					id: "195E85581F44C87E"
+					item: "quark:iron_button"
+					type: "item"
+				}
+			]
+			title: "Metal Buttons"
+			x: 8.0d
+			y: -11.5d
+		}
+		{
+			id: "1B9124ABD8D02252"
+			rewards: [
+				{
+					id: "320C31936433DC58"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "2657B45E82B39BE4"
+					type: "xp"
+					xp: 25
+				}
+			]
+			subtitle: "When given a redstone signal from the back, it'll randomly enable either the left or right output"
+			tasks: [{
+				id: "0559DEEA35C5492C"
+				item: "quark:redstone_randomizer"
+				type: "item"
+			}]
+			title: "Redstone Randomizer"
+			x: 9.5d
+			y: -13.5d
+		}
+		{
+			description: ["Differs slightly from the Mojang version as it was made before the snapshot released."]
+			id: "4BFDA5F2D03EFA98"
+			rewards: [
+				{
+					id: "67C1B60637C9746F"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "7BF2615116F85FAE"
+					type: "xp"
+					xp: 25
+				}
+			]
+			shape: "irontier"
+			subtitle: "Backport of the crafter from the 1.21 snapshots"
+			tasks: [{
+				id: "3DCF5FD990D5F387"
+				item: "quark:crafter"
+				type: "item"
+			}]
+			title: "Crafter"
+			x: 10.0d
+			y: -11.5d
+		}
+		{
+			id: "48757D67DD68152C"
+			rewards: [
+				{
+					id: "23912D1B3094962F"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "4463F1119CE5E753"
+					type: "xp"
+					xp: 25
+				}
+			]
+			shape: "diamondtier"
+			subtitle: "Pressure Plates made with obsidian will only trigger when Players walk over them"
+			tasks: [{
+				id: "15C10E026185CA8A"
+				item: "quark:obsidian_pressure_plate"
+				type: "item"
+			}]
+			title: "Obsidian Pressure Plate"
+			x: 4.5d
+			y: -14.5d
+		}
+		{
+			description: [
+				"Right-clicking a block will bind the Abacus to it. After that, look at a different block and it will count the distance between them."
+				"{image:fzzy_config:textures/gui/sprites/widget/popup/divider.png width:200 height:15 align:center}"
+				"The Abacus will count up to 48 blocks, drawing an outline of the counted blocks. The texture of the item will change according to how many blocks are counted. Right-click again to unbind."
+			]
+			id: "323F14E8984D4C73"
+			rewards: [
+				{
+					id: "114C2D11B6F9228B"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "62FF416FC37294E4"
+					type: "xp"
+					xp: 25
+				}
+			]
+			shape: "irontier"
+			subtitle: "It will count the distance between the targeted and hovered block, measured along right angles."
+			tasks: [{
+				id: "4ED97E9C79C9D85C"
+				item: "quark:abacus"
+				type: "item"
+			}]
+			title: "Abacus"
+			x: 3.5d
+			y: -14.5d
+		}
+		{
+			description: [
+				"Cloud levels is 192-196."
+				"The Bottled Cloud can be right clicked to produce a (non-solid) block floating in midair in front of you."
+				"The cloud block disappears after a few seconds, but you can right click it with any other block to replace the two."
+				"The cloud will go back in the bottle when you do this."
+			]
+			id: "5E0E022DB608FFC1"
+			rewards: [
+				{
+					id: "140C397CC2CE54E4"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "682E405C3ED62F0F"
+					type: "xp"
+					xp: 25
+				}
+			]
+			subtitle: "Using a Glass Bottle at the cloud levels will get you a Bottled Cloud."
+			tasks: [{
+				id: "4F57047BF392E27E"
+				item: "quark:bottled_cloud"
+				type: "item"
+			}]
+			title: "Bottled Cloud"
+			x: 2.5d
+			y: -14.5d
+		}
+		{
+			id: "1171584A851FF7A1"
+			rewards: [
+				{
+					id: "0FED88A965A1E109"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "3AED26731DD7F952"
+					type: "xp"
+					xp: 25
+				}
+			]
+			shape: "diamondtier"
+			subtitle: "The pickarang is a boomerang pickaxe - throw it, it breaks whatever it hits, and comes back to you with the drops."
+			tasks: [{
+				id: "50091B3486DC703A"
+				item: {
+					Count: 1
+					id: "quark:pickarang"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			x: -7.0d
+			y: -13.5d
+		}
+		{
+			id: "7EF69B47BB2DC106"
+			rewards: [
+				{
+					id: "486454F681C264A0"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "5A52881DEF4F5057"
+					type: "xp"
+					xp: 25
+				}
+			]
+			subtitle: "The Trowel, when right clicked, will place a random block from your hotbar."
+			tasks: [{
+				id: "4D38269142EDE257"
+				item: "quark:trowel"
+				type: "item"
+			}]
+			title: "Trowel"
+			x: -0.5d
+			y: -14.5d
+		}
+		{
+			description: ["Combining an Ancient Tome in an Anvil with an item containing that enchantment will increase its level by one, up to one over the cap."]
+			icon: {
+				Count: 1
+				id: "quark:ancient_tome"
+				tag: {
+					StoredEnchantments: [{
+						id: "minecraft:feather_falling"
+						lvl: 4s
+					}]
+				}
+			}
+			id: "2FCB26EFFA0A534A"
+			rewards: [
+				{
+					id: "46E022BC28B62430"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "030F7C8D443E0498"
+					type: "xp"
+					xp: 25
+				}
+			]
+			subtitle: "Usable to upgrade enchantments."
+			tasks: [{
+				id: "16E53522FE2974B9"
+				type: "checkmark"
+			}]
+			title: "Ancient Tomes"
+			x: 0.5d
+			y: -14.5d
+		}
+		{
+			description: [
+				"Tinted Glass can also be used to dim the beam."
+				"{image:fzzy_config:textures/gui/sprites/widget/popup/divider.png width:200 height:15 align:center}"
+				"&aNote:&r that for a beacon to function, the final segment must always face upwards towards the sky."
+			]
+			icon: "quark:violet_corundum_cluster"
+			id: "0FF9EFE394FAC822"
+			rewards: [
+				{
+					id: "78C2FA89A1ADD0EA"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "217A8C7C6CBEDB4F"
+					type: "xp"
+					xp: 25
+				}
+			]
+			shape: "goldtier"
+			subtitle: "The Cluster variants of Corundum can be used to redirect beacon beams and change their color"
+			tasks: [
+				{
+					id: "51AE42F3E8EB0CCE"
+					item: "quark:red_corundum_cluster"
+					type: "item"
+				}
+				{
+					id: "15BFE3B5DA452762"
+					item: "quark:orange_corundum_cluster"
+					type: "item"
+				}
+				{
+					id: "1296B9DE63105FA4"
+					item: "quark:yellow_corundum_cluster"
+					type: "item"
+				}
+				{
+					id: "4621A2263B4BD7D6"
+					item: "quark:green_corundum_cluster"
+					type: "item"
+				}
+				{
+					id: "46C7B3F025BE4149"
+					item: "quark:blue_corundum_cluster"
+					type: "item"
+				}
+				{
+					id: "6F3B63CBDA07E719"
+					item: "quark:indigo_corundum_cluster"
+					type: "item"
+				}
+				{
+					id: "273917FFB78257F6"
+					item: "quark:violet_corundum_cluster"
+					type: "item"
+				}
+				{
+					id: "2FAD732B8F79897A"
+					item: "quark:white_corundum_cluster"
+					type: "item"
+				}
+				{
+					id: "77A4033DF200DDC7"
+					item: "quark:black_corundum_cluster"
+					type: "item"
+				}
+			]
+			title: "Beacon Redirection"
+			x: -12.5d
+			y: -10.5d
+		}
+		{
+			description: ["You can also climb the inside of a vertical Hollow Log like a ladder."]
+			icon: "quark:hollow_oak_log"
+			id: "000CF2D6751D7AC8"
+			rewards: [
+				{
+					id: "671F271457771E70"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "552DDFCEEDF7833B"
+					type: "xp"
+					xp: 25
+				}
+			]
+			subtitle: "You can sneak next to a horizontal Hollow Log to climb inside"
+			tasks: [{
+				id: "7A18E27852D427CA"
+				type: "checkmark"
+			}]
+			title: "Hollow Logs"
+			x: -12.5d
+			y: -8.5d
+		}
+		{
+			description: [
+				"Ashen Trees do not generate naturally, instead ashen saplings can be dug up by Sniffers."
+				"{image:fzzy_config:textures/gui/sprites/widget/popup/divider.png width:200 height:15 align:center}"
+				"Ashen Trees will also drop the Enchanted Fruit."
+				"When eaten Enchanted Fruit will grant a small amount of experience."
+			]
+			icon: "quark:ancient_sapling"
+			id: "1A9132260288973A"
+			rewards: [
+				{
+					id: "6A5F1C8CF737C125"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "7B931C9775B232F2"
+					type: "xp"
+					xp: 25
+				}
+			]
+			shape: "goldtier"
+			subtitle: "Ashen Wood is a new wood type which can be obtained from Ashen Trees"
+			tasks: [
+				{
+					id: "294432588A037AC6"
+					item: "quark:ancient_sapling"
+					type: "item"
+				}
+				{
+					id: "4E910136EB9A6C77"
+					item: "quark:ancient_fruit"
+					type: "item"
+				}
+				{
+					id: "573F6EC62B72D0E5"
+					item: "quark:ancient_log"
+					type: "item"
+				}
+			]
+			title: "Ashen Wood"
+			x: -11.5d
+			y: -10.5d
+		}
+		{
+			description: ["Additional stool features include being able to place blocks over them, which makes them get bigger to match, and being able to stay on them even when moved by pistons."]
+			id: "4E0115408D173351"
+			rewards: [
+				{
+					id: "7D642ED08ABC4D2D"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "18C84911767EBC0B"
+					type: "xp"
+					xp: 25
+				}
+			]
+			subtitle: "As you can expect, you can sit on them!"
+			tasks: [{
+				id: "5D9DAB58FEF2C66C"
+				item: "quark:white_stool"
+				type: "item"
+			}]
+			title: "Stools"
+			x: -12.5d
+			y: -9.5d
+		}
+		{
+			description: [
+				"If an ender teleportation would result in the target being placed on a Myalite Viaduct, the target will instead land on the opposite end of the viaduct."
+				"{image:fzzy_config:textures/gui/sprites/widget/popup/divider.png width:200 height:15 align:center}"
+				"Viaducts longer than 24 blocks or that would cause a loop are illegal, and ender teleportion will function as normal."
+				"On a fork, the destination is chosen randomly."
+				"{image:fzzy_config:textures/gui/sprites/widget/popup/divider.png width:200 height:15 align:center}"
+				"Viaducts can be moved with pistons."
+			]
+			id: "4D73B88DDA7AE158"
+			rewards: [
+				{
+					id: "33FFBEE001027C5B"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "1D6FCF0C8370C4B3"
+					type: "xp"
+					xp: 25
+				}
+			]
+			subtitle: "Myalite Viaducts redirect ender teleportation caused by ender pearls or endermen teleporting"
+			tasks: [{
+				id: "67013C164449340A"
+				item: "quark:myalite_crystal"
+				type: "item"
+			}]
+			title: "Myalite Viaducts"
+			x: -10.5d
+			y: -10.5d
+		}
+		{
+			id: "2A5715F78C57A084"
+			rewards: [
+				{
+					id: "7D5D0A2552EB745B"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "59FBAB4C443D7C94"
+					type: "xp"
+					xp: 25
+				}
+			]
+			subtitle: "Can not be moved by Pistons"
+			tasks: [{
+				id: "381CAE1CF366938A"
+				item: "quark:sturdy_stone"
+				type: "item"
+			}]
+			title: "Sturdy Stone"
+			x: -9.5d
+			y: -9.5d
+		}
+		{
+			description: [
+				"If you put a banner inside a Glass Item Frame, it'll sit flat with the wall with the pattern that's in it, allowing you to create a wallpaper of sorts."
+				"{image:fzzy_config:textures/gui/sprites/widget/popup/divider.png width:200 height:15 align:center}"
+				"Shields display differently in Glass Item Frames, they sit flush with the wall and look nice."
+				"{image:fzzy_config:textures/gui/sprites/widget/popup/divider.png width:200 height:15 align:center}"
+				"Glass Item Frames can attach to the front of a Sign that's placed on the floor. This will make the item show flush with the sign."
+				"{image:fzzy_config:textures/gui/sprites/widget/popup/divider.png width:200 height:15 align:center}"
+				"Glass Item Frames can be right clicked through to open chests or other inventories."
+				"{image:fzzy_config:textures/gui/sprites/widget/popup/divider.png width:200 height:15 align:center}"
+				"When a map is placed in a Glass Item Frame, it will update in real time. Perfect for spies!"
+			]
+			icon: "quark:glass_item_frame"
+			id: "721BD16C67CF17A0"
+			rewards: [
+				{
+					id: "45EB1A7B3FDA4CFC"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "6A5B91E72C249768"
+					type: "xp"
+					xp: 25
+				}
+			]
+			subtitle: "Glass Item Frames will hide the frame around the item when you put it in"
+			tasks: [
+				{
+					id: "16211F428EDCEBBB"
+					item: "quark:glass_item_frame"
+					type: "item"
+				}
+				{
+					id: "26239B3119CD9AA4"
+					item: "quark:glowing_glass_item_frame"
+					type: "item"
+				}
+			]
+			x: -9.5d
+			y: -10.5d
+		}
+		{
+			description: ["Chains and lanterns can also connect to them."]
+			id: "23432EB9171FC194"
+			rewards: [
+				{
+					id: "42170EB33C554DF8"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "388DE066852E97AE"
+					type: "xp"
+					xp: 25
+				}
+			]
+			subtitle: "These are slim log style blocks you can lay down vertically or horizontally"
+			tasks: [{
+				id: "0A58447695E465C1"
+				item: "quark:oak_post"
+				type: "item"
+			}]
+			title: "Wooden Posts"
+			x: -8.5d
+			y: -11.0d
+		}
+		{
+			description: [
+				"Animals are afraid of walking on it, and will never do it."
+				"Items will just fall through the gaps."
+				"Players, monsters, and other entities will just walk through normally."
+				"Grates can be crawled under, similar to hollow logs."
+				"{image:fzzy_config:textures/gui/sprites/widget/popup/divider.png width:200 height:15 align:center}"
+				"Animals being held by a leash will also walk over the block just fine."
+			]
+			id: "0E28B98E96E95970"
+			rewards: [
+				{
+					id: "580135EB2F0225C5"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "0F2706207D9173E7"
+					type: "xp"
+					xp: 25
+				}
+			]
+			subtitle: "The Iron Grate is a new block with multiple uses"
+			tasks: [{
+				id: "764AE690461A27CF"
+				item: "quark:grate"
+				type: "item"
+			}]
+			title: "Iron Grate"
+			x: -9.5d
+			y: -11.5d
+		}
+		{
+			description: [
+				"A full stack of an item will take up 64, but 64 different items will also take up the same amount."
+				"{image:fzzy_config:textures/gui/sprites/widget/popup/divider.png width:200 height:15 align:center}"
+				"This makes the crate not very good for storing bulk items, but excellent for storing a high variety of items in one spot, or for collecting unstackables."
+			]
+			id: "63AE0CD914FC7733"
+			rewards: [
+				{
+					id: "109FDE28BC04C0E4"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "55F188F4C739660C"
+					type: "xp"
+					xp: 25
+				}
+			]
+			subtitle: "Alternative storage block that can hold up to 640 items"
+			tasks: [{
+				id: "3697762A6A3F7120"
+				item: "quark:crate"
+				type: "item"
+			}]
+			title: "Storage Crate"
+			x: -8.5d
+			y: -9.0d
+		}
+		{
+			id: "447E43546836726D"
+			rewards: [
+				{
+					id: "41C6C27D616A29DC"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "19FC802F0048C9A0"
+					type: "xp"
+					xp: 25
+				}
+			]
+			subtitle: "Enhances an item by applying the Soulbound effect to it."
+			tasks: [{
+				id: "39520FFCA6741F6C"
+				item: "galosphere:preserved_template"
+				type: "item"
+			}]
+			title: "Preserved effect"
+			x: -5.0d
+			y: -14.5d
+		}
+		{
+			id: "72D23F8F9F0F5E1E"
+			rewards: [
+				{
+					id: "1D956C1BF3170A81"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "64D0B78A4DC18494"
+					type: "xp"
+					xp: 25
+				}
+			]
+			subtitle: "Throws a Spectre, allowing you to see through the Spectre's eyes at the landing location."
+			tasks: [{
+				id: "040956B730D79BA9"
+				item: "galosphere:spectre_flare"
+				type: "item"
+			}]
+			x: -5.0d
+			y: -13.5d
+		}
+		{
+			description: [
+				"If you look down - creates columns around you."
+				"If you look to the side - creates a long strip of columns in the direction of your gaze."
+			]
+			id: "53B561A1AFD1FE0E"
+			rewards: [
+				{
+					id: "68B8B1FE3FFF6803"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "1FEBF67100D666BF"
+					type: "xp"
+					xp: 25
+				}
+			]
+			shape: "goldtier"
+			subtitle: "Creates columns that deal damage to enemies."
+			tasks: [{
+				id: "5D1BB10B174734CD"
+				item: {
+					Count: 1
+					id: "galosphere:saltbound_tablet"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			x: -4.0d
+			y: -13.5d
+		}
+		{
+			description: ["On land it emits a faint light, but glows very brightly underwater."]
+			id: "28EA701DD35B1776"
+			rewards: [
+				{
+					id: "6C586000C4E8BAB3"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "73BD2A9A54CE3434"
+					type: "xp"
+					xp: 25
+				}
+			]
+			shape: "goldtier"
+			subtitle: "Covers everything with glowing moss."
+			tasks: [{
+				id: "71225441DE735E29"
+				item: "galosphere:glow_flare"
+				type: "item"
+			}]
+			x: -2.0d
+			y: -14.5d
+		}
+		{
+			description: ["Allows you to move freely through blocks."]
+			id: "281F285D738A0F88"
+			rewards: [
+				{
+					id: "136AAB9699772F61"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "406C38B9E156F71A"
+					type: "xp"
+					xp: 25
+				}
+			]
+			subtitle: "Applies the Astral effect when used."
+			tasks: [{
+				id: "028E88095212F5CE"
+				item: {
+					Count: 1
+					id: "minecraft:potion"
+					tag: {
+						Potion: "galosphere:astral"
+					}
+				}
+				type: "item"
+			}]
+			x: -4.0d
+			y: -14.5d
+		}
+		{
+			description: [
+				"The &aSilver Bomb&r can be upgraded at the &aCombution Table&r."
+				"{image:fzzy_config:textures/gui/sprites/widget/popup/divider.png width:200 height:15 align:center}"
+				"&aGunpowder&r - Increases explosion radius and damage."
+				"&aSlime&r - The bomb additionally bounces off surfaces."
+				"&aString&r - Adds a delay before explosion."
+				"{image:fzzy_config:textures/gui/sprites/widget/popup/divider.png width:200 height:15 align:center}"
+				"Each modifier can be upgraded up to 3 times."
+			]
+			icon: "galosphere:silver_bomb"
+			id: "0A0C812AA3874EC1"
+			rewards: [
+				{
+					id: "12670E4CBBBA563F"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "3E5BE3819E7CD5DD"
+					type: "xp"
+					xp: 25
+				}
+			]
+			shape: "irontier"
+			subtitle: "A throwable bomb that explodes, damaging enemies and breaking blocks."
+			tasks: [
+				{
+					id: "0FA7BD4ACFCF6463"
+					item: "galosphere:silver_bomb"
+					type: "item"
+				}
+				{
+					id: "4857F7ABB8020B99"
+					item: "galosphere:combustion_table"
+					type: "item"
+				}
+				{
+					id: "0CECFE713735FEB5"
+					item: "minecraft:slime_ball"
+					type: "item"
+				}
+				{
+					id: "6462D7C4643BB77B"
+					item: "minecraft:gunpowder"
+					type: "item"
+				}
+				{
+					id: "5CBCFDE3F4C0853E"
+					item: "minecraft:string"
+					type: "item"
+				}
+			]
+			title: "Silver Bomb"
+			x: -2.0d
+			y: -13.5d
+		}
+		{
+			description: [
+				"Can be grown like bamboo."
+				"&aLichen Cordyceps&r replenishes air if eaten underwater."
+				"{image:fzzy_config:textures/gui/sprites/widget/popup/divider.png width:200 height:15 align:center}"
+				"&aGolden Lichen Cordyceps&r restores a lot of air and allows you to get an additional 4 air bubbles on top of the maximum."
+			]
+			icon: "galosphere:lichen_cordyceps"
+			id: "6D15A1BAD30B6BB2"
+			rewards: [
+				{
+					id: "6A989BB4DEA8BFEE"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "0CB4EDBF41C39CE6"
+					type: "xp"
+					xp: 25
+				}
+			]
+			shape: "goldtier"
+			subtitle: "The plant looks like bamboo, but grows underground."
+			tasks: [
+				{
+					id: "539BACB5D6086E98"
+					item: "galosphere:lichen_cordyceps"
+					type: "item"
+				}
+				{
+					id: "7A3441811B63DEF5"
+					item: "galosphere:golden_lichen_cordyceps"
+					type: "item"
+				}
+			]
+			x: -3.0d
+			y: -13.5d
+		}
+		{
+			description: [
+				"Can move any entities (objects, monsters, players, etc.)"
+				"Additionally, entities lose their attraction power while interacting with &aStranded Membrane Block&r."
+			]
+			id: "55C80A1A9A0C7EF2"
+			rewards: [
+				{
+					id: "1FB72ED1EDB94BCF"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "6DD0E6EAD72A7FA0"
+					type: "xp"
+					xp: 25
+				}
+			]
+			subtitle: "Moves objects that come into contact with it."
+			tasks: [{
+				id: "38DE65462DA0557E"
+				item: "galosphere:stranded_membrane_block"
+				type: "item"
+			}]
+			x: -11.5d
+			y: -9.5d
+		}
+		{
+			description: ["If you add 1 &eLumiere Shard&r to the compost, you will get &aGlowstone Dust&r instead of &aBone Meal&r."]
+			icon: "galosphere:lumiere_shard"
+			id: "77D18C87D1C6ABCF"
+			rewards: [
+				{
+					id: "68AB14BE8AFD3C9A"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "7A07D6DFBCF0CF5D"
+					type: "xp"
+					xp: 25
+				}
+			]
+			shape: "goldtier"
+			subtitle: "Lumiere allows composting of Glowstone Dust."
+			tasks: [
+				{
+					id: "46625D7831DEDADD"
+					item: "minecraft:glowstone_dust"
+					type: "item"
+				}
+				{
+					id: "6520A1E810977D15"
+					item: "galosphere:lumiere_shard"
+					type: "item"
+				}
+			]
+			title: "Glowdust production"
+			x: -12.5d
+			y: -11.5d
+		}
+		{
+			description: [
+				"If you place another block above a charged Lumiere block, the charge will be transferred to the block above and change it."
+				"{image:fzzy_config:textures/gui/sprites/widget/popup/divider.png width:200 height:15 align:center}"
+				"Currently working with &aCobblestone&r, &aRed Sand&r and &aGranite&r."
+			]
+			icon: "galosphere:charged_lumiere_block"
+			id: "44520E291F8088B3"
+			rewards: [
+				{
+					id: "6A9EA5E075512DBD"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "6208A624D29CDAE4"
+					type: "xp"
+					xp: 25
+				}
+			]
+			shape: "goldtier"
+			subtitle: "The Lumiere block that is struck by lightning is charged."
+			tasks: [
+				{
+					id: "31D1BA5DE64B4489"
+					item: "galosphere:charged_lumiere_block"
+					type: "item"
+				}
+				{
+					id: "43386944E9B1F1CC"
+					item: "galosphere:lumiere_block"
+					type: "item"
+				}
+			]
+			x: -10.5d
+			y: -9.5d
+		}
+		{
+			description: ["If there is an &aAmethyst&r, &aAllurite&r, or &aLumiere&r Cluster near a &eSparkle&r, the &eSparkle&r will bite it, forming a &aGlinted&r version."]
+			icon: "galosphere:glinted_amethyst_cluster"
+			id: "470EBDD4D98FCA2D"
+			rewards: [
+				{
+					id: "7FB5DF3B96572327"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "3DA424F550640C85"
+					type: "xp"
+					xp: 25
+				}
+			]
+			shape: "diamondtier"
+			subtitle: "They appear as a result of Sparkles eating regular crystals."
+			tasks: [
+				{
+					id: "16B2432C672A4F91"
+					item: "galosphere:glinted_amethyst_cluster"
+					type: "item"
+				}
+				{
+					id: "01D178AEDDE66487"
+					item: "galosphere:glinted_allurite_cluster"
+					type: "item"
+				}
+				{
+					id: "4059964B78DDD00D"
+					item: "galosphere:glinted_lumiere_cluster"
+					type: "item"
+				}
+			]
+			title: "Glinted Clusters"
+			x: -11.0d
+			y: -7.5d
+		}
+		{
+			description: [
+				"Charges with Alurit Blocks."
+				"Maximum 4 charges."
+				"Teleportation consumes a charge."
+				"Works within a radius of 16 blocks."
+				"{image:fzzy_config:textures/gui/sprites/widget/popup/divider.png width:200 height:15 align:center}"
+				"Also prevents damage taken from teleportation with pearls."
+				"Also work with Chorus Fruit."
+			]
+			icon: "galosphere:warped_anchor"
+			id: "35A479D48C1A1B49"
+			rewards: [
+				{
+					id: "4E1D4341C696DE2F"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "51675C6EF02414BB"
+					type: "xp"
+					xp: 25
+				}
+			]
+			subtitle: "Teleports you to itself if your ender pearl falls nearby."
+			tasks: [
+				{
+					id: "60D0BA54E2AC8BE2"
+					item: "galosphere:warped_anchor"
+					type: "item"
+				}
+				{
+					id: "616A008C7992F979"
+					item: "galosphere:allurite_block"
+					type: "item"
+				}
+			]
+			title: "Warped Anchor"
+			x: -8.5d
+			y: -10.0d
+		}
+		{
+			description: [
+				"If placed on top of a filled composter downwards, it will randomly turn the compost into coarse dirt."
+				"{image:fzzy_config:textures/gui/sprites/widget/popup/divider.png width:200 height:15 align:center}"
+				"If placed on top of a copper block, it has a higher chance of aging it."
+			]
+			id: "05B90AF132F8C45A"
+			rewards: [
+				{
+					id: "34F1938C139DCB75"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "1FAF29D90B7164BC"
+					type: "xp"
+					xp: 25
+				}
+			]
+			shape: "goldtier"
+			subtitle: "Affects blocks below it."
+			tasks: [{
+				id: "4F9B32276C7A2A3A"
+				item: "galosphere:pink_salt_straw"
+				type: "item"
+			}]
+			x: -10.0d
+			y: -7.5d
+		}
+		{
+			description: [
+				"Charged with an Lumiere Block."
+				"Works for 20 seconds."
+				"{image:fzzy_config:textures/gui/sprites/widget/popup/divider.png width:200 height:15 align:center}"
+				"Highlights blocks that have enough light in yellow, and blocks that don't have enough light in blue (blocks that monsters can spawn on)."
+				"Highlights all monsters within range."
+				"Emits a redstone signal equal to the number of monsters."
+				"Can be activated by redstone."
+			]
+			icon: "galosphere:monstrometer"
+			id: "15A8F10FA0B26E39"
+			rewards: [
+				{
+					id: "47A305F2D5E4F05E"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "076959A3DDCD7F3F"
+					type: "xp"
+					xp: 25
+				}
+			]
+			subtitle: "Creates an Aluritic aura around Monstromer."
+			tasks: [
+				{
+					id: "0EEDC613905213A8"
+					item: "galosphere:monstrometer"
+					type: "item"
+				}
+				{
+					id: "1352BDD4C756AE36"
+					item: "galosphere:lumiere_block"
+					type: "item"
+				}
+			]
+			title: "Monstrometer"
+			x: -8.5d
+			y: -12.0d
+		}
+		{
+			description: [
+				"If activated with redstone, it becomes solid and does not allow entities to pass through it."
+				"Also, monsters can't pass through it."
+			]
+			id: "73A8E1D13946F79D"
+			rewards: [
+				{
+					id: "54D9490EA3D06F20"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "534606DBEAF73857"
+					type: "xp"
+					xp: 25
+				}
+			]
+			subtitle: "Takes the shape of another block and does not interfere with movement."
+			tasks: [{
+				id: "0D41F65FDDE2C76D"
+				item: "galosphere:shadow_frame"
+				type: "item"
+			}]
+			title: "Shadow Frame"
+			x: 3.0d
+			y: -12.5d
+		}
+		{
+			description: ["Emits a redstone signal depending on the weight of the block."]
+			id: "41DA0E6E81B76A2A"
+			rewards: [
+				{
+					id: "23DAC00C06C7F229"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					id: "02AF9D93BBF30E6D"
+					type: "xp"
+					xp: 25
+				}
+			]
+			subtitle: "Weighs the block above it."
+			tasks: [{
+				id: "4127D63E53B0454C"
+				item: "galosphere:silver_balance"
+				type: "item"
+			}]
+			x: 2.5d
+			y: -13.5d
+		}
+		{
+			description: [
+				"Craft the Ruby Laser to detect entities and blocks in its path. "
+				"{image:fzzy_config:textures/gui/sprites/widget/popup/divider.png width:200 height:15 align:center}"
+				"Its beam is invisible unless you wear Ruby Lenses on your head. "
+				""
+				"Alternatively, place Glass directly in front of the Ruby Laser to make its beam visible. "
+				"Stained Glass tints the laser beam."
+				"{image:fzzy_config:textures/gui/sprites/widget/popup/divider.png width:200 height:15 align:center}"
+				"Its block output is proportional to how close the block or entity is. "
+				""
+				"The laser beam detects block hitboxes. Right-clicking the laser will turn it Tinted, making it only detect blocks and not entities. "
+				"{image:fzzy_config:textures/gui/sprites/widget/popup/divider.png width:200 height:15 align:center}"
+				"Placing Tinted Glass in the path of the laser will shorten it's range without redstone output. Currently only works with Tinted mode."
+			]
+			id: "60900097890FB07F"
+			rewards: [{
+				id: "6D8B064C555120F6"
+				type: "xp"
+				xp: 100
+			}]
+			shape: "goldtier"
+			subtitle: "Detecting Entities With Optics"
+			tasks: [{
+				id: "59F9A97189230A63"
+				item: "rubinated_nether:ruby_laser"
+				type: "item"
+			}]
+			x: 9.0d
+			y: -11.5d
+		}
+	]
+	title: "Additions+"
+}

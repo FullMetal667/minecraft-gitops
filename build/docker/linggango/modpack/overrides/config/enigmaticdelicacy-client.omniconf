@@ -1,0 +1,19 @@
+# Configuration File
+
+@CONFIG_VERSION: 1.1
+
+##########################################################################################################
+# Generic Config
+#--------------------------------------------------------------------------------------------------------#
+# Some more different stuff
+##########################################################################################################
+
+"Generic Config" {
+    # Whether to render the duration bar of the Abyss effect. [default: true]
+    B:AbyssalStewBarDisplay=true
+
+    # The extra nutrition modifier when have Astral Cruet in the inventory. Measured in percentage. [range: 0 ~ 100, default: 20]
+    I:AstralCruetExtraNutritionModifier=20
+}
+
+

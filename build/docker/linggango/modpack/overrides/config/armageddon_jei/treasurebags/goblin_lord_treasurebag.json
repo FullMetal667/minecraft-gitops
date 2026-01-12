@@ -1,0 +1,41 @@
+{
+  "bag_item": "armageddon_mod:goblin_lord_treasure_bagg",
+  "summon_item": "armageddon_mod:strange_coin",
+  "drops": [
+    {
+      "item": "minecraft:golden_apple",
+      "chance": 1.0,
+      "min_quantity": 1,
+      "max_quantity": 3,
+      "config_flag": "none"
+    },
+    {
+      "item": "armageddon_mod:gilded_nugget",
+      "chance": 1.0,
+      "min_quantity": 4,
+      "max_quantity": 8,
+      "config_flag": "none"
+    },
+    {
+      "item": "armageddon_mod:gilded_plate",
+      "chance": 1.0,
+      "min_quantity": 4,
+      "max_quantity": 7,
+      "config_flag": "none"
+    },
+    {
+      "item": "armageddon_mod:gilded_ingot_smithing_template",
+      "chance": 1.0,
+      "min_quantity": 4,
+      "max_quantity": 7,
+      "config_flag": "none"
+    },
+    {
+      "item": "minecraft:gold_ingot",
+      "chance": 1.0,
+      "min_quantity": 5,
+      "max_quantity": 10,
+      "config_flag": "ores"
+    }
+  ]
+}

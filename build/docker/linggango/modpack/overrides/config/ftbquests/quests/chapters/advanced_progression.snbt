@@ -1,0 +1,1039 @@
+{
+	autofocus_id: "43ACAF3A3EA50806"
+	default_hide_dependency_lines: false
+	default_quest_shape: "netheritetier"
+	filename: "advanced_progression"
+	group: "3C6AB1DE39D4F441"
+	icon: {
+		Count: 1
+		id: "ftbquests:custom_icon"
+		tag: {
+			Icon: "composite_material:item/disenchanted_book"
+		}
+	}
+	id: "2F1A384416C57A23"
+	images: [
+		{
+			click: "a"
+			height: 8.0d
+			hover: ["Tier Graph"]
+			image: "terramity:textures/screens/the_graph.png"
+			order: 1
+			rotation: 0.0d
+			width: 8.0d
+			x: -4.72959216716125d
+			y: -2.2173202095156483d
+		}
+		{
+			dev: true
+			height: 1.0d
+			hover: ["Questlines belong to me, and is protected by all rights reserved. Do not try to steal without an explicit permission from me."]
+			image: "fancymenu:textures/buddy/gui/button_close_normal.png"
+			order: 2
+			rotation: 0.0d
+			width: 1.0d
+			x: -3.5d
+			y: -5.0d
+		}
+		{
+			height: 1.0d
+			image: "terramity:textures/particle/ultra_glint_no_gravity_4.png"
+			rotation: 0.0d
+			width: 1.0d
+			x: -0.7596396581219125d
+			y: 1.9992355065109422d
+		}
+		{
+			height: 1.5d
+			image: "customtextures:textures/terramitylogo.png"
+			rotation: 0.0d
+			width: 10.0d
+			x: -11.5d
+			y: -10.5d
+		}
+		{
+			height: 1.0d
+			image: "terramity:textures/particle/ultra_glint_no_gravity_4.png"
+			rotation: 0.0d
+			width: 1.0d
+			x: 0.3475031990209416d
+			y: 3.534949792225234d
+		}
+		{
+			height: 7.0d
+			image: "ldlib:textures/gui/bordered_background.png"
+			rotation: 0.0d
+			width: 7.0d
+			x: -5.515306452875535d
+			y: -2.753034495229933d
+		}
+	]
+	order_index: 2
+	progression_mode: "flexible"
+	quest_links: [ ]
+	quests: [
+		{
+			description: [
+				"Terramity is a mod that adds a large amount of new content to the game and adjusts the progression while doing so."
+				""
+				"This questline will guide you through the mod's features!"
+				""
+				"There is also a graph that will help you track the progression."
+				""
+				"&c&lWarning: The Netherite pickaxe will not work on future tiers, so use Terramity's pickaxes!&r&r"
+			]
+			icon: {
+				Count: 1
+				id: "ftbquests:custom_icon"
+				tag: {
+					Icon: "composite_material:item/disenchanted_book"
+				}
+			}
+			id: "43ACAF3A3EA50806"
+			rewards: [{
+				id: "7353F96CE66B37CB"
+				type: "xp"
+				xp: 5
+			}]
+			shape: "square"
+			size: 1.5d
+			subtitle: "In-game Wiki"
+			tasks: [{
+				disable_toast: true
+				id: "6298A3FB5D09B054"
+				item: {
+					Count: 1
+					id: "patchouli:guide_book"
+					tag: {
+						"patchouli:book": "terramity:terramity_guidebook"
+					}
+				}
+				type: "item"
+			}]
+			x: -11.5d
+			y: -9.0d
+		}
+		{
+			dependencies: ["0F67904477CEA3A9"]
+			description: [
+				"&cGob, the King of Gnomes&r was a small gnome.. until he took creatine and other things.."
+				""
+				"Gob, King of Gnomes can be summoned by using a Red Gnome Hat at the Golden Gnome Statue in the Court of Gnomes."
+				""
+				"{ \"text\": \"Court Of Gnomes Locator\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"34804479F4207A1F\" } }"
+				""
+				"{image:customtextures:textures/courtgnome.png width:250 height:100 align:center}"
+				"{image:customtextures:textures/courtgnome2.png width:250 height:100 align:center}"
+			]
+			hide_dependency_lines: false
+			id: "5BF85D0A3254B959"
+			shape: "pentagon"
+			size: 1.0d
+			subtitle: "&8[Click to read]"
+			tasks: [{
+				entity: "terramity:gob"
+				icon: {
+					Count: 1
+					id: "terramity:gobs_claymore"
+					tag: {
+						Damage: 0
+					}
+				}
+				id: "43A2C67409663E54"
+				title: "Kill &cGob, King Of The Gnomes"
+				type: "kill"
+				value: 1L
+			}]
+			title: "Defeat Gob"
+			x: -9.5d
+			y: -7.0d
+		}
+		{
+			dependencies: ["16127A006FEEAF69"]
+			description: [
+				"You may have always found Sniffers too bland and boring... until now!"
+				""
+				"The Super Sniffer can be spawned by striking a normal Sniffer with lightning!"
+				""
+				"It is recommended to use the &eLightning Staff&r to strike near a Sniffer for this transformation."
+			]
+			hide_dependency_lines: false
+			id: "157C39FF1051EA3E"
+			rewards: [{
+				id: "712DE2BB0EA5DCFC"
+				item: "plushie_buddies:plushie_sniffer"
+				type: "item"
+			}]
+			shape: "pentagon"
+			size: 1.0d
+			subtitle: "&8[Click to read]"
+			tasks: [{
+				entity: "terramity:super_sniffer"
+				icon: "terramity:kamehameha"
+				id: "6B472B33006A7E62"
+				title: "Slay &cThe Super Sniffer&r"
+				type: "kill"
+				value: 1L
+			}]
+			title: "Defeat Super Sniffer"
+			x: -13.5d
+			y: -7.0d
+		}
+		{
+			dependencies: ["2932C7DEBC10B9D3"]
+			description: [
+				"Can be found on nether roof, blended in bedrocks."
+				""
+				"You need Enhanced Terramity Pickaxes to mine!"
+			]
+			hide_dependency_lines: false
+			icon: "terramity:black_matter"
+			id: "2C6FC2D93C93E3DC"
+			rewards: [{
+				id: "23455E466D4E94CC"
+				item: "terramity:black_matter"
+				random_bonus: 3
+				type: "item"
+			}]
+			shape: "pentagon"
+			size: 1.0d
+			subtitle: "It can be only obtained after defeating the Trial Guardian and obtaining a perish staff."
+			tasks: [{
+				id: "24B395F87DFFF9B8"
+				item: "terramity:black_matter"
+				type: "item"
+			}]
+			x: -13.0d
+			y: -3.0d
+		}
+		{
+			dependencies: ["516A877FEC4701DD"]
+			description: [
+				"Trial Guardian is.. just guarding his trial."
+				""
+				"Can be spawned by inserting a &eSpire Key&r at the lock in the basement of the Trial Tower."
+				""
+				""
+				"{ \"text\": \"Trial Guardian Locator\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"27E7F8F02A4ED69E\" } }"
+				""
+				"{image:customtextures:textures/trialspire.png width:250 height:100 align:center}"
+			]
+			hide_dependency_lines: false
+			icon: {
+				Count: 1
+				id: "ftbquests:custom_icon"
+				tag: {
+					Icon: "brutality:item/curio/head/trial_guardian_hands/trial_guardian_hands_inventory"
+				}
+			}
+			icon_scale: 1.3d
+			id: "2932C7DEBC10B9D3"
+			rewards: [{
+				icon: {
+					Count: 1
+					id: "ftbquests:custom_icon"
+					tag: {
+						Icon: "celestisynth:textures/abilityicon/skill/aquaflora_skill_icon_3.png"
+					}
+				}
+				id: "193CF30464297452"
+				table_id: 8699295573854160387L
+				type: "random"
+			}]
+			shape: "rsquare"
+			size: 1.0d
+			subtitle: "&8[Click to read]"
+			tasks: [{
+				entity: "terramity:trial_guardian"
+				icon: {
+					Count: 1
+					id: "terramity:perish_staff"
+					tag: {
+						Damage: 0
+					}
+				}
+				id: "16E9FD2EDDD72A61"
+				title: "Slay &cThe Trial Guardian&r"
+				type: "kill"
+				value: 1L
+			}]
+			x: -11.5d
+			y: -3.0d
+		}
+		{
+			dependencies: [
+				"7B8D5CEBA193AC34"
+				"4095D45E6F47975A"
+				"004807CDCE0EEB28"
+			]
+			description: [
+				"Final Boss of Terramity."
+				" "
+				"Drops tons of op accessories and loot!"
+				""
+				"Summoning him is a really headache, so u gotta get a super sniffer on &esecond phase&r and &e%10&r hp then strike him with lightning again."
+			]
+			hide_dependency_lines: false
+			icon: {
+				Count: 1
+				id: "ftbquests:custom_icon"
+				tag: {
+					Icon: "terramity:item/ultra_sniffers_pelt"
+				}
+			}
+			id: "05D0AF91008E3155"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "3EF2007578F243E9"
+				table_id: 8699295573854160387L
+				type: "random"
+			}]
+			shape: "octagon"
+			size: 1.5d
+			subtitle: "&8[Click to read]"
+			tasks: [{
+				entity: "terramity:ultra_sniffer"
+				icon: "terramity:kamehameha"
+				id: "73EC49CF0D0ADE5A"
+				title: "Slay &cThe Ultra Sniffer"
+				type: "kill"
+				value: 1L
+			}]
+			x: -0.5d
+			y: 3.0d
+		}
+		{
+			dependencies: [
+				"3284A47CBF5B8EE9"
+				"1E35A72FD965B419"
+				"1B0DEADF966579CF"
+			]
+			description: [
+				"Profanum is a key material for terramity progresion, it will allow us to make moondrill cannon and break through the bedrock!"
+				""
+				"Can be found deep in caves."
+			]
+			hide_dependency_lines: false
+			icon: "terramity:profanum"
+			id: "5D9252B669B888FE"
+			rewards: [{
+				id: "197A7421862158D9"
+				item: "terramity:profanum"
+				random_bonus: 1
+				type: "item"
+			}]
+			shape: "pentagon"
+			size: 1.2d
+			subtitle: "&8[Click to read]"
+			tasks: [{
+				id: "0A5230F6121DBEF7"
+				item: "terramity:profanum"
+				type: "item"
+			}]
+			x: -13.0d
+			y: 0.0d
+		}
+		{
+			dependencies: ["06406B2D8A9A618D"]
+			hide_dependency_lines: false
+			icon_scale: 1.2d
+			id: "19CBC92610B35600"
+			shape: "rsquare"
+			size: 1.2d
+			subtitle: "(W.I.P) Boss so.. expect it to be weird."
+			tasks: [{
+				entity: "terramity:virtue"
+				icon: "terramity:archangel_halo"
+				id: "1DF03EF3C9D00A9F"
+				type: "kill"
+				value: 1L
+			}]
+			title: "Defeat Virtue"
+			x: -13.0d
+			y: 3.0d
+		}
+		{
+			dependencies: ["19CBC92610B35600"]
+			description: [
+				"They can be summoned by using occult fabric on an offering pedestal found in cthonic cathedral above the nether, on the bedrock."
+				""
+				"{ \"text\": \"Chthonic Cathedral Locator\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"59DE95EEFF65D48F\" } }"
+				""
+				"{image:customtextures:textures/cathedral.png width:250 height:100 align:center}"
+			]
+			hide_dependency_lines: false
+			id: "041A90EFD4A3D846"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "5B8C7FFA4FF3307A"
+				table_id: 8699295573854160387L
+				type: "random"
+			}]
+			shape: "rsquare"
+			size: 1.2d
+			subtitle: "&8[Click to read]"
+			tasks: [
+				{
+					entity: "terramity:enchanter_merlin"
+					icon: {
+						Count: 1
+						id: "irons_spellbooks:electromancer_helmet"
+						tag: {
+							Damage: 0
+						}
+					}
+					id: "5C14F7CCAD39B9C3"
+					type: "kill"
+					value: 1L
+				}
+				{
+					entity: "terramity:sorceress_circe"
+					icon: {
+						Count: 1
+						id: "irons_spellbooks:archevoker_helmet"
+						tag: {
+							Damage: 0
+						}
+					}
+					id: "010DA89C829C9478"
+					type: "kill"
+					value: 1L
+				}
+			]
+			title: "Shadow Wizards"
+			x: -10.2d
+			y: 3.0d
+		}
+		{
+			dependencies: ["1005B36B7451F531"]
+			hide_dependency_lines: false
+			id: "14DDBB7CA3A71F56"
+			rewards: [{
+				id: "0DD50550523F0C18"
+				item: "terramity:antiprism"
+				random_bonus: 1
+				type: "item"
+			}]
+			shape: "diamond"
+			size: 1.2d
+			subtitle: "A boss drop from the shadow wizards."
+			tasks: [{
+				id: "608DC1492E6F4918"
+				item: "terramity:antiprism"
+				type: "item"
+			}]
+			x: -5.0d
+			y: 3.0d
+		}
+		{
+			dependencies: ["43ACAF3A3EA50806"]
+			description: [
+				"Used to duplicate antiprisms which is a late-game material, so let's keep it."
+				""
+				"It can also create lot of accessories."
+			]
+			id: "16127A006FEEAF69"
+			rewards: [{
+				count: 2
+				id: "09EFE0F011698006"
+				item: "terramity:prismatic_jewel"
+				random_bonus: 1
+				type: "item"
+			}]
+			shape: "diamond"
+			size: 1.0d
+			subtitle: "&8[Click to read]"
+			tasks: [{
+				id: "3DF64E7EE149B64C"
+				item: "terramity:prismatic_jewel"
+				type: "item"
+			}]
+			x: -14.0d
+			y: -8.0d
+		}
+		{
+			dependencies: ["5D9252B669B888FE"]
+			hide_dependency_lines: false
+			id: "06406B2D8A9A618D"
+			rewards: [{
+				id: "389BFE3FF16FCBCC"
+				type: "xp"
+				xp: 15
+			}]
+			shape: "pentagon"
+			size: 1.2d
+			subtitle: "Throw it in the sky to pierce the heavens and summon it's wrath...."
+			tasks: [{
+				id: "6C85DE5E7FCB2D1C"
+				item: {
+					Count: 1
+					id: "terramity:unholy_lance"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			x: -13.0d
+			y: 1.5d
+		}
+		{
+			dependencies: ["5D9252B669B888FE"]
+			description: ["Yeah the moon, u heard it right."]
+			hide_dependency_lines: false
+			id: "4824216451CB93E3"
+			rewards: [{
+				id: "292B985497C34338"
+				item: "terramity:circuit_board"
+				random_bonus: 3
+				type: "item"
+			}]
+			shape: "pentagon"
+			size: 1.2d
+			subtitle: "Can break bedrock and the moon."
+			tasks: [{
+				id: "16176F5879D5F410"
+				item: "terramity:moondrill_cannon"
+				type: "item"
+			}]
+			x: -11.5d
+			y: 0.0d
+		}
+		{
+			dependencies: ["5D9252B669B888FE"]
+			hide_dependency_lines: false
+			id: "7699A48EA0F36CD5"
+			rewards: [{
+				id: "4754296CEF33025F"
+				item: "terramity:void_alloy"
+				type: "item"
+			}]
+			shape: "pentagon"
+			size: 1.2d
+			subtitle: "Is it just a bomb for desctruction?.. might have another purpose."
+			tasks: [{
+				id: "068EBA36E0C4E384"
+				item: "terramity:black_hole_bomb"
+				type: "item"
+			}]
+			x: -14.5d
+			y: 0.0d
+		}
+		{
+			dependencies: ["2C6FC2D93C93E3DC"]
+			hide_dependency_lines: false
+			id: "34C2AA103214C77F"
+			rewards: [
+				{
+					id: "7D4479C96B6EFD13"
+					item: "terramity:spectral_soul"
+					random_bonus: 1
+					type: "item"
+				}
+				{
+					id: "704ED17FA8328FB2"
+					type: "xp_levels"
+					xp_levels: 5
+				}
+			]
+			shape: "pentagon"
+			size: 1.0d
+			subtitle: "Used in duplicating black matter and making tons of new stuff."
+			tasks: [{
+				id: "5E7EBFD54ED9E2B4"
+				item: "terramity:spectral_soul"
+				type: "item"
+			}]
+			x: -14.5d
+			y: -3.0d
+		}
+		{
+			dependencies: ["2932C7DEBC10B9D3"]
+			description: [
+				"Don't forget to use spectral soul to duplicate it for later needs!"
+				""
+				"&cNeed to confirm if the ore generates in nether normally. Contact me on discord."
+			]
+			hide_dependency_lines: false
+			icon: {
+				Count: 1
+				id: "ftbquests:custom_icon"
+				tag: {
+					Icon: "minecraft:textures/gui/info_icon.png"
+				}
+			}
+			icon_scale: 1.4d
+			id: "5F85763AC0F5D4DE"
+			rewards: [{
+				count: 5
+				id: "198490F623EC0B8D"
+				item: "terramity:black_matter"
+				type: "item"
+			}]
+			shape: "square"
+			size: 1.0d
+			subtitle: "&8[Click to read]"
+			tasks: [{
+				id: "0A00A655F323D675"
+				title: "Give it to me"
+				type: "checkmark"
+			}]
+			title: "Can't find black matter?"
+			x: -10.0d
+			y: -3.0d
+		}
+		{
+			dependencies: ["43ACAF3A3EA50806"]
+			id: "0A37C6F6EC6CF4EB"
+			rewards: [{
+				count: 2
+				id: "4CA5AD3E6781C9B8"
+				item: "terramity:topaz"
+				random_bonus: 2
+				type: "item"
+			}]
+			shape: "diamond"
+			size: 1.0d
+			subtitle: "Topaz can be found in hot, arid biomes. "
+			tasks: [{
+				id: "74E07EBD4B70E98C"
+				item: "terramity:topaz"
+				type: "item"
+			}]
+			x: -14.0d
+			y: -9.0d
+		}
+		{
+			dependencies: ["43ACAF3A3EA50806"]
+			id: "3504B2BF2F45FD01"
+			rewards: [{
+				count: 2
+				id: "4ED8B97007830594"
+				item: "terramity:ruby"
+				random_bonus: 2
+				type: "item"
+			}]
+			shape: "diamond"
+			size: 1.0d
+			subtitle: "Rubies can be found almost in anywhere in nether."
+			tasks: [{
+				id: "05F41E9686691A07"
+				item: "terramity:ruby"
+				type: "item"
+			}]
+			x: -9.0d
+			y: -9.0d
+		}
+		{
+			dependencies: ["43ACAF3A3EA50806"]
+			id: "6442ABD9DDC76217"
+			rewards: [{
+				count: 2
+				id: "5C87560134DFED32"
+				item: "terramity:sapphire"
+				random_bonus: 2
+				type: "item"
+			}]
+			shape: "diamond"
+			size: 1.0d
+			subtitle: "Sapphire can be found in snowy biomes."
+			tasks: [{
+				id: "5BD101640D05FE6B"
+				item: "terramity:sapphire"
+				type: "item"
+			}]
+			x: -8.5d
+			y: -8.5d
+		}
+		{
+			dependencies: ["43ACAF3A3EA50806"]
+			id: "0F67904477CEA3A9"
+			rewards: [{
+				count: 2
+				id: "7636E68C35E2BC3D"
+				item: "terramity:onyx"
+				random_bonus: 2
+				type: "item"
+			}]
+			shape: "diamond"
+			size: 1.0d
+			subtitle: "Onyx can be found in end."
+			tasks: [{
+				id: "57648D70AFE78E97"
+				item: "terramity:onyx"
+				type: "item"
+			}]
+			x: -9.0d
+			y: -8.0d
+		}
+		{
+			dependencies: ["43ACAF3A3EA50806"]
+			description: ["Allows you to make accessories, curios."]
+			id: "2E0F67FB9C0282BF"
+			rewards: [{
+				count: 2
+				id: "5071044F723A77A2"
+				item: "terramity:iridescent_shard"
+				random_bonus: 2
+				type: "item"
+			}]
+			shape: "diamond"
+			size: 1.0d
+			subtitle: "Iridescent shards can be found deep anywhere in the overworld."
+			tasks: [{
+				id: "01BA2B99B8049585"
+				item: "terramity:iridescent_shard"
+				type: "item"
+			}]
+			x: -14.5d
+			y: -8.5d
+		}
+		{
+			dependencies: ["157C39FF1051EA3E"]
+			hide_dependency_lines: false
+			id: "10F6E5FD5819F5CE"
+			rewards: [{
+				id: "0C7B2750F2B0BDE6"
+				item: "terramity:dimlite_ingot"
+				random_bonus: 1
+				type: "item"
+			}]
+			shape: "diamond"
+			size: 1.0d
+			subtitle: "Dimlite ore can be found in a uniform pattern in the overworld, between Y=-44 and Y=-64"
+			tasks: [{
+				id: "41817A70FF7C81C4"
+				item: "terramity:dimlite_ingot"
+				type: "item"
+			}]
+			x: -13.0d
+			y: -5.5d
+		}
+		{
+			dependencies: ["5BF85D0A3254B959"]
+			hide_dependency_lines: false
+			id: "5CB32CEF85677707"
+			rewards: [{
+				id: "37D7AA7495DF7E34"
+				item: "terramity:virentium_alloy_ingot"
+				random_bonus: 1
+				type: "item"
+			}]
+			shape: "diamond"
+			size: 1.0d
+			subtitle: "Gianite clustur can be found in lush caves, can also be obtained via gaia lilies."
+			tasks: [{
+				id: "613E26502A5C9C68"
+				item: "terramity:virentium_alloy_ingot"
+				type: "item"
+			}]
+			x: -10.5d
+			y: -6.0d
+		}
+		{
+			dependencies: ["5BF85D0A3254B959"]
+			hide_dependency_lines: false
+			id: "51B5E776DCBBA146"
+			rewards: [{
+				id: "0025FA7A56067B1B"
+				item: "terramity:cosmilite_ingot"
+				random_bonus: 1
+				type: "item"
+			}]
+			shape: "diamond"
+			size: 1.0d
+			subtitle: "Cosmic scrap can be found in the end, between Y=50 and Y=0"
+			tasks: [{
+				id: "02A4B577F0D9CDBD"
+				item: "terramity:cosmilite_ingot"
+				type: "item"
+			}]
+			x: -10.0d
+			y: -5.5d
+		}
+		{
+			dependencies: [
+				"5CB32CEF85677707"
+				"10F6E5FD5819F5CE"
+				"51B5E776DCBBA146"
+				"6FAFE2F8AFDAB075"
+			]
+			description: ["In order to mine, you need terramity pickaxes, normal netherite wont work!"]
+			hide_dependency_lines: false
+			id: "516A877FEC4701DD"
+			rewards: [{
+				id: "7FCC2D472500CA05"
+				item: "terramity:iridium"
+				random_bonus: 1
+				type: "item"
+			}]
+			shape: "pentagon"
+			size: 1.0d
+			subtitle: "Can be found in any terramity structure or nether roof."
+			tasks: [{
+				id: "3A4BFB330EE194B8"
+				item: "terramity:iridium"
+				type: "item"
+			}]
+			x: -11.5d
+			y: -4.5d
+		}
+		{
+			dependencies: ["157C39FF1051EA3E"]
+			description: ["Usually crafted guns with."]
+			id: "6FAFE2F8AFDAB075"
+			rewards: [{
+				id: "1A4FA3D7E3DE645C"
+				item: "terramity:daemonium"
+				random_bonus: 1
+				type: "item"
+			}]
+			shape: "diamond"
+			size: 1.0d
+			subtitle: "Can be found on the ceiling of nether or cthonic dungeon"
+			tasks: [{
+				id: "433B0FA81A1F66B0"
+				item: "terramity:daemonium"
+				type: "item"
+			}]
+			x: -12.5d
+			y: -6.0d
+		}
+		{
+			dependencies: ["2C6FC2D93C93E3DC"]
+			hide_dependency_lines: false
+			id: "1B0DEADF966579CF"
+			rewards: [{
+				id: "4C49D9A1349E2B00"
+				item: "terramity:conductite"
+				random_bonus: 1
+				type: "item"
+			}]
+			shape: "pentagon"
+			size: 1.0d
+			subtitle: "Craftable Ingot"
+			tasks: [{
+				id: "0DC73E3F383415C1"
+				item: "terramity:conductite"
+				type: "item"
+			}]
+			x: -11.5d
+			y: -1.5d
+		}
+		{
+			dependencies: ["4E24EF436028EC67"]
+			hide_dependency_lines: false
+			id: "4095D45E6F47975A"
+			rewards: [{
+				id: "4D016D8801ACA853"
+				item: "terramity:nyxium"
+				random_bonus: 1
+				type: "item"
+			}]
+			shape: "gear"
+			size: 1.2d
+			subtitle: "Last tier ore, crafted with couple of other materials."
+			tasks: [{
+				id: "42EF91E8D08FD35D"
+				item: "terramity:nyxium"
+				type: "item"
+			}]
+			x: -3.0d
+			y: 1.5d
+		}
+		{
+			dependencies: ["14DDBB7CA3A71F56"]
+			hide_dependency_lines: false
+			id: "004807CDCE0EEB28"
+			rewards: [{
+				id: "2B7BA07FA63AB22F"
+				item: "terramity:reverium"
+				random_bonus: 1
+				type: "item"
+			}]
+			shape: "gear"
+			size: 1.2d
+			subtitle: "Need Virtue's feathers."
+			tasks: [{
+				id: "09705C8441A9031D"
+				item: "terramity:reverium"
+				type: "item"
+			}]
+			x: -3.0d
+			y: 3.0d
+		}
+		{
+			dependencies: ["5CB177CF227CCD27"]
+			hide_dependency_lines: false
+			id: "7B8D5CEBA193AC34"
+			rewards: [{
+				id: "5EAAC4139099D476"
+				item: "terramity:exodium_superalloy"
+				random_bonus: 1
+				type: "item"
+			}]
+			shape: "gear"
+			size: 1.2d
+			subtitle: "Last tier ore, crafted with couple of other materials."
+			tasks: [{
+				id: "634996F950F21822"
+				item: "terramity:exodium_superalloy"
+				type: "item"
+			}]
+			x: -3.0d
+			y: 4.5d
+		}
+		{
+			dependencies: ["14DDBB7CA3A71F56"]
+			hide_dependency_lines: false
+			id: "5CB177CF227CCD27"
+			rewards: [{
+				id: "7E00DC193979B21A"
+				item: "terramity:cracked_microcosm"
+				random_bonus: 1
+				type: "item"
+			}]
+			shape: "diamond"
+			size: 1.2d
+			subtitle: "Can be obtained by throwing empty essence into a blackhole bomb."
+			tasks: [
+				{
+					id: "3903D638F7E06982"
+					item: "terramity:cracked_microcosm"
+					type: "item"
+				}
+				{
+					id: "0B50E7D823B8369C"
+					item: "terramity:empty_essence"
+					type: "item"
+				}
+			]
+			title: "Cracked Microcosm and Empty Essence"
+			x: -5.0d
+			y: 4.5d
+		}
+		{
+			dependencies: ["14DDBB7CA3A71F56"]
+			hide_dependency_lines: false
+			id: "4E24EF436028EC67"
+			rewards: [{
+				id: "44D44AB81422A6CA"
+				item: "terramity:opaline_moonstone"
+				random_bonus: 1
+				type: "item"
+			}]
+			shape: "diamond"
+			size: 1.2d
+			subtitle: "Can be obtained by using moondrill cannon on a moon."
+			tasks: [{
+				id: "4021F9413CBE89E9"
+				item: "terramity:opaline_moonstone"
+				type: "item"
+			}]
+			x: -5.0d
+			y: 1.5d
+		}
+		{
+			dependencies: ["19CBC92610B35600"]
+			hide_dependency_lines: false
+			id: "73317396BA69E10B"
+			rewards: [{
+				id: "7C0418ED00FAC2DF"
+				item: "terramity:angel_feather"
+				random_bonus: 1
+				type: "item"
+			}]
+			shape: "diamond"
+			size: 1.2d
+			subtitle: "A Drop From the Virtue boss, used on last tier ores and other few things."
+			tasks: [{
+				id: "397BEC9661600B86"
+				item: "terramity:angel_feather"
+				type: "item"
+			}]
+			x: -14.5d
+			y: 3.0d
+		}
+		{
+			dependencies: ["2C6FC2D93C93E3DC"]
+			id: "3284A47CBF5B8EE9"
+			rewards: [{
+				id: "24C5E388C0EFFDA6"
+				item: "terramity:hellspec_alloy"
+				random_bonus: 1
+				type: "item"
+			}]
+			shape: "pentagon"
+			size: 1.0d
+			subtitle: "Craftable Ingot"
+			tasks: [{
+				id: "3706B61460A1D8C5"
+				item: "terramity:hellspec_alloy"
+				type: "item"
+			}]
+			x: -14.5d
+			y: -1.5d
+		}
+		{
+			dependencies: ["2C6FC2D93C93E3DC"]
+			id: "1E35A72FD965B419"
+			rewards: [{
+				id: "1ADA80F74894A42C"
+				item: "terramity:void_alloy"
+				random_bonus: 1
+				type: "item"
+			}]
+			shape: "pentagon"
+			size: 1.0d
+			subtitle: "&e 4 Empty Essenses&r Created by throwing Black Matter into stygian blood to get Void Alloy Ingots."
+			tasks: [{
+				id: "091D40B466EB0AE9"
+				item: "terramity:void_alloy"
+				type: "item"
+			}]
+			x: -13.0d
+			y: -1.5d
+		}
+		{
+			dependencies: ["041A90EFD4A3D846"]
+			description: [
+				"&cArchmage Gundalf&r is a very old wise magician, he should not be underestimated."
+				""
+				"He appears after the death of shadow wizards."
+			]
+			icon: {
+				Count: 1
+				id: "ftbquests:custom_icon"
+				tag: {
+					Icon: "terramity:item/gundalfs_pointed_hat"
+				}
+			}
+			id: "1005B36B7451F531"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "56AFAA35DC09E3F5"
+				table_id: 8699295573854160387L
+				type: "random"
+			}]
+			shape: "rsquare"
+			size: 1.2d
+			tasks: [{
+				entity: "terramity:gundalf"
+				icon: {
+					Count: 1
+					id: "ftbquests:custom_icon"
+					tag: {
+						Icon: "goety:item/witch_hat"
+					}
+				}
+				id: "55052F54E5FBCD2C"
+				title: "&cKill&r Archmage Gunddalf"
+				type: "kill"
+				value: 1L
+			}]
+			x: -7.0d
+			y: 3.0d
+		}
+	]
+	title: "Terramity"
+}

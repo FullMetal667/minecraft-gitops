@@ -1,0 +1,41 @@
+{
+  "bag_item": "armageddon_mod:iron_colossus_treasure_bag",
+  "summon_item": "armageddon_mod:iron_remote",
+  "drops": [
+    {
+      "item": "armageddon_mod:iron_colossus_arm",
+      "chance": 0.25,
+      "min_quantity": 1,
+      "max_quantity": 1,
+      "config_flag": "weapons_and_artifacts"
+    },
+    {
+      "item": "armageddon_mod:colossal_iron_ingot",
+      "chance": 1.0,
+      "min_quantity": 6,
+      "max_quantity": 9,
+      "config_flag": "none"
+    },
+    {
+      "item": "minecraft:raw_iron",
+      "chance": 1.0,
+      "min_quantity": 10,
+      "max_quantity": 15,
+      "config_flag": "ores"
+    },
+    {
+      "item": "minecraft:iron_ingot",
+      "chance": 0.20,
+      "min_quantity": 1,
+      "max_quantity": 4,
+      "config_flag": "ores"
+    },
+    {
+      "item": "minecraft:raw_iron_block",
+      "chance": 0.20,
+      "min_quantity": 1,
+      "max_quantity": 3,
+      "config_flag": "ores"
+    }
+  ]
+}

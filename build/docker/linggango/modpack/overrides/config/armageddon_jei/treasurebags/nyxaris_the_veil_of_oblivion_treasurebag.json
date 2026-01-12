@@ -1,0 +1,27 @@
+{
+  "bag_item": "armageddon_mod:nyxaris_the_veil_of_oblivion_treasure_bag",
+  "summon_item": "armageddon_mod:the_corrupted_tear",
+  "drops": [
+    {
+      "item": "armageddon_mod:lance_of_the_veil",
+      "chance": 0.20,
+      "min_quantity": 1,
+      "max_quantity": 1,
+      "config_flag": "weapons_and_artifacts"
+    },
+    {
+      "item": "minecraft:golden_apple",
+      "chance": 1.0,
+      "min_quantity": 14,
+      "max_quantity": 16,
+      "config_flag": "none"
+    },
+    {
+      "item": "armageddon_mod:shadow_fragment",
+      "chance": 1.0,
+      "min_quantity": 8,
+      "max_quantity": 12,
+      "config_flag": "none"
+    }
+  ]
+}

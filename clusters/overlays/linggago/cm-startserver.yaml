@@ -1,0 +1,11 @@
+#!/bin/bash
+set -e
+cd /srv/mc
+
+# OPTIONAL: runtime overrides vom PVC drüberkopieren
+# (falls du pvc-overrides mountest)
+if [ -d "/overrides" ]; then
+  cp -rT /overrides /srv/mc
+fi
+
+exec java ${JVM_ARGS} -jar forge-1.20.1-47.2.0.jar nogui

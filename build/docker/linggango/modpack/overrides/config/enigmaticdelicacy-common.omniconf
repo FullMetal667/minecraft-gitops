@@ -1,0 +1,290 @@
+# Configuration File
+
+@CONFIG_VERSION: 1.1
+
+##########################################################################################################
+# Accessibility Options
+#--------------------------------------------------------------------------------------------------------#
+# You may disable certain items or features from being obtainable/usable here.
+# Check more details in Enigmatic Legacy's Config Files.
+##########################################################################################################
+
+"Accessibility Options" {
+    # Whether or not Abyssal Stew should be enabled. [default: true, synchronized: yes]
+    B:AbyssalStewEnabled=true
+
+    # Whether or not Astral Button should be enabled. [default: true, synchronized: yes]
+    B:AstralButtonEnabled=true
+
+    # Whether or not Astral Cabinet should be enabled. [default: true, synchronized: yes]
+    B:AstralCabinetEnabled=true
+
+    # Whether or not Astral Cruet should be enabled. [default: true, synchronized: yes]
+    B:AstralCruetEnabled=true
+
+    # Whether or not Astral Door should be enabled. [default: true, synchronized: yes]
+    B:AstralDoorEnabled=true
+
+    # Whether or not Astral Fruit should be enabled. [default: true, synchronized: yes]
+    B:AstralFruitEnabled=true
+
+    # Whether or not Astral Leaf should be enabled. [default: true, synchronized: yes]
+    B:AstralLeafEnabled=true
+
+    # Whether or not Astral Leaves should be enabled. [default: true, synchronized: yes]
+    B:AstralLeavesEnabled=true
+
+    # Whether or not Astral Log should be enabled. [default: true, synchronized: yes]
+    B:AstralLogEnabled=true
+
+    # Whether or not Astral Planks should be enabled. [default: true, synchronized: yes]
+    B:AstralPlanksEnabled=true
+
+    # Whether or not Astral Popsicle should be enabled. [default: true, synchronized: yes]
+    B:AstralPopsicleEnabled=true
+
+    # Whether or not Astral Pressure Plate should be enabled. [default: true, synchronized: yes]
+    B:AstralPressurePlateEnabled=true
+
+    # Whether or not Astral Sapling should be enabled. [default: true, synchronized: yes]
+    B:AstralSaplingEnabled=true
+
+    # Whether or not Astral Slab should be enabled. [default: true, synchronized: yes]
+    B:AstralSlabEnabled=true
+
+    # Whether or not Astral Stairs should be enabled. [default: true, synchronized: yes]
+    B:AstralStairsEnabled=true
+
+    # Whether or not Astral Tea should be enabled. [default: true, synchronized: yes]
+    B:AstralTeaEnabled=true
+
+    # Whether or not Astral Trapdoor should be enabled. [default: true, synchronized: yes]
+    B:AstralTrapdoorEnabled=true
+
+    # Whether or not Astral Wood should be enabled. [default: true, synchronized: yes]
+    B:AstralWoodEnabled=true
+
+    # Whether or not Balanced Stewed Soup Block should be enabled. [default: true, synchronized: yes]
+    B:BalancedStewedSoupBlockEnabled=true
+
+    # Whether or not Balanced Stewed Soup should be enabled. [default: true, synchronized: yes]
+    B:BalancedStewedSoupEnabled=true
+
+    # Whether or not Bloody Custard should be enabled. [default: true, synchronized: yes]
+    B:BloodyCustardEnabled=true
+
+    # Whether or not Blossoming Astral Leaves should be enabled. [default: true, synchronized: yes]
+    B:BlossomingAstralLeavesEnabled=true
+
+    # Whether or not Broken Cursed Soul Crystal should be enabled. [default: true, synchronized: yes]
+    B:BrokenCursedSoulCrystalEnabled=true
+
+    # Whether or not Charm of Self-discipline should be enabled. [default: true, synchronized: yes]
+    B:CharmofSelfdisciplineEnabled=true
+
+    # Whether or not Curse Blade should be enabled. [default: true, synchronized: yes]
+    B:CurseBladeEnabled=true
+
+    # Whether or not Curse Potion should be enabled. [default: true, synchronized: yes]
+    B:CursePotionEnabled=true
+
+    # Whether or not Cursed Soul Crystal should be enabled. [default: true, synchronized: yes]
+    B:CursedSoulCrystalEnabled=true
+
+    # Whether or not Cursed Soul Crystal Knife should be enabled. [default: true, synchronized: yes]
+    B:CursedSoulCrystalKnifeEnabled=true
+
+    # Whether or not Cursed Soul Crystal Pendant should be enabled. [default: true, synchronized: yes]
+    B:CursedSoulCrystalPendantEnabled=true
+
+    # Whether or not Cursed Soul Crystal Ring should be enabled. [default: true, synchronized: yes]
+    B:CursedSoulCrystalRingEnabled=true
+
+    # Whether or not Divine Fruit Pie Block should be enabled. [default: true, synchronized: yes]
+    B:DivineFruitPieBlockEnabled=true
+
+    # Whether or not Divine Fruit Pie should be enabled. [default: true, synchronized: yes]
+    B:DivineFruitPieEnabled=true
+
+    # Whether or not Enigmatic Bush should be enabled. [default: true, synchronized: yes]
+    B:EnigmaticBushEnabled=true
+
+    # Whether or not Enigmatic Cream should be enabled. [default: true, synchronized: yes]
+    B:EnigmaticCreamEnabled=true
+
+    # Whether or not Enigmatic Fruit Crate should be enabled. [default: true, synchronized: yes]
+    B:EnigmaticFruitCrateEnabled=true
+
+    # Whether or not Enigmatic Fruit should be enabled. [default: true, synchronized: yes]
+    B:EnigmaticFruitEnabled=true
+
+    # Whether or not Enigmatic Seed should be enabled. [default: true, synchronized: yes]
+    B:EnigmaticSeedEnabled=true
+
+    # Whether or not Etherium Machete should be enabled. [default: true, synchronized: yes]
+    B:EtheriumMacheteEnabled=true
+
+    # Whether or not Etherium Ore should be enabled. [default: true, synchronized: yes]
+    B:EtheriumOreEnabled=true
+
+    # Whether or not Etherium Steak should be enabled. [default: true, synchronized: yes]
+    B:EtheriumSteakEnabled=true
+
+    # Whether or not Etherium Stove should be enabled. [default: true, synchronized: yes]
+    B:EtheriumStoveEnabled=true
+
+    # Whether or not Fragment of Cursed Soul Crystal should be enabled. [default: true, synchronized: yes]
+    B:FragmentofCursedSoulCrystalEnabled=true
+
+    # Whether or not Glistening Bark should be enabled. [default: true, synchronized: yes]
+    B:GlisteningBarkEnabled=true
+
+    # Whether or not Glistening Heart of Protection should be enabled. [default: true, synchronized: yes]
+    B:GlisteningHeartofProtectionEnabled=true
+
+    # Whether or not Glory of Weapon Master should be enabled. [default: true, synchronized: yes]
+    B:GloryofWeaponMasterEnabled=true
+
+    # Whether or not Harmonious Grail should be enabled. [default: true, synchronized: yes]
+    B:HarmoniousGrailEnabled=true
+
+    # Whether or not Ichor Egg should be enabled. [default: true, synchronized: yes]
+    B:IchorEggEnabled=true
+
+    # Whether or not Ichoroot Soup should be enabled. [default: true, synchronized: yes]
+    B:IchorootSoupEnabled=true
+
+    # Whether or not Infini-Farmland should be enabled. [default: true, synchronized: yes]
+    B:InfiniFarmlandEnabled=true
+
+    # Whether or not Infini-Soil should be enabled. [default: true, synchronized: yes]
+    B:InfiniSoilEnabled=true
+
+    # Whether or not Passion Fried Rice should be enabled. [default: true, synchronized: yes]
+    B:PassionFriedRiceEnabled=true
+
+    # Whether or not Potted Astral Sapling should be enabled. [default: true, synchronized: yes]
+    B:PottedAstralSaplingEnabled=true
+
+    # Whether or not Purified Dragon Breath should be enabled. [default: true, synchronized: yes]
+    B:PurifiedDragonBreathEnabled=true
+
+    # Whether or not Scroll of Fading should be enabled. [default: true, synchronized: yes]
+    B:ScrollofFadingEnabled=true
+
+    # Whether or not Slice of Astral Fruit should be enabled. [default: true, synchronized: yes]
+    B:SliceofAstralFruitEnabled=true
+
+    # Whether or not Slice of Cosmic Cake should be enabled. [default: true, synchronized: yes]
+    B:SliceofCosmicCakeEnabled=true
+
+    # Whether or not Slice of Sticky Enigmatic Pie should be enabled. [default: true, synchronized: yes]
+    B:SliceofStickyEnigmaticPieEnabled=true
+
+    # Whether or not Sticky Enigmatic Pie should be enabled. [default: true, synchronized: yes]
+    B:StickyEnigmaticPieEnabled=true
+
+    # Whether or not Stripped Astral Log should be enabled. [default: true, synchronized: yes]
+    B:StrippedAstralLogEnabled=true
+
+    # Whether or not Stripped Astral Wood should be enabled. [default: true, synchronized: yes]
+    B:StrippedAstralWoodEnabled=true
+
+    # Whether or not Stuffed Astral Potato should be enabled. [default: true, synchronized: yes]
+    B:StuffedAstralPotatoEnabled=true
+
+    # Whether or not Tome of Omniscience should be enabled. [default: true, synchronized: yes]
+    B:TomeofOmniscienceEnabled=true
+
+    # Whether or not Voracity Emblem should be enabled. [default: true, synchronized: yes]
+    B:VoracityEmblemEnabled=true
+}
+
+
+##########################################################################################################
+# Balance Options
+#--------------------------------------------------------------------------------------------------------#
+# Various options that mostly affect individual items
+##########################################################################################################
+
+"Balance Options" {
+    # The damage modifier when you have the effect of Abyssal Stew. Measured in percentage. [range: 0 ~ 32768, default: 30, synchronized: yes]
+    I:AbyssalStewDamageModifier=30
+
+    # The effect duration of Abyssal Stew. Measured in tick. [range: 0 ~ 32768, default: 18000, synchronized: yes]
+    I:AbyssalStewDuration=18000
+
+    # The attack damage modifier when you equip The Testament of Contempt and have the effect of Abyssal Stew. Measured in percentage. [range: 0 ~ 100, default: 80, synchronized: yes]
+    I:AbyssalStewEldritchAmuletDamageBoost=80
+
+    # The damage resistance rate when you equip The Testament of Contempt and have the effect of Abyssal Stew. Measured in percentage. [range: 0 ~ 100, default: 40, synchronized: yes]
+    I:AbyssalStewEldritchAmuletDamageResistance=40
+
+    # The reduced duration time when killing creatures. Measured in tick. [range: 0 ~ 32768, default: 40, synchronized: yes]
+    I:AbyssalStewKillPunishment=40
+
+    # The damage resistance modifier when you have the effect of Abyssal Stew. Measured in percentage. [range: 0 ~ 100, default: 25, synchronized: yes]
+    I:AbyssalStewResistanceModifier=25
+
+    # The attack damage modifier per every harmful effect the target has when you hold The Infinitum and have the effect of Abyssal Stew. Measured in percentage. [range: 0 ~ 50, default: 8, synchronized: yes]
+    I:AbyssalStewTheInfinitumAttackModifierPerHarmfulEffect=8
+
+    # The probability to making next attack received ineffective when you hold The Infinitum and have the effect of Abyssal Stew. Measured in percentage. [range: 0 ~ 80, default: 25, synchronized: yes]
+    I:AbyssalStewTheInfinitumDisAttackProbability=25
+
+    # The extra nutrition modifier when have Astral Cruet in the inventory. Measured in percentage. [range: 0 ~ 100, default: 20, synchronized: yes]
+    I:AstralCruetExtraNutritionModifier=20
+
+    # The amplifier of additional health curse effect while charging attack. [range: 0 ~ 9, default: 4, synchronized: yes]
+    I:CurseBladeAdditionalHealthCurseAmplifier=4
+
+    # The duration of additional health curse effect while charging attack. [range: 600 ~ 32768, default: 2400, synchronized: yes]
+    I:CurseBladeAdditionalHealthCurseDuration=2400
+
+    # The Attack Speed Multiplier when you get the curse after gaining Blooded Ring of the Seven Curses. [range: 0 ~ 32768, default: 10, synchronized: yes]
+    I:CurseBladeAttackSpeedCurseMultiplier=10
+
+    # The Amplifier of Health Curse when you get the curse after gaining Broken Cursed Soul Crystal. [range: 0 ~ 32768, default: 5, synchronized: yes]
+    I:CurseBladeHealthCurseAmplifier=5
+
+    # The probability of applying health curse effect on the target. Measures in percentage. [range: 0 ~ 30, default: 16, synchronized: yes]
+    I:CursedSoulCrystalKnifeApplyingCurseEffectProbability=16
+
+    # The cooldown of transforming creatures into babies ot drop loot. Measures in tick. [range: 40 ~ 32768, default: 200, synchronized: yes]
+    I:CursedSoulCrystalKnifeSpecialLootCooldown=200
+
+    # The healing amount modifier. Measures in percentage. [range: 0 ~ 100, default: 25, synchronized: yes]
+    I:CursedSoulCrystalPendantHealingAmountModifier=25
+
+    # The ratio of recovery base on the damage you received. Measures in percentage. [range: 0 ~ 100, default: 24, synchronized: yes]
+    I:CursedSoulCrystalPendantInjuryRecoveryRate=24
+
+    # The protection skill cooldown of Glistening Heart of Protection. [range: 0 ~ 32768, default: 240, synchronized: yes]
+    I:GlisteningHeartofProtectionCooldown=240
+
+    # The damage resistance when equipped Glistening Heart of Protection. [range: 0 ~ 90, default: 75, synchronized: yes]
+    I:GlisteningHeartofProtectionDamageResistance=75
+
+    # The resistance threshold to fully resist when equipped Glistening Heart of Protection. [range: 0 ~ 90, default: 60, synchronized: yes]
+    I:GlisteningHeartofProtectionResistanceThreshold=60
+
+    # The damage modifier when equipped Glory of Weapon Master. Measured in percentage. [range: 0 ~ 32768, default: 10, synchronized: yes]
+    I:GloryofWeaponMasterDamageModifier=10
+
+    # The cooldown of add Fading Effect when equipped Scroll of Fading. Measured in ticks. [range: 100 ~ 32768, default: 1200, synchronized: yes]
+    I:ScrollofFadingCooldown=1200
+
+    # Crit modifier increase provided by Emblem of Bloodstained Valor for each missing percent of food. Measured as percentage. [range: 0.0 ~ 32768.0, default: 1.25, synchronized: yes]
+    D:VoracityEmblemCritModifier=1.25
+
+    # Damage increase provided by Emblem of Boundless Voracity for each missing percent of food. Measured as percentage. [range: 0.0 ~ 32768.0, default: 0.4, synchronized: yes]
+    D:VoracityEmblemDamageBoost=0.4
+
+    # Damage resistance provided by Emblem of Bloodstained Valor for each missing percent of food. Measured as percentage. [range: 0.0 ~ 32768.0, default: 0.5, synchronized: yes]
+    D:VoracityEmblemResistanceBoost=0.5
+
+    # Movement speed increase provided by Emblem of Bloodstained Valor for each missing percent of food. Measured as percentage. [range: 0.0 ~ 32768.0, default: 0.25, synchronized: yes]
+    D:VoracityEmblemSpeedBoost=0.25
+}
+
+

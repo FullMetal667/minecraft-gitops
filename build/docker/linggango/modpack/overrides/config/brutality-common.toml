@@ -1,0 +1,39 @@
+
+["Brutality Common Config"]
+	#Should Seventh Star Projectiles break blocks (Default = False)
+	seventhStarShouldBreakBlocks = true
+	#Should Atomic Judgement break blocks (Default = False)
+	atomicJudgementShouldBreakBlocks = false
+	#Atomic Judgement explosion multiplier (Default = 1.0)
+	#Range: 0.0 ~ 10.0
+	atomicJudgementExplosionMultiplier = 1.0
+	#Pull Strength of the Black Hole (Default = 1.0)
+	#Range: 0.1 ~ 10.0
+	blackHolePullStrength = 1.0
+	#Black Hole Tick Damage (Default = 2)
+	#Range: 0 ~ 10
+	blackHoleTickDamage = 2
+	#How many times Gungnir will hit before returning (Default = 3)
+	#Range: 0 ~ 10
+	gungnirHitQuota = 3
+	#Beachball Lifespan in Ticks
+	#Range: 20 ~ 20000
+	beachBallLifeSpan = 1200
+	#Should Throwing Weapons break blocks, this includes things such as On Hit Block effects or Explosions breaking blocks
+	throwingWeaponsShouldBreakBlocks = true
+	#Deathsaw Wall Climb Speed Multiplier (Default = 0.8)
+	#Range: 0.0 ~ 100.0
+	deathsawWallClimbSpeed = 0.8
+	#Biomech Reactor Damage (Default = 30)
+	#Range: 0 ~ 1000
+	biomechReactorDamage = 30
+	#Last Prism Tick Damage (Default = 2)
+	#Range: 0 ~ 100
+	lastPrismTickDamage = 2
+	#Deathsaw Tick Damage (Default = 1)
+	#Range: 0 ~ 100
+	deathsawTickDamage = 1
+	#Entities above this Health Point threshold will be unaffected by Crease of Creation
+	#Range: 1 ~ 20000
+	creaseOfCreationThreshold = 200
+

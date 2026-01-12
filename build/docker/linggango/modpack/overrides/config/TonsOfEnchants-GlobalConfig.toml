@@ -1,0 +1,61 @@
+
+["Enable or Disable Enchantments"]
+	blessed_weapon = true
+	decay = true
+	Delicate = true
+	Disengage = true
+	dull_edge = true
+	night_vision_ench = false
+	water_breathing = true
+	enhanced_efficiency = true
+	"Enhanced Eff Arm Speed" = true
+	enhanced_fire_aspect = true
+	enhanced_handling = false
+	enhanced_locomotion = true
+	enhanced_protection = true
+	enhanced_sharpness = true
+	enhanced_thorns = false
+	enhanced_unbreaking = true
+	Excavator = false
+	exploding_arrows = true
+	Feasting = true
+	final_stand = true
+	fiery_thorns = false
+	Frostbite = true
+	ground_pound = false
+	Heavy = true
+	horse_shoe = true
+	insta_kill = false
+	jugger_nog = true
+	lava_walker = true
+	Lightning = true
+	Lumberjack = false
+	Magnetize = false
+	midas_touch = true
+	praise_the_sun = true
+	reverse_knockback = true
+	Savior = true
+	Slowness = true
+	Smelting = false
+	Spilling = true
+	Springy = true
+	swimmers_boots = true
+	tnt_miner = true
+	Vitality = true
+	Webbing = true
+	Wither = true
+	xp_mining_master = false
+	"XP++ for Weapon" = false
+	lifestealing_arrows = true
+
+["Enable or disable explosions for enchantments"]
+	ground_pound = true
+	exploding_arrows = true
+	Disengage = true
+	tnt_miner = true
+
+["Commands - /cleargrounditems"]
+	"Enabled?" = true
+	"Available in creative?" = true
+	"Available in survival?" = false
+

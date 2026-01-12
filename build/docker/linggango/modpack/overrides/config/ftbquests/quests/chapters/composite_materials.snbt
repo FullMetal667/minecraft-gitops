@@ -1,0 +1,2330 @@
+{
+	autofocus_id: "5B405969C6A4170B"
+	default_hide_dependency_lines: false
+	default_quest_shape: "netheritetier"
+	filename: "composite_materials"
+	group: "3C6AB1DE39D4F441"
+	icon: {
+		Count: 1
+		id: "ftbquests:custom_icon"
+		tag: {
+			Icon: "composite_material:item/reinforced_book"
+		}
+	}
+	id: "187257D6A59E2A50"
+	images: [
+		{
+			dependency: "16F570C334B2B782"
+			height: 1.0d
+			hover: ["Small Allay Shop!"]
+			image: "tameablebeasts:item/purple_allay"
+			rotation: 0.0d
+			width: 1.0d
+			x: 15.584446381081328d
+			y: -4.667968089696977d
+		}
+		{
+			height: 2.0d
+			image: "minecraft:block/sculk_sensor_tendril_active"
+			rotation: 0.0d
+			width: 2.0d
+			x: 9.655874952509905d
+			y: 5.689174767445884d
+		}
+		{
+			height: 2.0d
+			image: "minecraft:block/sculk_sensor_tendril_active"
+			rotation: 65.0d
+			width: 1.0d
+			x: 11.535714285714285d
+			y: 6.25d
+		}
+		{
+			height: 3.0d
+			image: "minecraft:block/sculk_sensor_tendril_active"
+			rotation: 0.0d
+			width: 2.0d
+			x: 10.110182018914578d
+			y: 3.614298583828351d
+		}
+		{
+			height: 1.0d
+			image: "minecraft:block/sculk_sensor_tendril_active"
+			rotation: -90.0d
+			width: 1.0d
+			x: 9.717324876057447d
+			y: 1.7571557266855038d
+		}
+		{
+			height: 2.0d
+			image: "minecraft:block/sculk_sensor_tendril_active"
+			rotation: 87.0d
+			width: 0.4d
+			x: 10.964285714285715d
+			y: 1.6785714285714306d
+		}
+		{
+			height: 0.5d
+			image: "infinitybuttons:textures/particle/diamond_sparkle.png"
+			rotation: 0.0d
+			width: 0.5d
+			x: 4.003039161771731d
+			y: 6.038108107637855d
+		}
+		{
+			height: 0.5d
+			image: "infinitybuttons:textures/particle/diamond_sparkle.png"
+			rotation: 0.0d
+			width: 0.5d
+			x: 4.431610590343155d
+			y: 4.400012869542621d
+		}
+		{
+			height: 1.0d
+			image: "galosphere:textures/particle/amethyst_rain1.png"
+			rotation: 0.0d
+			width: 1.0d
+			x: 2.0d
+			y: -5.0d
+		}
+		{
+			height: 1.0d
+			image: "galosphere:textures/particle/amethyst_rain1.png"
+			rotation: 0.0d
+			width: 1.0d
+			x: -2.2066226614271898d
+			y: -5.979140014069706d
+		}
+		{
+			height: 1.0d
+			image: "galosphere:textures/particle/amethyst_rain1.png"
+			rotation: 0.0d
+			width: 1.0d
+			x: -0.5d
+			y: -4.5d
+		}
+		{
+			height: 1.0d
+			image: "galosphere:textures/particle/amethyst_rain1.png"
+			rotation: 0.0d
+			width: 1.0d
+			x: 0.5d
+			y: -6.0d
+		}
+		{
+			height: 1.0d
+			image: "minecraft:block/campfire_fire"
+			rotation: 0.0d
+			width: 1.0d
+			x: 4.785714285714285d
+			y: -3.6785714285714306d
+		}
+		{
+			height: 0.5d
+			image: "infinitybuttons:textures/particle/diamond_sparkle.png"
+			rotation: 0.0d
+			width: 0.5d
+			x: 5.89589630462887d
+			y: 2.073822393352147d
+		}
+		{
+			height: 0.5d
+			image: "infinitybuttons:textures/particle/diamond_sparkle.png"
+			rotation: 0.0d
+			width: 0.5d
+			x: 2.89589630462887d
+			y: 2.2214414409711907d
+		}
+		{
+			dev: true
+			height: 1.0d
+			hover: ["Questlines belong to me, and is protected by all rights reserved. Do not try to steal without an explicit permission from me."]
+			image: "fancymenu:textures/buddy/gui/button_close_normal.png"
+			rotation: 0.0d
+			width: 1.0d
+			x: -4.0d
+			y: -14.5d
+		}
+		{
+			height: 3.0d
+			image: "customtextures:textures/compositemateriallogo.png"
+			rotation: 0.0d
+			width: 7.0d
+			x: 0.0d
+			y: -14.5d
+		}
+	]
+	order_index: 1
+	progression_mode: "flexible"
+	quest_links: [ ]
+	quests: [
+		{
+			dependencies: ["5B405969C6A4170B"]
+			description: ["Similiar to stone tools, but has more durability."]
+			icon: {
+				Count: 1
+				id: "composite_material:flint_pickaxe"
+				tag: {
+					Damage: 0
+				}
+			}
+			icon_scale: 1.3d
+			id: "17C0F0B6D9965F33"
+			rewards: [{
+				count: 2
+				id: "570CCFE3B0D1C6F9"
+				item: "minecraft:flint"
+				type: "item"
+			}]
+			shape: "rsquare"
+			size: 1.2d
+			subtitle: "&8[Click to read]"
+			tasks: [{
+				id: "721E9966B01CF1E0"
+				item: {
+					Count: 1
+					id: "itemfilters:or"
+					tag: {
+						items: [
+							{
+								Count: 1b
+								id: "composite_material:flint_sword"
+								tag: {
+									Damage: 0
+								}
+							}
+							{
+								Count: 1b
+								id: "composite_material:flint_pickaxe"
+								tag: {
+									Damage: 0
+								}
+							}
+							{
+								Count: 1b
+								id: "composite_material:flint_axe"
+								tag: {
+									Damage: 0
+								}
+							}
+							{
+								Count: 1b
+								id: "composite_material:flint_shovel"
+								tag: {
+									Damage: 0
+								}
+							}
+							{
+								Count: 1b
+								id: "composite_material:flint_hoe"
+								tag: {
+									Damage: 0
+								}
+							}
+						]
+					}
+				}
+				title: "Any flint tool"
+				type: "item"
+			}]
+			title: "Some Flint Tools"
+			x: 0.0d
+			y: -9.0d
+		}
+		{
+			description: [
+				"Composite Materials is a substantial mod that introduces numerous new tools, armor sets, and unique mechanics. "
+				""
+				"Given the power of the tools obtainable from this mod, this dedicated questline is here to guide your progression."
+			]
+			hide_until_deps_complete: true
+			icon: {
+				Count: 1
+				id: "ftbquests:custom_icon"
+				tag: {
+					Icon: "composite_material:item/reinforced_book"
+				}
+			}
+			id: "5B405969C6A4170B"
+			rewards: [{
+				id: "7522850D2C6B935F"
+				type: "xp"
+				xp: 25
+			}]
+			shape: "square"
+			size: 1.5d
+			subtitle: "&8[Click to read]"
+			tasks: [
+				{
+					id: "31CF6B033EC9CCC0"
+					title: "Okay!"
+					type: "checkmark"
+				}
+				{
+					id: "29B5A6CA87C864EA"
+					item: "minecraft:flint"
+					type: "item"
+				}
+			]
+			title: "Composite Materials!"
+			x: 0.0d
+			y: -12.0d
+		}
+		{
+			dependencies: ["17C0F0B6D9965F33"]
+			description: ["Worse stats than iron armor, but gives knockback resistance."]
+			icon: {
+				Count: 1
+				id: "composite_material:copper_helmet"
+				tag: {
+					Damage: 0
+				}
+			}
+			id: "796E9BF6EAAB7EAE"
+			rewards: [
+				{
+					count: 4
+					id: "013EA08D61A7FE98"
+					item: "minecraft:copper_ingot"
+					type: "item"
+				}
+				{
+					count: 2
+					id: "67345B6D3C0308AC"
+					item: "minecraft:cooked_beef"
+					type: "item"
+				}
+			]
+			shape: "rsquare"
+			size: 1.2d
+			subtitle: "&8[Click to read]"
+			tasks: [{
+				id: "4E77D67E2E771698"
+				item: {
+					Count: 1
+					id: "itemfilters:or"
+					tag: {
+						items: [
+							{
+								Count: 1b
+								id: "composite_material:copper_helmet"
+								tag: {
+									Damage: 0
+								}
+							}
+							{
+								Count: 1b
+								id: "composite_material:copper_chestplate"
+								tag: {
+									Damage: 0
+								}
+							}
+							{
+								Count: 1b
+								id: "composite_material:copper_leggings"
+								tag: {
+									Damage: 0
+								}
+							}
+							{
+								Count: 1b
+								id: "composite_material:copper_boots"
+								tag: {
+									Damage: 0
+								}
+							}
+						]
+					}
+				}
+				title: "Any copper armor"
+				type: "item"
+			}]
+			title: "Copper Armor Set"
+			x: 1.7999999999999998d
+			y: -7.199999999999999d
+		}
+		{
+			dependencies: ["17C0F0B6D9965F33"]
+			description: ["Worse than iron, but can be thrown into water to oxidize the tools, thus making them inflict poison!"]
+			icon: {
+				Count: 1
+				id: "composite_material:copper_pickaxe"
+				tag: {
+					Damage: 0
+				}
+			}
+			id: "2526C45CE93330B8"
+			rewards: [
+				{
+					count: 4
+					id: "3F73EC4861B584B7"
+					item: "minecraft:copper_ingot"
+					type: "item"
+				}
+				{
+					count: 2
+					id: "776F6FB4C06EC6A2"
+					item: "minecraft:cooked_beef"
+					type: "item"
+				}
+			]
+			shape: "rsquare"
+			size: 1.2d
+			subtitle: "&8[Click to read]"
+			tasks: [{
+				id: "75F37DFD9EFF52FB"
+				item: {
+					Count: 1
+					id: "itemfilters:or"
+					tag: {
+						items: [
+							{
+								Count: 1b
+								id: "composite_material:copper_sword"
+								tag: {
+									Damage: 0
+								}
+							}
+							{
+								Count: 1b
+								id: "composite_material:copper_pickaxe"
+								tag: {
+									Damage: 0
+								}
+							}
+							{
+								Count: 1b
+								id: "composite_material:copper_axe"
+								tag: {
+									Damage: 0
+								}
+							}
+							{
+								Count: 1b
+								id: "composite_material:copper_shovel"
+								tag: {
+									Damage: 0
+								}
+							}
+							{
+								Count: 1b
+								id: "composite_material:copper_hoe"
+								tag: {
+									Damage: 0
+								}
+							}
+						]
+					}
+				}
+				title: "Any copper tool"
+				type: "item"
+			}]
+			title: "Copper Toolset"
+			x: -1.7999999999999998d
+			y: -7.199999999999999d
+		}
+		{
+			dependencies: [
+				"796E9BF6EAAB7EAE"
+				"2526C45CE93330B8"
+			]
+			description: [
+				"Similiar attributes to iron, has magic resistance and can repair itself when thrown into water."
+				""
+				"The shield can block sonic attacks from the warden!"
+			]
+			icon: {
+				Count: 1
+				id: "composite_material:amethyst_helmet"
+				tag: {
+					Damage: 0
+				}
+			}
+			id: "736E807439EDC197"
+			rewards: [
+				{
+					count: 2
+					id: "30B093C3D17AEFE0"
+					item: "minecraft:amethyst_shard"
+					type: "item"
+				}
+				{
+					id: "4F28DBA5EE0D8A36"
+					item: "chimes:amethyst_chimes"
+					type: "item"
+				}
+			]
+			shape: "rsquare"
+			size: 1.2d
+			subtitle: "&8[Click to read]"
+			tasks: [{
+				id: "7765205C4CB91CD3"
+				item: {
+					Count: 1
+					id: "itemfilters:or"
+					tag: {
+						items: [
+							{
+								Count: 1b
+								id: "composite_material:amethyst_helmet"
+								tag: {
+									Damage: 0
+								}
+							}
+							{
+								Count: 1b
+								id: "composite_material:amethyst_chestplate"
+								tag: {
+									Damage: 0
+								}
+							}
+							{
+								Count: 1b
+								id: "composite_material:amethyst_leggings"
+								tag: {
+									Damage: 0
+								}
+							}
+							{
+								Count: 1b
+								id: "composite_material:amethyst_boots"
+								tag: {
+									Damage: 0
+								}
+							}
+							{
+								Count: 1b
+								id: "composite_material:amethyst_shield"
+								tag: {
+									Damage: 0
+								}
+							}
+						]
+					}
+				}
+				title: "Any amethyst armor"
+				type: "item"
+			}]
+			title: "Amethyst Armor Set"
+			x: -1.7999999999999998d
+			y: -5.3999999999999995d
+		}
+		{
+			dependencies: [
+				"2526C45CE93330B8"
+				"796E9BF6EAAB7EAE"
+			]
+			description: ["Similiar attributes to iron, and can repair itself when thrown into water."]
+			icon: {
+				Count: 1
+				id: "composite_material:amethyst_pickaxe"
+				tag: {
+					Damage: 0
+				}
+			}
+			id: "13384AC186341D38"
+			rewards: [{
+				count: 2
+				id: "59788BCA35BB017B"
+				item: "minecraft:amethyst_shard"
+				type: "item"
+			}]
+			shape: "rsquare"
+			size: 1.2d
+			subtitle: "&8[Click to read]"
+			tasks: [{
+				id: "07C82E7B10F02713"
+				item: {
+					Count: 1
+					id: "itemfilters:or"
+					tag: {
+						items: [
+							{
+								Count: 1b
+								id: "composite_material:amethyst_sword"
+								tag: {
+									Damage: 0
+								}
+							}
+							{
+								Count: 1b
+								id: "composite_material:amethyst_pickaxe"
+								tag: {
+									Damage: 0
+								}
+							}
+							{
+								Count: 1b
+								id: "composite_material:amethyst_axe"
+								tag: {
+									Damage: 0
+								}
+							}
+							{
+								Count: 1b
+								id: "composite_material:amethyst_shovel"
+								tag: {
+									Damage: 0
+								}
+							}
+							{
+								Count: 1b
+								id: "composite_material:amethyst_hoe"
+								tag: {
+									Damage: 0
+								}
+							}
+						]
+					}
+				}
+				title: "Any amethyst tool"
+				type: "item"
+			}]
+			title: "Amethyst Toolset"
+			x: 1.7999999999999998d
+			y: -5.3999999999999995d
+		}
+		{
+			dependencies: [
+				"736E807439EDC197"
+				"13384AC186341D38"
+			]
+			description: [
+				"&cThe Elder Guardian&r was once the fierce protector of the ocean, though now it is, simply put, an old fish."
+				""
+				"Anyways, we need to kill this boss in order to get a required material."
+			]
+			icon: "plushie_buddies:plushie_elder_guardian"
+			icon_scale: 1.4d
+			id: "57734015B3527500"
+			rewards: [{
+				id: "176151729210BADD"
+				item: "composite_material:guardian_elder_spike"
+				random_bonus: 2
+				type: "item"
+			}]
+			shape: "octagon"
+			size: 1.2d
+			subtitle: "&8[Click to read]"
+			tasks: [{
+				entity: "minecraft:elder_guardian"
+				icon: "plushie_buddies:plushie_elder_guardian"
+				id: "40460A4AA013F52B"
+				title: "&cKill&r The Elder Guardian"
+				type: "kill"
+				value: 1L
+			}]
+			x: 0.0d
+			y: -3.5999999999999996d
+		}
+		{
+			dependencies: ["57734015B3527500"]
+			id: "68A929431E05F20F"
+			rewards: [{
+				id: "4957ACD9A482D99B"
+				type: "xp"
+				xp: 1
+			}]
+			shape: "diamond"
+			size: 1.2d
+			subtitle: "Obtained by killing a Elder Guardian"
+			tasks: [{
+				id: "5B7D0D4E82A6C797"
+				item: "composite_material:guardian_elder_spike"
+				type: "item"
+			}]
+			x: 0.0d
+			y: -1.7999999999999998d
+		}
+		{
+			dependencies: ["68A929431E05F20F"]
+			description: ["When thrown near an activated conduit, it will turn into a Abyss Fang."]
+			id: "68751F3651BF7810"
+			rewards: [
+				{
+					count: 4
+					id: "7B7A6690976E4A2B"
+					item: "species:werefang"
+					type: "item"
+				}
+				{
+					count: 4
+					id: "7250A3C7294D494A"
+					item: "biomancy:mob_fang"
+					type: "item"
+				}
+			]
+			shape: "diamond"
+			size: 1.2d
+			subtitle: "&8[Click to read]"
+			tasks: [{
+				id: "0F91E3866589FB0D"
+				item: "composite_material:abyss_fang"
+				type: "item"
+			}]
+			x: -1.2d
+			y: 0.0d
+		}
+		{
+			dependencies: ["68A929431E05F20F"]
+			id: "02D52DB3350AA83C"
+			rewards: [{
+				count: 4
+				id: "3A0ED7025D8B4CF1"
+				item: "minecraft:prismarine_shard"
+				random_bonus: 4
+				type: "item"
+			}]
+			shape: "diamond"
+			size: 1.2d
+			subtitle: "Can be crafted with various aquatic materials"
+			tasks: [{
+				id: "3DF40D8657683E9E"
+				item: "composite_material:prismarine_alloy_ingot"
+				type: "item"
+			}]
+			x: 1.2d
+			y: 0.0d
+		}
+		{
+			dependencies: [
+				"02D52DB3350AA83C"
+				"68751F3651BF7810"
+			]
+			id: "41A1389708C76431"
+			rewards: [
+				{
+					id: "07A119E29AFC4502"
+					type: "xp"
+					xp: 25
+				}
+				{
+					id: "58F2B275DB5130DB"
+					item: {
+						Count: 1
+						id: "traveloptics:aqua_echo"
+						tag: { }
+					}
+					type: "item"
+				}
+			]
+			shape: "rsquare"
+			size: 1.2d
+			subtitle: "Now it's craftable!"
+			tasks: [{
+				id: "6E0B36F0944266FE"
+				item: {
+					Count: 1
+					id: "minecraft:trident"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			x: -0.6d
+			y: 1.7999999999999998d
+		}
+		{
+			dependencies: [
+				"02D52DB3350AA83C"
+				"68751F3651BF7810"
+			]
+			description: ["This weapon has the ability to cause aquatic mobs to drop extra resources."]
+			id: "2C8792C34200438B"
+			rewards: [
+				{
+					id: "37A5A50EFD53A168"
+					type: "xp"
+					xp: 25
+				}
+				{
+					id: "5E9D236433A8EB54"
+					item: {
+						Count: 1
+						id: "traveloptics:aqua_echo"
+						tag: { }
+					}
+					type: "item"
+				}
+			]
+			shape: "rsquare"
+			size: 1.2d
+			subtitle: "&8[Click to read]"
+			tasks: [{
+				id: "17A704B312E6F956"
+				item: {
+					Count: 1
+					id: "composite_material:abyss_blade"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			x: 0.6d
+			y: 1.7999999999999998d
+		}
+		{
+			dependencies: ["13384AC186341D38"]
+			id: "055CDFD704ACB58A"
+			rewards: [{
+				count: 2
+				id: "0FBD88295A3E9059"
+				item: "composite_material:obsidian_steel_ingot"
+				type: "item"
+			}]
+			shape: "gear"
+			size: 1.2d
+			subtitle: "Obtained Through Crafting"
+			tasks: [{
+				id: "309E040F6085A85C"
+				item: "composite_material:obsidian_steel_ingot"
+				type: "item"
+			}]
+			x: 4.8d
+			y: -5.3999999999999995d
+		}
+		{
+			dependencies: ["055CDFD704ACB58A"]
+			description: [
+				"The armor has the same attributes as diamond but higher enchantability."
+				""
+				"Wearing the armor will also make you neutral with the piglins."
+			]
+			id: "235D4C802021ACF4"
+			rewards: [{
+				count: 2
+				id: "771752EE72066E3B"
+				item: "composite_material:obsidian_steel_ingot"
+				type: "item"
+			}]
+			shape: "rsquare"
+			size: 1.2d
+			subtitle: "&8[Click to read]"
+			tasks: [{
+				id: "1881474DF1581C26"
+				item: {
+					Count: 1
+					id: "itemfilters:or"
+					tag: {
+						items: [
+							{
+								Count: 1b
+								id: "composite_material:obsidian_helmet"
+								tag: {
+									Damage: 0
+								}
+							}
+							{
+								Count: 1b
+								id: "composite_material:obsidian_chestplate"
+								tag: {
+									Damage: 0
+								}
+							}
+							{
+								Count: 1b
+								id: "composite_material:obsidian_leggings"
+								tag: {
+									Damage: 0
+								}
+							}
+							{
+								Count: 1b
+								id: "composite_material:obsidian_boots"
+								tag: {
+									Damage: 0
+								}
+							}
+						]
+					}
+				}
+				title: "Any obsidian armor"
+				type: "item"
+			}]
+			title: "Obsidian Armor Set"
+			x: 6.0d
+			y: -6.6d
+		}
+		{
+			dependencies: ["055CDFD704ACB58A"]
+			description: ["The tools are a mix of gold and diamond, though with less durability than the latter."]
+			id: "316187625F2B10B7"
+			rewards: [{
+				count: 2
+				id: "09B98F108B5483CB"
+				item: "composite_material:obsidian_steel_ingot"
+				type: "item"
+			}]
+			shape: "rsquare"
+			size: 1.2d
+			subtitle: "&8[Click to read]"
+			tasks: [{
+				id: "52EE1CDBC56F816C"
+				item: {
+					Count: 1
+					id: "itemfilters:or"
+					tag: {
+						items: [
+							{
+								Count: 1b
+								id: "composite_material:obsidian_sword"
+								tag: {
+									Damage: 0
+								}
+							}
+							{
+								Count: 1b
+								id: "composite_material:obsidian_pickaxe"
+								tag: {
+									Damage: 0
+								}
+							}
+							{
+								Count: 1b
+								id: "composite_material:obsidian_axe"
+								tag: {
+									Damage: 0
+								}
+							}
+							{
+								Count: 1b
+								id: "composite_material:obsidian_shovel"
+								tag: {
+									Damage: 0
+								}
+							}
+							{
+								Count: 1b
+								id: "composite_material:obsidian_hoe"
+								tag: {
+									Damage: 0
+								}
+							}
+							{
+								Count: 1b
+								id: "composite_material:obsidian_wand"
+								tag: {
+									Damage: 0
+								}
+							}
+						]
+					}
+				}
+				title: "Any obsidian tool"
+				type: "item"
+			}]
+			title: "Obsidian Toolset"
+			x: 3.5999999999999996d
+			y: -6.6d
+		}
+		{
+			dependencies: ["055CDFD704ACB58A"]
+			description: [
+				"While holding Right-Click with it, you will shoot fire. "
+				""
+				"In the nether though, it will shoot fireballs instead."
+			]
+			id: "0BDE37FDC6E1CFF6"
+			rewards: [{
+				count: 2
+				id: "42C2939E4D68C136"
+				item: "composite_material:obsidian_steel_ingot"
+				type: "item"
+			}]
+			shape: "netheritetier"
+			size: 1.2d
+			subtitle: "&8[Click to read]"
+			tasks: [{
+				id: "41E3A5A54731561D"
+				item: {
+					Count: 1
+					id: "composite_material:obsidian_wand"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			x: 4.8d
+			y: -3.0d
+		}
+		{
+			dependencies: ["055CDFD704ACB58A"]
+			description: [
+				"Use a cardboard box to break spawners with no problem!"
+				""
+				"Then bring it to home, and throw &dobsidian steel ingot&r on it."
+				""
+				"There's a chance it will convert into &adungeon steel ingot!"
+			]
+			id: "1A79AC9048653A9D"
+			rewards: [{
+				count: 4
+				id: "0A3098C5708B0FAF"
+				item: "mekanism:cardboard_box"
+				type: "item"
+			}]
+			shape: "square"
+			size: 1.2d
+			subtitle: "&8[Click to read]"
+			tasks: [{
+				id: "31EBC07C628DB854"
+				item: "mekanism:cardboard_box"
+				type: "item"
+			}]
+			title: "Breaking a Spawner"
+			x: 8.4d
+			y: -5.3999999999999995d
+		}
+		{
+			dependencies: ["1A79AC9048653A9D"]
+			id: "734425E2A8C791C7"
+			rewards: [{
+				id: "492185919B48C4F5"
+				item: {
+					Count: 1
+					id: "terramity:flintlock_pistol"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			shape: "netheritetier"
+			size: 1.2d
+			subtitle: "Obtained by dropping obsidian steel ingot on a spawner."
+			tasks: [{
+				id: "15A7004D2787311A"
+				item: "composite_material:dungeon_steel_ingot"
+				type: "item"
+			}]
+			x: 12.0d
+			y: -5.3999999999999995d
+		}
+		{
+			dependencies: ["734425E2A8C791C7"]
+			description: [
+				"Beheader heals you whenever you kill an enemy with the weapon."
+				""
+				"It also has a chance to drop mobs head, increases with every fortune level."
+			]
+			id: "6106FDF4BBD69EF3"
+			rewards: [{
+				id: "1D582B166179E5F9"
+				item: "composite_material:dungeon_steel_ingot"
+				type: "item"
+			}]
+			shape: "netheritetier"
+			size: 1.2d
+			subtitle: "&8[Click to read]"
+			tasks: [{
+				id: "2E9FAF62CC4F77F0"
+				item: {
+					Count: 1
+					id: "composite_material:dungeon_axe"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			x: 10.0d
+			y: -7.3999999999999995d
+		}
+		{
+			dependencies: ["734425E2A8C791C7"]
+			description: [
+				"The Sealer heals you for part of the damage dealt, with a chance to drop spawn eggs from the mob."
+				""
+				"The chance increases with looting."
+			]
+			id: "3640BFE607F6C3EA"
+			rewards: [{
+				id: "6782A8B48F8F09CC"
+				item: "composite_material:dungeon_steel_ingot"
+				type: "item"
+			}]
+			shape: "netheritetier"
+			size: 1.2d
+			subtitle: "&8[Click to read]"
+			tasks: [{
+				id: "500998F65C2391BE"
+				item: {
+					Count: 1
+					id: "composite_material:dungeon_sword"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			x: 11.2d
+			y: -8.0d
+		}
+		{
+			dependencies: ["734425E2A8C791C7"]
+			description: [
+				"The Thumper deals damage based on the distance fallen and negates fall damage."
+				""
+				"Basically a better version of the mace."
+			]
+			id: "0E70B42FC7FC2185"
+			rewards: [{
+				id: "40F3F195067124A5"
+				item: "composite_material:dungeon_steel_ingot"
+				type: "item"
+			}]
+			size: 1.2d
+			subtitle: "&8[Click to read]"
+			tasks: [{
+				id: "59CA8F5DB793982F"
+				item: {
+					Count: 1
+					id: "composite_material:dungeon_hammer"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			x: 12.4d
+			y: -8.0d
+		}
+		{
+			dependencies: ["734425E2A8C791C7"]
+			description: ["The Breaker is a special pickaxe that allows you to mine mob spawners."]
+			id: "383F2E2B479DC3B0"
+			rewards: [{
+				id: "259EBB36BE891D2A"
+				item: "composite_material:dungeon_steel_ingot"
+				type: "item"
+			}]
+			size: 1.2d
+			subtitle: "&8[Click to read]"
+			tasks: [{
+				id: "2E5FDCD43D2B3A46"
+				item: {
+					Count: 1
+					id: "composite_material:dungeon_pickaxe"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			x: 13.6d
+			y: -7.3999999999999995d
+		}
+		{
+			dependencies: ["734425E2A8C791C7"]
+			description: [
+				"If you hit a mob with the bow, then hit another one with the arrow, you can make them fight eachother!"
+				""
+				"Pretty confusing.."
+			]
+			id: "6052859090CD29FA"
+			rewards: [{
+				id: "38E491E1BFB7D676"
+				item: "composite_material:dungeon_steel_ingot"
+				type: "item"
+			}]
+			size: 1.2d
+			subtitle: "&8[Click to read]"
+			tasks: [{
+				id: "3E47543D1B2CBDF4"
+				item: {
+					Count: 1
+					id: "composite_material:scapegoat"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			x: 14.2d
+			y: -5.0d
+		}
+		{
+			dependencies: ["734425E2A8C791C7"]
+			description: ["The Opressor heals you whenever a enemy heals near you."]
+			id: "4566633CF8C7CC0A"
+			rewards: [{
+				id: "3EC037E247464AA4"
+				item: "composite_material:dungeon_steel_ingot"
+				type: "item"
+			}]
+			size: 1.2d
+			subtitle: "&8[Click to read]"
+			tasks: [{
+				id: "6AC78B06AF7D96B5"
+				item: {
+					Count: 1
+					id: "composite_material:dungeon_shield"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			x: 14.2d
+			y: -6.2d
+		}
+		{
+			dependencies: ["734425E2A8C791C7"]
+			description: [
+				"Obtained by giving a dungeon steel ingot to a allay."
+				""
+				"Allay will die in this process.. :c"
+			]
+			id: "0DD1C5FDF2692182"
+			rewards: [{
+				id: "4437063114A0A35F"
+				item: "composite_material:allay_steel_ingot"
+				type: "item"
+			}]
+			shape: "gear"
+			size: 1.3d
+			subtitle: "&8[Click to read]"
+			tasks: [{
+				id: "239263FD838879E5"
+				item: "composite_material:allay_steel_ingot"
+				type: "item"
+			}]
+			x: 12.0d
+			y: -3.5999999999999996d
+		}
+		{
+			dependencies: ["734425E2A8C791C7"]
+			icon: {
+				Count: 1
+				id: "ftbquests:custom_icon"
+				tag: {
+					Icon: "minecraft:textures/gui/info_icon.png"
+				}
+			}
+			icon_scale: 1.35d
+			id: "16F570C334B2B782"
+			shape: "square"
+			size: 1.2d
+			subtitle: "Just Check me!"
+			tasks: [{
+				id: "675D64CFA5A77B6A"
+				title: "Yesss i do!"
+				type: "checkmark"
+			}]
+			title: "Having trouble finding allays?"
+			x: 13.2d
+			y: -3.5999999999999996d
+		}
+		{
+			can_repeat: true
+			dependencies: ["16F570C334B2B782"]
+			id: "148EA871C27C7C15"
+			rewards: [{
+				count: 5
+				id: "6B7C783F0D296A27"
+				item: "minecraft:allay_spawn_egg"
+				type: "item"
+			}]
+			size: 1.2d
+			subtitle: "Requires 5 Dungeon Steel Ingot"
+			tasks: [{
+				consume_items: true
+				count: 5L
+				id: "72D3F4A43F2FD42C"
+				item: { Count: 5, id: "composite_material:dungeon_steel_ingot" }
+				type: "item"
+			}]
+			title: "Buy Allay Spawn Egg"
+			x: 15.6d
+			y: -3.5999999999999996d
+		}
+		{
+			dependencies: ["0DD1C5FDF2692182"]
+			description: [
+				"The armor has medium durability but less armor toughness than even diamond."
+				""
+				"-It can negate fall damage, give you %10 move speed with each armor piece."
+				""
+				"-You also become immune to wither, poison and hunger damage, recover quickly aswell!"
+			]
+			icon: {
+				Count: 1
+				id: "ftbquests:custom_icon"
+				tag: {
+					Icon: "composite_material:item/allay_steel_helmet"
+				}
+			}
+			id: "63810D5E4B311305"
+			rewards: [{
+				id: "0ED284EE71C44092"
+				item: "composite_material:allay_steel_ingot"
+				type: "item"
+			}]
+			shape: "rsquare"
+			size: 1.2d
+			subtitle: "&8[Click to read]"
+			tasks: [{
+				id: "2AD9473CCBC4AABB"
+				item: {
+					Count: 1
+					id: "itemfilters:or"
+					tag: {
+						items: [
+							{
+								Count: 1b
+								id: "composite_material:allay_steel_helmet"
+								tag: {
+									Damage: 0
+								}
+							}
+							{
+								Count: 1b
+								id: "composite_material:allay_steel_chestplate"
+								tag: {
+									Damage: 0
+								}
+							}
+							{
+								Count: 1b
+								id: "composite_material:allay_steel_leggings"
+								tag: {
+									Damage: 0
+								}
+							}
+							{
+								Count: 1b
+								id: "composite_material:allay_steel_boots"
+								tag: {
+									Damage: 0
+								}
+							}
+						]
+					}
+				}
+				type: "item"
+			}]
+			title: "Any Allay Armor Piece"
+			x: 10.799999999999999d
+			y: -1.7999999999999998d
+		}
+		{
+			dependencies: ["0DD1C5FDF2692182"]
+			description: ["These tools can break up x64 of the same type in an area when used."]
+			icon: {
+				Count: 1
+				id: "ftbquests:custom_icon"
+				tag: {
+					Icon: "composite_material:item/allay_steel_pickaxe"
+				}
+			}
+			id: "26562D5DC2968A9D"
+			rewards: [{
+				id: "12A1A43AD56EABB9"
+				item: "composite_material:allay_steel_ingot"
+				type: "item"
+			}]
+			shape: "rsquare"
+			size: 1.2d
+			subtitle: "&8[Click to read]"
+			tasks: [{
+				id: "2D2786F6E1E2CEED"
+				item: {
+					Count: 1
+					id: "itemfilters:or"
+					tag: {
+						items: [
+							{
+								Count: 1b
+								id: "composite_material:allay_steel_sword"
+								tag: {
+									Damage: 0
+								}
+							}
+							{
+								Count: 1b
+								id: "composite_material:allay_steel_pickaxe"
+								tag: {
+									Damage: 0
+								}
+							}
+							{
+								Count: 1b
+								id: "composite_material:allay_steel_axe"
+								tag: {
+									Damage: 0
+								}
+							}
+							{
+								Count: 1b
+								id: "composite_material:allay_steel_shovel"
+								tag: {
+									Damage: 0
+								}
+							}
+							{
+								Count: 1b
+								id: "composite_material:allay_steel_hoe"
+								tag: {
+									Damage: 0
+								}
+							}
+						]
+					}
+				}
+				type: "item"
+			}]
+			title: "Any Allay Tool"
+			x: 13.2d
+			y: -1.7999999999999998d
+		}
+		{
+			dependencies: [
+				"63810D5E4B311305"
+				"26562D5DC2968A9D"
+			]
+			description: [
+				"&cThe Warden&r rests deep under the ground."
+				""
+				"It resides a strange and worrying fauna that reacts to sounds. Don't make too much noise or you might wake it up."
+			]
+			icon: "plushie_buddies:plushie_warden"
+			icon_scale: 1.4d
+			id: "706326297CA26190"
+			rewards: [{
+				count: 4
+				id: "0D405C06848713A2"
+				item: "minecraft:echo_shard"
+				type: "item"
+			}]
+			shape: "octagon"
+			size: 1.2d
+			subtitle: "Overworld / Ancient City"
+			tasks: [{
+				entity: "minecraft:warden"
+				id: "132CA25AC2657937"
+				type: "kill"
+				value: 1L
+			}]
+			title: "Kill &cThe Warden&r"
+			x: 12.0d
+			y: 0.0d
+		}
+		{
+			dependencies: ["706326297CA26190"]
+			description: ["This item can be used along with echo shards and diamond to craft an Echoium Ingot."]
+			id: "71F2374479DC95EE"
+			rewards: [
+				{
+					id: "6EEF1A2DF943DE1A"
+					type: "xp"
+					xp: 25
+				}
+				{
+					id: "330B1B348B69CC48"
+					item: "composite_material:warden_hand"
+					type: "item"
+				}
+			]
+			shape: "gear"
+			size: 1.2d
+			subtitle: "&8[Click to read]"
+			tasks: [{
+				id: "57F7B3ACC5B81324"
+				item: "composite_material:warden_hand"
+				type: "item"
+			}]
+			x: 12.0d
+			y: 3.0d
+		}
+		{
+			dependencies: ["71F2374479DC95EE"]
+			description: [
+				"Echoium Armor set has better attributes than netherite, grants you additional hearts, and grants darkness and blindness immunity!"
+				""
+				"-Wardens won't spawn near you."
+				""
+				"-You won't take fire damage."
+				""
+				"-Immune to weakness effect."
+			]
+			icon: {
+				Count: 1
+				id: "composite_material:echoium_helmet"
+				tag: {
+					Damage: 0
+				}
+			}
+			id: "38239F51F2B5E06A"
+			rewards: [{
+				count: 4
+				id: "6ACD2888837A6B82"
+				item: "minecraft:echo_shard"
+				type: "item"
+			}]
+			shape: "rsquare"
+			size: 1.2d
+			subtitle: "&8[Click to read]"
+			tasks: [
+				{
+					id: "0223FD58E063DEBE"
+					item: {
+						Count: 1
+						id: "composite_material:echoium_helmet"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "05E83B589404FFFA"
+					item: {
+						Count: 1
+						id: "composite_material:echoium_chestplate"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "6664A615231D58AF"
+					item: {
+						Count: 1
+						id: "composite_material:echoium_leggings"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "301C475B47337D8E"
+					item: {
+						Count: 1
+						id: "composite_material:echoium_boots"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+			]
+			title: "Echoium Armor Set"
+			x: 10.2d
+			y: 1.7999999999999998d
+		}
+		{
+			dependencies: ["71F2374479DC95EE"]
+			description: [
+				"Better attributes than netherite."
+				""
+				"Deals additional damage based on the opponents armor while ignoring it!"
+			]
+			icon: {
+				Count: 1
+				id: "composite_material:echoium_pickaxe"
+				tag: {
+					Damage: 0
+				}
+			}
+			id: "7472DB2463DD5262"
+			rewards: [{
+				count: 4
+				id: "343BC5728B58759B"
+				item: "minecraft:echo_shard"
+				type: "item"
+			}]
+			shape: "rsquare"
+			size: 1.2d
+			subtitle: "&8[Click to read]"
+			tasks: [
+				{
+					id: "55A08D371FB4B367"
+					item: {
+						Count: 1
+						id: "composite_material:echoium_sword"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "11A0681FDF911D21"
+					item: {
+						Count: 1
+						id: "composite_material:echoium_pickaxe"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "05683BA800ADA34D"
+					item: {
+						Count: 1
+						id: "composite_material:echoium_axe"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "133638D748DCDBDC"
+					item: {
+						Count: 1
+						id: "composite_material:echoium_shovel"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "335B18B56988D338"
+					item: {
+						Count: 1
+						id: "composite_material:echoium_hoe"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+			]
+			title: "Echoium Toolset"
+			x: 10.2d
+			y: 4.8d
+		}
+		{
+			dependencies: ["7472DB2463DD5262"]
+			description: [
+				"This bow increases it's damage based on how long you draw it."
+				""
+				"It can go up to PRETTY high damages, but you have to wait a lot."
+			]
+			id: "6A03C826EEBA5BF8"
+			rewards: [{
+				count: 4
+				id: "2788F431B2454E08"
+				item: "minecraft:echo_shard"
+				type: "item"
+			}]
+			shape: "rsquare"
+			size: 1.2d
+			subtitle: "&8[Click to read]"
+			tasks: [{
+				id: "4916BF0D2B4ABDDC"
+				item: {
+					Count: 1
+					id: "composite_material:lacerator"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			x: 10.799999999999999d
+			y: 6.6d
+		}
+		{
+			dependencies: ["7472DB2463DD5262"]
+			description: [
+				"When charged, shoots the sonic boom ability from warden."
+				""
+				"Using the echoium armor set can amplify it's damage by 3x."
+			]
+			id: "050B220574F3265A"
+			rewards: [{
+				count: 4
+				id: "3CF61FB1B27EB2AD"
+				item: "minecraft:echo_shard"
+				type: "item"
+			}]
+			shape: "rsquare"
+			size: 1.2d
+			subtitle: "&8[Click to read]"
+			tasks: [{
+				id: "7CA5428E1CB9AAE0"
+				item: {
+					Count: 1
+					id: "composite_material:sonic_boom_wand"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			x: 9.6d
+			y: 6.6d
+		}
+		{
+			dependencies: [
+				"7472DB2463DD5262"
+				"38239F51F2B5E06A"
+			]
+			description: [
+				"These materials can turn leather armor into primitive armor."
+				""
+				"It can also upgrade the flint tools we had before into primitive tools!"
+			]
+			id: "6EA6750A1FDDC7EC"
+			rewards: [
+				{
+					id: "42C5CF68986810D9"
+					type: "xp_levels"
+					xp_levels: 5
+				}
+				{
+					id: "6C422996F8F1318D"
+					item: "composite_material:ancient_fiber"
+					type: "item"
+				}
+			]
+			shape: "gear"
+			size: 1.2d
+			subtitle: "&8[Click to read]"
+			tasks: [{
+				id: "597D7EB61A0B6E24"
+				item: "composite_material:ancient_fiber"
+				type: "item"
+			}]
+			x: 9.0d
+			y: 4.2d
+		}
+		{
+			dependencies: [
+				"7472DB2463DD5262"
+				"38239F51F2B5E06A"
+			]
+			description: [
+				"These materials can turn leather armor into primitive armor."
+				""
+				"It can also upgrade the flint tools we had before into primitive tools!"
+			]
+			id: "12015F7226F39056"
+			rewards: [
+				{
+					id: "30078745A945DBDB"
+					type: "xp_levels"
+					xp_levels: 5
+				}
+				{
+					id: "47213E479CE7559D"
+					item: "minecraft:sniffer_egg"
+					type: "item"
+				}
+			]
+			shape: "gear"
+			size: 1.2d
+			subtitle: "&8[Click to read]"
+			tasks: [{
+				id: "67D57CA5D1A50682"
+				item: "composite_material:primitive_tenacity"
+				type: "item"
+			}]
+			x: 9.0d
+			y: 2.4d
+		}
+		{
+			dependencies: [
+				"6EA6750A1FDDC7EC"
+				"12015F7226F39056"
+			]
+			description: [
+				"The armor only provides small amount of armor, but has a lot of armor toughness."
+				""
+				"It also gives lot of hp!"
+				""
+				"-%20 increased swim speed"
+				""
+				"-+1 block reach"
+				""
+				"-lot of bad effect immunities."
+			]
+			icon: {
+				Count: 1
+				id: "composite_material:primitive_helmet"
+				tag: {
+					Damage: 0
+				}
+			}
+			id: "5BF3464D9F640438"
+			rewards: [{
+				id: "5042EACEDC42B225"
+				item: "composite_material:ancient_fiber"
+				type: "item"
+			}]
+			shape: "rsquare"
+			size: 1.2d
+			subtitle: "&8[Click to read]"
+			tasks: [
+				{
+					id: "34CF18CF8B533D02"
+					item: {
+						Count: 1
+						id: "composite_material:primitive_helmet"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "5391EA5D848E2D70"
+					item: {
+						Count: 1
+						id: "composite_material:primitive_chestplate"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "1C8F0B63CA25DB8C"
+					item: {
+						Count: 1
+						id: "composite_material:primitive_leggings"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "231F68C68FAA0A99"
+					item: {
+						Count: 1
+						id: "composite_material:primitive_boots"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+			]
+			title: "Primitive Armor Set"
+			x: 7.199999999999999d
+			y: 2.4d
+		}
+		{
+			dependencies: [
+				"12015F7226F39056"
+				"6EA6750A1FDDC7EC"
+			]
+			description: [
+				"These tools deal a lot of damage and still increase with the more hp you got."
+				""
+				"The attributes are way higher than netherite, including the durability."
+			]
+			icon: {
+				Count: 1
+				id: "composite_material:primitive_pickaxe"
+				tag: {
+					Damage: 0
+				}
+			}
+			id: "6B861C59DA04C374"
+			rewards: [{
+				id: "1535C34EDC7CC791"
+				item: "composite_material:primitive_tenacity"
+				type: "item"
+			}]
+			shape: "rsquare"
+			size: 1.2d
+			subtitle: "&8[Click to read]"
+			tasks: [
+				{
+					id: "5F9E38F6D0457031"
+					item: {
+						Count: 1
+						id: "composite_material:primitive_sword"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "49A81EA049A435E2"
+					item: {
+						Count: 1
+						id: "composite_material:primitive_pickaxe"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "56C9EB471E5B9067"
+					item: {
+						Count: 1
+						id: "composite_material:primitive_axe"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "53500E83B5817F73"
+					item: {
+						Count: 1
+						id: "composite_material:primitive_shovel"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "531F0278774F5FEF"
+					item: {
+						Count: 1
+						id: "composite_material:primitive_hoe"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+			]
+			title: "Primitive Tools"
+			x: 7.199999999999999d
+			y: 4.2d
+		}
+		{
+			dependencies: [
+				"6B861C59DA04C374"
+				"5BF3464D9F640438"
+			]
+			description: ["The last material to cover is Etherite, made from end-game items."]
+			id: "69AE3351C85C0964"
+			rewards: [{
+				count: 4
+				id: "2CC8A5F33F68A6D8"
+				item: "composite_material:etherite_nugget"
+				type: "item"
+			}]
+			shape: "gear"
+			size: 1.2d
+			subtitle: "&8[Click to read]"
+			tasks: [{
+				id: "5191D70C78A2211E"
+				item: "composite_material:etherite_ingot"
+				type: "item"
+			}]
+			x: 5.3999999999999995d
+			y: 2.4d
+		}
+		{
+			dependencies: [
+				"6B861C59DA04C374"
+				"5BF3464D9F640438"
+			]
+			description: ["The last material to cover is Perkin, made from end-game items."]
+			id: "068C39719866B49B"
+			rewards: [{
+				id: "3617954E4C2458C2"
+				item: "composite_material:perkin"
+				type: "item"
+			}]
+			shape: "gear"
+			size: 1.2d
+			subtitle: "&8[Click to read]"
+			tasks: [{
+				id: "5EBABBD4CEEE7531"
+				item: "composite_material:perkin"
+				type: "item"
+			}]
+			x: 5.3999999999999995d
+			y: 4.2d
+		}
+		{
+			dependencies: [
+				"69AE3351C85C0964"
+				"068C39719866B49B"
+			]
+			description: [
+				"End-game armor, has incredibly high attributes and effects."
+				""
+				"To read all of them, check the item tooltip!"
+			]
+			id: "57CD81BFA66A35BD"
+			rewards: [{
+				icon: {
+					Count: 1
+					id: "ftbquests:custom_icon"
+					tag: {
+						Icon: "celestisynth:textures/abilityicon/skill/aquaflora_skill_icon_3.png"
+					}
+				}
+				id: "790B5707483D1A6B"
+				table_id: 8699295573854160387L
+				type: "random"
+			}]
+			shape: "octagon"
+			size: 1.5d
+			subtitle: "&8[Click to read]"
+			tasks: [
+				{
+					id: "4943DC9057E6B50C"
+					item: {
+						Count: 1
+						id: "composite_material:etherite_helmet"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "3A72461C8301C994"
+					item: {
+						Count: 1
+						id: "composite_material:etherite_chestplate"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "095C5E2CCCFD13A7"
+					item: {
+						Count: 1
+						id: "composite_material:etherite_leggings"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "3578997C4024659A"
+					item: {
+						Count: 1
+						id: "composite_material:etherite_boots"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+			]
+			title: "&bEtherite Armor Set"
+			x: 3.5999999999999996d
+			y: 2.4d
+		}
+		{
+			dependencies: [
+				"068C39719866B49B"
+				"69AE3351C85C0964"
+			]
+			description: [
+				"End-game tools, has incredibly high attributes and effects."
+				""
+				"To read all of them, check the item tooltip!"
+			]
+			id: "15B4A10DBC0ACB2E"
+			rewards: [{
+				icon: {
+					Count: 1
+					id: "ftbquests:custom_icon"
+					tag: {
+						Icon: "celestisynth:textures/abilityicon/skill/aquaflora_skill_icon_4.png"
+					}
+				}
+				id: "719E57B2BF6BE293"
+				table_id: 8699295573854160387L
+				type: "random"
+			}]
+			shape: "octagon"
+			size: 1.5d
+			subtitle: "&8[Click to read]"
+			tasks: [
+				{
+					id: "4F571DD8EACD68E1"
+					item: {
+						Count: 1
+						id: "composite_material:etherite_sword"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "1EE2D1626A93BFB8"
+					item: {
+						Count: 1
+						id: "composite_material:etherite_pickaxe"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "7698A5689C04F737"
+					item: {
+						Count: 1
+						id: "composite_material:etherite_axe"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "4873CF66B278B52B"
+					item: {
+						Count: 1
+						id: "composite_material:etherite_shovel"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "15F433121A706284"
+					item: {
+						Count: 1
+						id: "composite_material:etherite_hoe"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "46E40A0AB7B544EA"
+					item: {
+						Count: 1
+						id: "composite_material:etherite_shield"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+			]
+			title: "&bEtherite Toolset"
+			x: 3.5999999999999996d
+			y: 4.2d
+		}
+		{
+			dependencies: ["15B4A10DBC0ACB2E"]
+			description: ["Fires wither skulls that deal nice amount of damage, can be buffed with full etherite armor set!"]
+			id: "3DC6FFA510DB5638"
+			rewards: [{
+				id: "5E0D307E081C5D3A"
+				type: "xp"
+				xp: 1
+			}]
+			shape: "rsquare"
+			size: 1.5d
+			subtitle: "&8[Click to read]"
+			tasks: [{
+				id: "2DFFF1E33ACAB989"
+				item: {
+					Count: 1
+					id: "composite_material:etherite_wand"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			x: 3.5999999999999996d
+			y: 6.0d
+		}
+		{
+			dependencies: ["5B405969C6A4170B"]
+			description: [
+				"Hold this item in the main hand and hold a piece of enchanted equipment in the off-hand, right-click to transfer all the enchantments to an Enchanted Book."
+				""
+				"&8Doesn't work with two-handed weapons."
+			]
+			id: "5AAA22D68F7FC59F"
+			shape: "diamond"
+			size: 1.2d
+			subtitle: "&8[Click to read]"
+			tasks: [{
+				id: "087A36845BA04E53"
+				item: "composite_material:disenchanted_book"
+				type: "item"
+			}]
+			x: -1.2d
+			y: -10.2d
+		}
+		{
+			dependencies: ["5B405969C6A4170B"]
+			description: [
+				"To use this item, hold it in your main hand and hold a piece of equipment in your off-hand. Right-click to enchant the equipment based on your current XP level. This action costs 3 XP levels and has a chance to yield treasure enchantments."
+				""
+				"&8Note: This process does not work with two-handed weapons."
+			]
+			id: "32E8FC6195AA3D60"
+			shape: "diamond"
+			size: 1.2d
+			subtitle: "&8[Click to read]"
+			tasks: [{
+				id: "3ECD8805F3307FA9"
+				item: "composite_material:enlightened_book"
+				type: "item"
+			}]
+			x: -2.4d
+			y: -12.0d
+		}
+		{
+			dependencies: ["5B405969C6A4170B"]
+			description: [
+				"Hold this item in the main hand and hold the enchanted item in the off-hand, right-click to uprade all enchantments of the enchanted item that do not haffer of maximum level of 1 (Up to an additional 4 levels on top of the maximum, level)."
+				""
+				"&8Doesn't work with two-handed weapons."
+			]
+			id: "44AF82F2BB0640C0"
+			shape: "diamond"
+			size: 1.2d
+			subtitle: "&8[Click to read]"
+			tasks: [{
+				id: "6D8B55A12A5E6F17"
+				item: "composite_material:reinforced_book"
+				type: "item"
+			}]
+			x: 1.2d
+			y: -10.2d
+		}
+		{
+			dependencies: ["5B405969C6A4170B"]
+			description: [
+				"To use this item, hold it in your main hand and hold an Enchanted Book in your off-hand. Right-click to duplicate the Enchanted Book."
+				""
+				"&8Note: This process does not work with two-handed weapons."
+			]
+			id: "362E54481BED8B63"
+			shape: "diamond"
+			size: 1.2d
+			subtitle: "&8[Click to read]"
+			tasks: [{
+				id: "7533515D4219B80C"
+				item: "composite_material:duplichanted_book"
+				type: "item"
+			}]
+			x: -1.7999999999999998d
+			y: -12.6d
+		}
+		{
+			dependencies: ["5B405969C6A4170B"]
+			description: [
+				"Hold this item in the main hand and hold an enchanted item in the off-hand, right-click to separate the first enchantment of the enchanted item."
+				""
+				"&8Doesn't work with two-handed weapons."
+			]
+			id: "05656AC847A0C534"
+			shape: "diamond"
+			size: 1.2d
+			subtitle: "&8[Click to read]"
+			tasks: [{
+				id: "1DA6BAD64F6D8C47"
+				item: "composite_material:sepachanted_book"
+				type: "item"
+			}]
+			x: 2.4d
+			y: -12.0d
+		}
+		{
+			dependencies: ["5B405969C6A4170B"]
+			description: [
+				"This item has two primary functions, depending on its state:"
+				""
+				"&e1.&r If the book is not enchanted: Right-click to absorb all enchantments from the item held in your off-hand."
+				""
+				"&e2.&r If the book is already enchanted: Right-click to consume its durability and release all stored enchantments onto the item held in your off-hand."
+				""
+				"In the case of duplicate enchantments during transfer, the one with the highest level will be retained. Note that enchantments can only be transferred to valid equipment."
+				""
+				"&8This function does not work with two-handed weapons."
+			]
+			id: "7CA08CD18837E3FB"
+			shape: "diamond"
+			size: 1.2d
+			subtitle: "&8[Click to read]"
+			tasks: [{
+				id: "3D51CD759CDFC2B8"
+				item: {
+					Count: 1
+					id: "composite_material:ancient_book"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			x: 1.7999999999999998d
+			y: -12.6d
+		}
+		{
+			dependencies: ["5AAA22D68F7FC59F"]
+			description: [
+				"I put this in the last because of how op it can be.."
+				""
+				"When used it may kill you, but it will duplicate the item in your off-hand."
+				""
+				"It can also turn any mob into a egg if below %1 hp."
+			]
+			id: "6D13BEFF88844223"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "490C97D28CAD388D"
+				table_id: 5076402803711178431L
+				type: "random"
+			}]
+			shape: "diamond"
+			size: 1.2d
+			subtitle: "&8[Click to read]"
+			tasks: [{
+				id: "493A38149AB722EC"
+				item: "composite_material:dungeon_steel_totem"
+				type: "item"
+			}]
+			x: -2.4d
+			y: -10.2d
+		}
+		{
+			dependencies: ["44AF82F2BB0640C0"]
+			description: [
+				"Makes any item in your off-hand unbreakable."
+				""
+				"Can also work just normal as a totem of undying, but with a cooldown instead of breaking."
+			]
+			id: "387458C8E92C83B3"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "3D2CC4D4F27608DA"
+				table_id: 5076402803711178431L
+				type: "random"
+			}]
+			shape: "diamond"
+			size: 1.2d
+			tasks: [{
+				id: "4E7E831A2DA64A12"
+				item: "composite_material:etherite_totem"
+				type: "item"
+			}]
+			x: 2.4d
+			y: -10.2d
+		}
+	]
+	title: "Composite Materials"
+}

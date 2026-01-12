@@ -1,0 +1,48 @@
+{
+  "bag_item": "armageddon_mod:elvenite_paladin_treasure_bag",
+  "summon_item": "armageddon_mod:titan_insigna",
+  "drops": [
+    {
+      "item": "armageddon_mod:the_titans_oath",
+      "chance": 0.21,
+      "min_quantity": 1,
+      "max_quantity": 1,
+      "config_flag": "weapons_and_artifacts"
+    },
+    {
+      "item": "armageddon_mod:elvenite_bell",
+      "chance": 0.13,
+      "min_quantity": 1,
+      "max_quantity": 1,
+      "config_flag": "weapons_and_artifacts"
+    },
+    {
+      "item": "minecraft:golden_apple",
+      "chance": 1.0,
+      "min_quantity": 6,
+      "max_quantity": 8,
+      "config_flag": "none"
+    },
+    {
+      "item": "armageddon_mod:elvenite_ore",
+      "chance": 1.0,
+      "min_quantity": 0,
+      "max_quantity": 3,
+      "config_flag": "ores"
+    },
+    {
+      "item": "armageddon_mod:raw_elvenite",
+      "chance": 1.0,
+      "min_quantity": 8,
+      "max_quantity": 14,
+      "config_flag": "ores"
+    },
+    {
+      "item": "armageddon_mod:elvenite_ingot",
+      "chance": 1.0,
+      "min_quantity": 2,
+      "max_quantity": 5,
+      "config_flag": "ores"
+    }
+  ]
+}

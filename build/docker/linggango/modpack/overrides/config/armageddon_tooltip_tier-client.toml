@@ -1,0 +1,8 @@
+
+#Armageddon Tooltip Tier Configuration
+[general]
+	#List of tag entries. Format: [tags, label, color, advancement]
+	#Tags can be comma-separated for multiple tags
+	#Example: ["forge:diamond_tools,minecraft:swords", "Eldorath the Ancient Builder!", "c", "armageddon_mod:the_diamond_keeper"]
+	tags = [["forge:bloody_tools, forge:bloody_armor, forge:bloody_blocks", "Sanghor, Lord of Blood", "4", "armageddon_mod:the_blood_keeper"], ["forge:diamond_tools, forge:diamond_armor, forge:diamond_blocks", "Eldorath the Ancient Builder", "b", "armageddon_mod:the_diamond_keeper"], ["forge:elvenite_tools, forge:elvenite_armor, forge:elvenite_blocks", "The Elvenite Paladin", "e", "armageddon_mod:the_elvenite_keeper"], ["forge:emerald_tools, forge:emerald_armor, forge:emerald_blocks", "Arion, Tyrant of the Emerald Wrath", "a", "armageddon_mod:the_emerald_keeper"], ["forge:helionite_tools, forge:helionite_armor, forge:helionite_blocks", "Zoranth, Newborn of the Zenith", "6", "armageddon_mod:the_sun_keeper"], ["forge:voiderite_tools, forge:voiderite_armor, forge:voiderite_blocks", "Vaedric, the Fallen Wanderer", "5", "armageddon_mod:the_voiderite_keeper"], ["forge:iron_tools, forge:iron_armor, forge:iron_blocks", "The Iron Colossus", "f", "armageddon_mod:the_iron_keeper"], ["forge:golden_tools, forge:golden_armor, forge:golden_blocks", "The Goblin Lord", "6", "armageddon_mod:the_gold_keeper"], ["forge:netherite_tools, forge:netherite_armor, forge:netherite_blocks", "Zoranth, the Forgotten One", "8", "armageddon_mod:the_netherite_keeper"]]
+

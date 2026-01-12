@@ -1,0 +1,41 @@
+{
+  "bag_item": "armageddon_mod:zoranth_newborn_of_the_zenith_treasure_bag",
+  "summon_item": "armageddon_mod:the_sun_emblem",
+  "drops": [
+    {
+      "item": "armageddon_mod:obsidian_skull",
+      "chance": 0.20,
+      "min_quantity": 1,
+      "max_quantity": 1,
+      "config_flag": "weapons_and_artifacts"
+    },
+    {
+      "item": "armageddon_mod:the_eye_of_the_sun",
+      "chance": 0.20,
+      "min_quantity": 1,
+      "max_quantity": 1,
+      "config_flag": "weapons_and_artifacts"
+    },
+    {
+      "item": "minecraft:golden_apple",
+      "chance": 1.0,
+      "min_quantity": 10,
+      "max_quantity": 15,
+      "config_flag": "none"
+    },
+    {
+      "item": "armageddon_mod:helionite_ingot",
+      "chance": 1.0,
+      "min_quantity": 6,
+      "max_quantity": 10,
+      "config_flag": "none"
+    },
+    {
+      "item": "armageddon_mod:helionite_smithing_template",
+      "chance": 1.0,
+      "min_quantity": 6,
+      "max_quantity": 10,
+      "config_flag": "none"
+    }
+  ]
+}

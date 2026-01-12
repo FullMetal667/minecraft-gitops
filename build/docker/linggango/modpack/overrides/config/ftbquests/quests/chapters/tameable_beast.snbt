@@ -1,0 +1,333 @@
+{
+	autofocus_id: "423ED5C6EB4FE582"
+	default_hide_dependency_lines: false
+	default_quest_shape: "woodtier"
+	filename: "tameable_beast"
+	group: "3C6AB1DE39D4F441"
+	icon: "domesticationinnovation:wayward_lantern"
+	id: "266A5686BA357872"
+	images: [
+		{
+			height: 4.0d
+			image: "customtextures:textures/domesticationlogo.png"
+			rotation: 0.0d
+			width: 12.0d
+			x: -19.85442009603998d
+			y: -7.753683413366645d
+		}
+		{
+			dev: true
+			height: 1.0d
+			hover: ["Questlines belong to me, and is protected by All Rights Reserved. Do not try to steal without an explicit permission from me."]
+			image: "fancymenu:textures/buddy/gui/button_close_normal.png"
+			rotation: 0.0d
+			width: 1.0d
+			x: -21.0d
+			y: -6.0d
+		}
+	]
+	order_index: 7
+	quest_links: [ ]
+	quests: [
+		{
+			description: [
+				"Domestication Innovation adds lot of QoL features to your pets!"
+				""
+				"&eSuch as:"
+				""
+				"&8-Stay, Wander, Protect. Commands for your pet."
+				""
+				"&8-No friendlyfire unless held shift!"
+				""
+				"&8Unlocks questlines&r"
+			]
+			icon: "minecraft:name_tag"
+			id: "423ED5C6EB4FE582"
+			rewards: [{
+				id: "4BCEDF9E3CDC349C"
+				type: "xp"
+				xp: 25
+			}]
+			shape: "pentagon"
+			size: 1.3d
+			subtitle: "&8[Click to read]"
+			tasks: [{
+				id: "5957C96118710CDC"
+				title: "Who uses pets?"
+				type: "checkmark"
+			}]
+			title: "Overhauled Pet Taming System"
+			x: -20.0d
+			y: -6.0d
+		}
+		{
+			description: [
+				"By moving your pet onto one of these, it will automatically set a spawnpoint just like you have :D!"
+				""
+				"The pet will respawn there after the death."
+				""
+				"If your pet doesn't respawn, just wait till dawn."
+			]
+			id: "268D6D148D167476"
+			rewards: [{
+				id: "25340D2ECE579ED5"
+				type: "xp"
+				xp: 25
+			}]
+			shape: "rsquare"
+			subtitle: "&8[Click to read]"
+			tasks: [{
+				id: "107F01D45D3A054C"
+				item: {
+					Count: 1
+					ForgeCaps: {
+						"celestisynth:celestisynthitemstackcapabilities": {
+							cs.aquaSkin: 0
+						}
+					}
+					id: "itemfilters:tag"
+					tag: {
+						value: "domesticationinnovation:pet_beds"
+					}
+				}
+				title: "Pet Bed"
+				type: "item"
+			}]
+			title: "Pet Bed"
+			x: -20.5d
+			y: -4.5d
+		}
+		{
+			description: [
+				"The Wayward Lantern is a decorative block that has some uses."
+				""
+				"If u get teleported away with a dice, your pet might fail to teleport to you."
+				""
+				"To prevent this, place wayward lanterns on your house so you know they're always there!"
+			]
+			id: "099EA2F2740047DC"
+			rewards: [{
+				id: "43CDA6F4EB47DD04"
+				type: "xp"
+				xp: 25
+			}]
+			shape: "rsquare"
+			subtitle: "&8[Click to read]"
+			tasks: [{
+				id: "225BCA46DCD0AA04"
+				item: {
+					Count: 1
+					ForgeCaps: {
+						"celestisynth:celestisynthitemstackcapabilities": {
+							cs.aquaSkin: 0
+						}
+					}
+					id: "domesticationinnovation:wayward_lantern"
+				}
+				type: "item"
+			}]
+			x: -21.5d
+			y: -3.5d
+		}
+		{
+			description: ["Useful for moving pets around, it works just like a cat playing with toy."]
+			id: "35A60F8ABB6349FB"
+			rewards: [{
+				id: "729B462CF7DA563C"
+				type: "xp"
+				xp: 25
+			}]
+			shape: "rsquare"
+			subtitle: "&8[Click to read]"
+			tasks: [{
+				id: "3E29B8B27FD217C7"
+				item: {
+					Count: 1
+					ForgeCaps: {
+						"celestisynth:celestisynthitemstackcapabilities": {
+							cs.aquaSkin: 0
+						}
+					}
+					id: "domesticationinnovation:feather_on_a_stick"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			x: -18.5d
+			y: -3.5d
+		}
+		{
+			description: [
+				"Rotten Apples have a chance to spawn when an apple despawns on the floor."
+				""
+				"Can be fed to a Horse in order to turn it into a Zombie Horse."
+			]
+			id: "217291EED877A617"
+			rewards: [{
+				id: "06A192A7103C6234"
+				type: "xp"
+				xp: 25
+			}]
+			shape: "rsquare"
+			subtitle: "&8[Click to read]"
+			tasks: [{
+				id: "537399E9AB1AC5FF"
+				item: {
+					Count: 1
+					ForgeCaps: {
+						"celestisynth:celestisynthitemstackcapabilities": {
+							cs.aquaSkin: 0
+						}
+					}
+					id: "domesticationinnovation:rotten_apple"
+				}
+				type: "item"
+			}]
+			x: -19.5d
+			y: -4.5d
+		}
+		{
+			description: [
+				"They can be fed to a Zombie Horse in order to turn it into a Skeleton Horse."
+				""
+				"If fed to a rabbit, it will turn into a maniac killer rabbit."
+			]
+			id: "1FCBC9DFC78EAD5F"
+			rewards: [{
+				id: "7AB649D3E673FC5B"
+				type: "xp"
+				xp: 25
+			}]
+			shape: "rsquare"
+			subtitle: "&8[Click to read]"
+			tasks: [{
+				id: "59FE60A959059F65"
+				item: {
+					Count: 1
+					ForgeCaps: {
+						"celestisynth:celestisynthitemstackcapabilities": {
+							cs.aquaSkin: 0
+						}
+					}
+					id: "domesticationinnovation:sinister_carrot"
+				}
+				type: "item"
+			}]
+			x: -19.5d
+			y: -3.5d
+		}
+		{
+			description: [
+				"The &dDeed of Ownership&r is an item that can be purchased from the &cAnimal Tamer&r villager. "
+				""
+				"By &6right clicking&r on a tamed pet that you are the owner of, you bind it to the deed. "
+				""
+				"If you give the deed to any other player, and they use it on the bounded animal, then the ownership of the pet will pass onto them, making it effectively as if they were the ones who tamed the animal."
+			]
+			id: "22ABAE3CC010A07C"
+			rewards: [{
+				id: "56472029DF74CA6A"
+				type: "xp"
+				xp: 25
+			}]
+			shape: "rsquare"
+			subtitle: "&8[Click to read]"
+			tasks: [{
+				id: "0F57CC7E7E1B6B14"
+				item: {
+					Count: 1
+					ForgeCaps: {
+						"celestisynth:celestisynthitemstackcapabilities": {
+							cs.aquaSkin: 0
+						}
+					}
+					id: "domesticationinnovation:deed_of_ownership"
+				}
+				type: "item"
+			}]
+			x: -20.5d
+			y: -3.5d
+		}
+		{
+			description: ["When interacted, commands in a area, changing all mobs behaviour."]
+			id: "731EC33CE669D87A"
+			rewards: [{
+				id: "50C8B6F64976E783"
+				type: "xp"
+				xp: 25
+			}]
+			shape: "rsquare"
+			subtitle: "&8[Click to read]"
+			tasks: [{
+				id: "5D9E4A368545216A"
+				item: {
+					Count: 1
+					ForgeCaps: {
+						"celestisynth:celestisynthitemstackcapabilities": {
+							cs.aquaSkin: 0
+						}
+					}
+					id: "domesticationinnovation:drum"
+				}
+				type: "item"
+			}]
+			x: -21.5d
+			y: -4.5d
+		}
+		{
+			description: ["Same as a name tag but with a catch, you can &denchant&r it!"]
+			id: "12F0C6C5C1F8E56F"
+			rewards: [{
+				id: "58DB6C93C09A0DE9"
+				type: "xp"
+				xp: 25
+			}]
+			shape: "rsquare"
+			subtitle: "&8[Click to read]"
+			tasks: [{
+				id: "5B46DC696AB19548"
+				item: {
+					Count: 1
+					ForgeCaps: {
+						"celestisynth:celestisynthitemstackcapabilities": {
+							cs.aquaSkin: 0
+						}
+					}
+					id: "domesticationinnovation:collar_tag"
+				}
+				type: "item"
+			}]
+			x: -18.5d
+			y: -4.5d
+		}
+		{
+			description: [
+				"&ePets can be enchanted by applying enchants to a &dCollar Tag&r &ein either an anvil or an enchanting table.&r"
+				""
+				"These collars can then be placed on a tamed pet of yours by interacting with it. "
+				""
+				"To get the enchanted collar back, you can simply swap it with any other collar, including an unenchanted one. "
+			]
+			icon: "minecraft:enchanting_table"
+			id: "1EE284AB94AA1FAC"
+			rewards: [{
+				id: "1C1A1ED4440A0D1D"
+				type: "xp"
+				xp: 25
+			}]
+			shape: "hexagon"
+			size: 1.4d
+			subtitle: "&8[Click to read]"
+			tasks: [{
+				id: "1791BFEE9058A61B"
+				title: "&eEnchanting Your Pets"
+				type: "checkmark"
+			}]
+			x: -20.0d
+			y: -2.0d
+		}
+	]
+	title: "Domestication Innovation"
+}

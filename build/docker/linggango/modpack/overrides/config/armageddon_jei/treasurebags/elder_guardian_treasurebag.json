@@ -1,0 +1,12 @@
+{
+  "bag_item": "armageddon_mod:elder_guardian_treasurebag",
+  "drops": [
+    {
+      "item": "armageddon_mod:ancient_prism",
+      "chance": 1.0,
+      "min_quantity": 6,
+      "max_quantity": 12,
+      "config_flag": "none"
+    }
+  ]
+}

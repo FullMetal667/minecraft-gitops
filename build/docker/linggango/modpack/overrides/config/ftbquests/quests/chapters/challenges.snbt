@@ -1,0 +1,271 @@
+{
+	default_hide_dependency_lines: false
+	default_quest_shape: "netheritetier"
+	filename: "challenges"
+	group: "3B5FC78CC89E4CD7"
+	hide_quest_until_deps_complete: true
+	icon: {
+		Count: 1
+		id: "ftbquests:custom_icon"
+		tag: {
+			Icon: "born_in_chaos_v1:item/shattered_skull"
+		}
+	}
+	id: "3751A749EAB4494C"
+	images: [
+		{
+			height: 7.0d
+			image: "celestisynth:textures/entity/visuals/keres_pulse.png"
+			rotation: 0.0d
+			width: 7.0d
+			x: -9.5d
+			y: -1.5d
+		}
+		{
+			dev: true
+			height: 1.0d
+			hover: ["Questlines belong to me, and is protected by All Rights Reserved. Do not try to steal without an explicit permission from me."]
+			image: "fancymenu:textures/buddy/gui/button_close_normal.png"
+			rotation: 0.0d
+			width: 1.0d
+			x: -13.5d
+			y: -1.5d
+		}
+		{
+			click: "a"
+			height: 1.0d
+			hover: ["Extremely WIP.. lmk if u got challenge ideas in my discord.."]
+			image: "bloodmagic:models/alchemyarrays/wiparray"
+			rotation: 0.0d
+			width: 1.0d
+			x: -9.5d
+			y: -5.5d
+		}
+	]
+	order_index: 4
+	quest_links: [ ]
+	quests: [
+		{
+			description: [
+				"Do you still think the pack is easy or.. boring? (hope u dont) "
+				""
+				"Well there's challenges, they will make the game harder and weirder. Don't cheat!!"
+			]
+			icon: {
+				Count: 1
+				id: "ftbquests:custom_icon"
+				tag: {
+					Icon: "ancient_elements:item/ancient_helmet"
+				}
+			}
+			icon_scale: 1.4d
+			id: "75143005BED675A7"
+			shape: "gear"
+			size: 2.0d
+			subtitle: "&8[Click to read]"
+			tasks: [{
+				id: "0EC49DE5CDFB0DAA"
+				title: "Challenges!"
+				type: "checkmark"
+			}]
+			x: -9.485714285714288d
+			y: -1.4142857142857181d
+		}
+		{
+			dependencies: ["75143005BED675A7"]
+			description: ["If you die without checking spawn point, you will spawn at the normal dimension."]
+			icon: "alexscaves:scarlet_magnet"
+			id: "2EAC38083FFF467C"
+			rewards: [{
+				id: "1F13486C3583A14B"
+				item: "alex_caves_dimensions:magnetic_caves_key"
+				type: "item"
+			}]
+			subtitle: "Finish the pack in magnetic dimension"
+			tasks: [{
+				id: "46AD9B3E1A33A743"
+				title: "okay"
+				type: "checkmark"
+			}]
+			title: "&l&4Mag&r&l&1netic&r &lExperience"
+			x: -11.0d
+			y: 0.5d
+		}
+		{
+			dependencies: ["75143005BED675A7"]
+			description: ["If you die without checking spawn point, you will spawn at the normal dimension."]
+			icon: "alexscaves:dinosaur_nugget"
+			id: "1AEA8A1AEBD6D64E"
+			rewards: [{
+				id: "660050B09928ED43"
+				item: "alex_caves_dimensions:primordial_caves_key"
+				type: "item"
+			}]
+			subtitle: "Finish the pack in primordial dimension"
+			tasks: [{
+				id: "63505C9D55DB1188"
+				title: "okay"
+				type: "checkmark"
+			}]
+			title: "&6&lDino Dino Dinos"
+			x: -9.5d
+			y: 1.0d
+		}
+		{
+			dependencies: ["75143005BED675A7"]
+			description: ["If you die without checking spawn point, you will spawn at the normal dimension."]
+			icon: "alexscaves:nuclear_bomb"
+			id: "27041AC5286051F5"
+			rewards: [{
+				id: "478DB6EFBCB2887B"
+				item: "alex_caves_dimensions:toxic_caves_key"
+				type: "item"
+			}]
+			subtitle: "Finish the pack in toxic dimension"
+			tasks: [{
+				id: "5329D0630D7EC0C1"
+				title: "hell"
+				type: "checkmark"
+			}]
+			title: "&a&lNuclear &r&lExperience"
+			x: -8.0d
+			y: 0.5d
+		}
+		{
+			dependencies: ["75143005BED675A7"]
+			description: ["If you die without checking spawn point, you will spawn at the normal dimension."]
+			icon: "enigmaticlegacy:ocean_stone"
+			id: "3AC24A6493FE9EFD"
+			rewards: [{
+				id: "4F7CFCF399CEE378"
+				item: "alex_caves_dimensions:abyssal_chasm_key"
+				type: "item"
+			}]
+			subtitle: "Finish the pack in abyssal dimension (not really)"
+			tasks: [{
+				id: "70C0A56A86EEF2B3"
+				title: "awokay"
+				type: "checkmark"
+			}]
+			title: "&b&lDeep Blue&r &lExperience"
+			x: -11.792857142857102d
+			y: -2.6214285714285737d
+		}
+		{
+			dependencies: ["75143005BED675A7"]
+			description: ["If you die without checking spawn point, you will spawn at the normal dimension."]
+			icon: {
+				Count: 1
+				id: "ftbquests:custom_icon"
+				tag: {
+					Icon: "occult:item/occult_upgrade_smithing_template"
+				}
+			}
+			id: "21F325BFF59327AD"
+			rewards: [{
+				id: "6F3D5B58E632E239"
+				item: "alex_caves_dimensions:forlorn_hollows_key"
+				type: "item"
+			}]
+			subtitle: "Finish the pack in forlorn dimension"
+			tasks: [{
+				id: "7C7BBA115AF416BF"
+				title: "okay"
+				type: "checkmark"
+			}]
+			title: "&4&lOcculty&r &lExperience"
+			x: -11.0d
+			y: -3.5d
+		}
+		{
+			dependencies: ["75143005BED675A7"]
+			description: ["If you die without checking spawn point, you will spawn at the normal dimension."]
+			icon: {
+				Count: 1
+				id: "ftbquests:custom_icon"
+				tag: {
+					Icon: "alexscaves:block/candy_cane"
+				}
+			}
+			id: "2BA5A85D6B526916"
+			rewards: [{
+				id: "6DF1D13B43EA2B89"
+				item: "alex_caves_dimensions:candy_cavity_key"
+				type: "item"
+			}]
+			subtitle: "Finish the pack in candy dimension"
+			tasks: [{
+				id: "7D62C23F5AD4EA3C"
+				title: "okay"
+				type: "checkmark"
+			}]
+			title: "&l&dSweet&r &lExperience"
+			x: -8.0d
+			y: -3.5d
+		}
+		{
+			dependencies: ["75143005BED675A7"]
+			icon: {
+				Count: 1
+				id: "ftbquests:custom_icon"
+				tag: {
+					Icon: "brutality:item/axe/old_gpu/old_gpu_inventory"
+				}
+			}
+			id: "7C7448B77D625A0C"
+			rewards: [{
+				id: "341727BCA093D0B3"
+				item: {
+					Count: 1
+					id: "brutality:old_gpu"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			subtitle: "Finish the pack with Old GPU weapon"
+			tasks: [{
+				id: "0B4921A1DE37F6A1"
+				title: "Okay"
+				type: "checkmark"
+			}]
+			title: "&lBreath Taking Experience"
+			x: -9.5d
+			y: -4.0d
+		}
+		{
+			dependencies: ["75143005BED675A7"]
+			description: ["It's not even possible btw."]
+			icon: {
+				Count: 1
+				id: "brutality:paper_cut"
+				tag: {
+					Damage: 0
+				}
+			}
+			id: "7F5EE2142DB9149D"
+			rewards: [{
+				id: "7374375737C1C3AC"
+				item: {
+					Count: 1
+					id: "brutality:paper_cut"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			subtitle: "Finish The Pack With Paper Cut Weapon"
+			tasks: [{
+				id: "65EE6321949FC53E"
+				title: "what"
+				type: "checkmark"
+			}]
+			title: "&l&cPainful&r &lExperience"
+			x: -7.123469387755065d
+			y: -2.605102040816355d
+		}
+	]
+	title: "Challenges"
+}

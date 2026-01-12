@@ -1,0 +1,1891 @@
+{
+	autofocus_id: "79097B7E3E4E2782"
+	default_hide_dependency_lines: false
+	default_quest_shape: "woodtier"
+	filename: "progress"
+	group: "3C6AB1DE39D4F441"
+	hide_quest_until_deps_complete: true
+	icon: {
+		Count: 1
+		id: "ftbquests:custom_icon"
+		tag: {
+			Icon: "composite_material:item/ancient_book"
+		}
+	}
+	id: "315A75112DB595D9"
+	images: [
+		{
+			click: "https://discord.gg/linggango"
+			height: 1.0d
+			hover: ["Join Linggango Discord Server!"]
+			image: "ars_nouveau:textures/gui/discord_tab.png"
+			rotation: 0.0d
+			width: 1.0d
+			x: -11.0d
+			y: -15.5d
+		}
+		{
+			dependency: "647CCE4CA1600E21"
+			height: 4.0d
+			image: "born_in_chaos_v1:textures/mob_effect/dark_splash.png"
+			rotation: 0.0d
+			width: 4.0d
+			x: -13.0d
+			y: -9.5d
+		}
+		{
+			click: "A"
+			dependency: "79097B7E3E4E2782"
+			height: 1.0d
+			hover: ["Unlocks Iron"]
+			image: "minecraft:item/iron_ingot"
+			rotation: 0.0d
+			width: 1.0d
+			x: -8.0d
+			y: -14.5d
+		}
+		{
+			click: "a"
+			dependency: "5D3E8E9BCD0A9935"
+			height: 1.0d
+			hover: ["Unlocks Gold"]
+			image: "minecraft:item/gold_ingot"
+			rotation: 0.0d
+			width: 1.0d
+			x: -5.0d
+			y: -15.5d
+		}
+		{
+			click: "a"
+			dependency: "7D0C439E5D207DDE"
+			height: 1.0d
+			hover: ["Unlocks Emerald"]
+			image: "minecraft:item/emerald"
+			rotation: 90.0d
+			width: 1.0d
+			x: -5.0d
+			y: -13.0d
+		}
+		{
+			click: "a"
+			dependency: "4F34F740CD095315"
+			height: 1.0d
+			hover: ["Unlocks Diamond"]
+			image: "minecraft:item/diamond"
+			rotation: 180.0d
+			width: 1.0d
+			x: -6.0d
+			y: -9.5d
+		}
+		{
+			click: "a"
+			dependency: "2EAC826E47A3A682"
+			height: 1.0d
+			hover: ["Unlocks Netherite"]
+			image: "minecraft:item/netherite_ingot"
+			rotation: 0.0d
+			width: 1.0d
+			x: -2.0d
+			y: -11.5d
+		}
+		{
+			click: "a"
+			dependency: "2B69C369F7D0B25C"
+			height: 1.0d
+			hover: ["Unlocks The Elvenite"]
+			image: "armageddon_mod:item/elvenite_ingot"
+			rotation: 0.0d
+			width: 1.0d
+			x: -4.0d
+			y: -8.5d
+		}
+		{
+			click: "a"
+			dependency: "231B06216159E95A"
+			height: 1.0d
+			hover: ["Unlocks Voiderite"]
+			image: "armageddon_mod:item/voiderite_ingot"
+			rotation: 0.0d
+			width: 1.0d
+			x: -6.0d
+			y: -8.5d
+		}
+		{
+			click: "a"
+			dependency: "4BFFC4F93792C4F7"
+			height: 1.0d
+			hover: ["Unlocks Bloody Ingot"]
+			image: "armageddon_mod:item/bloody_ingot"
+			rotation: 0.0d
+			width: 1.0d
+			x: -9.0d
+			y: -5.5d
+		}
+		{
+			dev: true
+			height: 1.0d
+			hover: ["Questlines belong to me, and is protected by All Rights Reserved. Do not try to steal without an explicit permission from me."]
+			image: "fancymenu:textures/buddy/gui/button_close_normal.png"
+			rotation: 0.0d
+			width: 1.0d
+			x: -10.0d
+			y: -13.0d
+		}
+		{
+			dependency: "19F19149E61D93AD"
+			height: 1.0d
+			image: "hexerei:textures/book/arrow_right_hover.png"
+			rotation: 0.0d
+			width: 1.0d
+			x: 1.0d
+			y: -13.5d
+		}
+		{
+			click: "a"
+			dependency: "297F31BB6030C00F"
+			height: 1.0d
+			hover: ["INFO: The game will become incredibly harder after defeating the ender dragon!"]
+			image: "jei:textures/jei/atlas/gui/icons/info.png"
+			rotation: 0.0d
+			width: 1.0d
+			x: -1.0d
+			y: -7.5d
+		}
+		{
+			click: "a"
+			dependency: "19F19149E61D93AD"
+			height: 1.0d
+			hover: ["Eye Shop"]
+			image: "ftblibrary:icons/money_bag"
+			rotation: 0.0d
+			width: 1.0d
+			x: 2.0d
+			y: -13.5d
+		}
+		{
+			dependency: "19F19149E61D93AD"
+			height: 1.0d
+			image: "minecraft:item/ender_eye"
+			rotation: 0.0d
+			width: 1.0d
+			x: 2.0d
+			y: -10.5d
+		}
+		{
+			height: 2.6d
+			image: "customtextures:textures/mainprog.png"
+			rotation: 0.0d
+			width: 12.0d
+			x: -10.0d
+			y: -18.0d
+		}
+		{
+			click: "a"
+			dependency: "25326B961DE6B5EA"
+			height: 1.0d
+			hover: ["Unlocks Helionite"]
+			image: "armageddon_mod:item/blessed_ingot_of_the_sun"
+			rotation: 0.0d
+			width: 1.0d
+			x: -14.5d
+			y: -5.5d
+		}
+	]
+	order_index: 0
+	quest_links: [ ]
+	quests: [
+		{
+			dependencies: ["79097B7E3E4E2782"]
+			description: [
+				"If you've encountered difficulty mining Iron or using Iron tools, you've discovered the progression change."
+				""
+				"{image:customtextures:textures/ironoreerror.png width:200 height:30 align:center}"
+				""
+				"Minecraft's main ores are now guarded by powerful bosses. To proceed, you must challenge the &cIron Colossus!&r Craft the Iron Remote, and summon him!"
+				""
+				"&dRecommended armor:"
+				""
+				"-The Chainmail Armor Set"
+				""
+				"-The Sterling Armor Set"
+			]
+			id: "5D3E8E9BCD0A9935"
+			rewards: [
+				{
+					id: "4BBDD7DF127D3C90"
+					type: "xp"
+					xp: 25
+				}
+				{
+					id: "042653DBB022DCCB"
+					item: {
+						Count: 1
+						id: "minecraft:chainmail_chestplate"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "14877BC3081C56D9"
+					item: {
+						Count: 1
+						id: "minecraft:chainmail_leggings"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "5E16CD5B99B1EB08"
+					item: {
+						Count: 1
+						id: "minecraft:chainmail_boots"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+			]
+			shape: "square"
+			size: 1.25d
+			subtitle: "&8[Click to read]"
+			tasks: [{
+				id: "39392EAA73398E23"
+				item: {
+					Count: 1
+					id: "armageddon_mod:iron_remote"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			title: "Why cant i break iron?"
+			x: -8.0d
+			y: -15.5d
+		}
+		{
+			dependency_requirement: "one_started"
+			description: [
+				"Swords and armor are locked behind bosses. This questline will guide you through the progression system to unlock them."
+				""
+				"The Armageddon mod completely overhauls Minecraft's standard progression with something far more exciting! It also introduces new mechanics and additional ores."
+				""
+				"{image:customtextures:textures/armageddonlogo.png width:200 height:50 align:center}"
+			]
+			icon: {
+				Count: 1
+				id: "ftbquests:custom_icon"
+				tag: {
+					Icon: "composite_material:item/ancient_book"
+				}
+			}
+			id: "79097B7E3E4E2782"
+			min_width: 250
+			rewards: [
+				{
+					id: "7B7EA0DFBB80BACE"
+					item: {
+						Count: 1
+						id: "armageddon_mod:primitive_pike"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "23D3262E642169E0"
+					item: {
+						Count: 1
+						id: "minecraft:chainmail_helmet"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+			]
+			shape: "square"
+			size: 1.35d
+			subtitle: "&8[Click to read]"
+			tasks: [
+				{
+					dimension: "minecraft:overworld"
+					disable_toast: true
+					icon: {
+						Count: 1
+						id: "ftbquests:custom_icon"
+						tag: {
+							Icon: "armageddon_mod:item/bruh_sword"
+						}
+					}
+					id: "63EA418D3EEA25E9"
+					title: "Armageddon Mod!"
+					type: "dimension"
+				}
+				{
+					disable_toast: true
+					elapsedTime: 20L
+					id: "503794A1364FA734"
+					title: "Wait!"
+					type: "questsadditions:time"
+				}
+			]
+			title: "New Progression Mechanics"
+			x: -10.0d
+			y: -15.5d
+		}
+		{
+			dependencies: ["5D3E8E9BCD0A9935"]
+			description: [
+				"Same with iron, in order to get to gold ingot, we need to kill &cThe Goblin Lord&r"
+				""
+				"&dRecommended armor:&r Iron Armor Set,"
+				""
+				"Silver Armor Set."
+			]
+			icon_scale: 1.2d
+			id: "7D0C439E5D207DDE"
+			rewards: [
+				{
+					id: "4766217826F32981"
+					type: "xp"
+					xp: 25
+				}
+				{
+					id: "55F05BB830B1324F"
+					item: "minecraft:milk_bucket"
+					type: "item"
+				}
+			]
+			shape: "square"
+			size: 1.25d
+			subtitle: "&8[Click to read]"
+			tasks: [{
+				id: "2AEC50CF84DFB0EE"
+				item: {
+					Count: 1
+					id: "armageddon_mod:strange_coin"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			title: "Accessing The Gold!"
+			x: -6.0d
+			y: -15.5d
+		}
+		{
+			dependencies: ["7D0C439E5D207DDE"]
+			description: [
+				"&cArion&r is an &8Elite Pillager&r, and he has some magical knowledge too, so be aware!"
+				""
+				"Defeating this formidable foe will unlock a vast new tier of weapons and armor, including access to &2Emerald&r crafting materials."
+				""
+				"&dRecommended Armor:&r"
+				""
+				"-Gilded Armor Set"
+				""
+				"-Bronze Armor Set"
+				""
+				"-Cloggrum Armor Set"
+				""
+				"-Copper Armor Set"
+				""
+				"&eNote: Emerald Totem is crafted through Create Compacting."
+			]
+			id: "4F34F740CD095315"
+			rewards: [
+				{
+					id: "4EB4A30F36090522"
+					type: "xp"
+					xp: 25
+				}
+				{
+					id: "254D5F0DD01F5474"
+					item: {
+						Count: 1
+						id: "minecraft:potion"
+						tag: {
+							Potion: "armageddon_mod:resistance"
+						}
+					}
+					type: "item"
+				}
+			]
+			shape: "square"
+			size: 1.25d
+			subtitle: "&8[Click to read]"
+			tasks: [{
+				id: "694DA8D87F0DA4F3"
+				item: {
+					Count: 1
+					id: "armageddon_mod:emerald_totem"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			title: "Accessing The Emerald!"
+			x: -6.0d
+			y: -13.0d
+		}
+		{
+			dependencies: ["4F34F740CD095315"]
+			description: [
+				"&cEldorath&r is an ancient warrior whose prime was long ago, but do not underestimate him, he remains still strong."
+				""
+				"Defeating this boss will unlock a powerful new arsenal of weapons, access to core enchanting mechanics, and the key to &bDiamond&r crafting."
+				""
+				"&cImportant:&r Be sure to bring bucket of water to mitigate fall damage."
+				""
+				"&dRecommended Armor:&r"
+				""
+				"-Osmium Armor Set"
+				""
+				"-Necromium Armor Set"
+			]
+			id: "2EAC826E47A3A682"
+			rewards: [
+				{
+					id: "03B21987FCF6AE60"
+					type: "xp_levels"
+					xp_levels: 5
+				}
+				{
+					id: "4DEB3DA93CA04CFD"
+					item: "minecraft:water_bucket"
+					type: "item"
+				}
+			]
+			shape: "square"
+			size: 1.25d
+			subtitle: "&8[Click to read]"
+			tasks: [{
+				id: "3FD1CCE976B9831B"
+				item: {
+					Count: 1
+					id: "armageddon_mod:builder_stone"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			title: "Accessing The Diamond"
+			x: -6.0d
+			y: -10.5d
+		}
+		{
+			dependencies: ["177DFA9CBE995173"]
+			description: [
+				"&cZoranth&r is a fierce warrior, he used to fight against the nether army."
+				""
+				"Defeating this powerful boss will unlock a wealth of new weapons and armor, granting you access to the &eNetherite."
+				""
+				"Warning: Zoranth can only be spawned within the Nether Dimension."
+				""
+				"&dRecommended Armor:&r"
+				""
+				"-Crystallized Armor Set"
+				""
+				"-Obsidian Armor Set"
+			]
+			id: "297F31BB6030C00F"
+			rewards: [
+				{
+					id: "212482A63204488F"
+					type: "xp_levels"
+					xp_levels: 10
+				}
+				{
+					id: "376FE8126F87CEC2"
+					item: "born_in_chaos_v1:dark_metal_ingot"
+					type: "item"
+				}
+			]
+			shape: "square"
+			size: 1.25d
+			subtitle: "&8[Click to read]"
+			tasks: [{
+				id: "7C71359E6E149A5C"
+				item: {
+					Count: 1
+					id: "armageddon_mod:fiery_wither_skull"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			title: "Accessing The Netherite"
+			x: -2.0d
+			y: -10.5d
+		}
+		{
+			dependencies: ["2B69C369F7D0B25C"]
+			description: [
+				"Elvenite is a new ore introduced by the Armageddon mod."
+				""
+				"This material allows you to craft numerous powerful swords and a complete armor set. Of course, access to this valuable resource is gated by another boss challenge."
+				""
+				"&dRecommended Armor:&r"
+				""
+				"-Refined Obsidian Armor Set"
+				""
+				"&eNote: Titan's insignia is crafted through Create Heated Compacting."
+			]
+			id: "231B06216159E95A"
+			rewards: [
+				{
+					id: "69471ED992C1BAAD"
+					type: "xp_levels"
+					xp_levels: 15
+				}
+				{
+					id: "25758D70E91526D4"
+					item: "armageddon_mod:elvenite_ingot"
+					type: "item"
+				}
+			]
+			shape: "square"
+			size: 1.25d
+			subtitle: "&8[Click to read]"
+			tasks: [{
+				id: "0E74AD81045EEB1A"
+				item: {
+					Count: 1
+					id: "armageddon_mod:titan_insigna"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			title: "Accessing The Elvenite"
+			x: -4.0d
+			y: -7.5d
+		}
+		{
+			dependencies: ["231B06216159E95A"]
+			description: [
+				"Vaedric was once a solitary wanderer of the End Dimension. You can say it was a journey that, unfortunately, did not end well for him."
+				""
+				"Defeating this entity will unlock Voiderite!"
+				""
+				"&dRecommended Armor:&r"
+				""
+				"-Elvenite Armor Set with Enhanced Protection IV"
+				""
+				"&7&lNote: You must summon him on the Outer End Islands."
+			]
+			id: "4E97AB0CAB1A3763"
+			rewards: [
+				{
+					id: "254A39AF4CC6C281"
+					type: "xp_levels"
+					xp_levels: 20
+				}
+				{
+					id: "034EEA8ECCD9CC8F"
+					item: "armageddon_mod:voiderite"
+					type: "item"
+				}
+			]
+			shape: "square"
+			size: 1.25d
+			subtitle: "&8[Click to read]"
+			tasks: [{
+				id: "7F803DA0A30DEC5E"
+				item: {
+					Count: 1
+					id: "armageddon_mod:wanderers_fallen_shard"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			x: -6.0d
+			y: -7.5d
+		}
+		{
+			dependencies: ["4E97AB0CAB1A3763"]
+			description: [
+				"Defeating this entity is crucial, as it drops a key item required for all incoming boss encounters."
+				""
+				"Be warned: this foe is immortal for a short duration during its second phase!"
+				""
+				"&dRecommended Armor:&r"
+				""
+				"-Voiderite Armor Set (enchanted with Enhanced Protection IV)"
+				""
+				"It is highly recommended you bring plenty of Golden Apples for the fight."
+				""
+				"&8Go create your own build from now on."
+			]
+			id: "338DD0DDABBF130D"
+			rewards: [
+				{
+					id: "537805152AFD0CDB"
+					type: "xp_levels"
+					xp_levels: 25
+				}
+				{
+					count: 2
+					id: "0C92846540EE640D"
+					item: "armageddon_mod:voiderite"
+					type: "item"
+				}
+				{
+					id: "184E5539091AA41B"
+					item: "armageddon_mod:wither_spine"
+					type: "item"
+				}
+			]
+			shape: "square"
+			size: 1.25d
+			subtitle: "&8[Click to read]"
+			tasks: [{
+				id: "7BD2921B77B302C6"
+				item: {
+					Count: 1
+					id: "armageddon_mod:the_key_of_doom"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			x: -8.0d
+			y: -7.5d
+		}
+		{
+			dependencies: ["338DD0DDABBF130D"]
+			description: ["The Four Calamity are responsible for the current state of the Overworld, acting as one of the main reasons that it is now corrupted with undead monsters."]
+			id: "4BFFC4F93792C4F7"
+			rewards: [
+				{
+					id: "34258A2B3475E35E"
+					type: "xp_levels"
+					xp_levels: 15
+				}
+				{
+					icon: {
+						Count: 1
+						id: "ftbquests:custom_icon"
+						tag: {
+							Icon: "celestisynth:textures/abilityicon/skill/aquaflora_skill_icon_3.png"
+						}
+					}
+					id: "6329E1DF27945588"
+					table_id: 8699295573854160387L
+					type: "random"
+				}
+			]
+			shape: "square"
+			size: 1.25d
+			subtitle: "&8[Click to read]"
+			tasks: [{
+				id: "7371A1AA3D9C1A4A"
+				item: {
+					Count: 1
+					id: "armageddon_mod:sigil_of_calamity"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			x: -10.0d
+			y: -7.5d
+		}
+		{
+			dependencies: ["4BFFC4F93792C4F7"]
+			description: [
+				"To craft Ankh's Tablet, you will first require the Tinkerer's Accessory Template. Here is how to create it:"
+				""
+				"You must first obtain Spirits, which are dropped by vanilla mobs such as Zombie, Slime, and Skeleton. Note that each mob drops a different type of Spirit."
+				""
+				"&cDespair, Dread and Chaos&r"
+				""
+				"Utilize these Spirits to craft a Calamitous Core."
+				""
+				"Then, combine the Calamitous Core with Khyros's Goldened Tear to craft the &dAccessory Template&r."
+				""
+				"&eHere is The Recipe:"
+				""
+				"Create a 'U' shape using End Stones, place the Calamitous Core in the middle, and then place the Khyros's Goldened Tear directly on top of the Core."
+			]
+			icon: "armageddon_mod:ankh_tablet"
+			icon_scale: 1.3d
+			id: "5C70A89677BEAE60"
+			optional: true
+			rewards: [
+				{
+					count: 2
+					id: "5A75B786CF8722B6"
+					item: "armageddon_mod:tinkerers_accesory_template"
+					type: "item"
+				}
+				{
+					count: 5
+					id: "30801AFA2914300A"
+					item: "armageddon_mod:khyros_tear"
+					type: "item"
+				}
+				{
+					count: 5
+					id: "4EBE0668ADA83EBB"
+					item: "minecraft:netherite_ingot"
+					type: "item"
+				}
+			]
+			size: 1.0d
+			subtitle: "&8[Click to read]"
+			tasks: [
+				{
+					id: "183C3929E8920459"
+					item: "armageddon_mod:ankh_tablet"
+					type: "item"
+				}
+				{
+					id: "1F99ED038B57F08F"
+					item: "armageddon_mod:calamitous_core"
+					type: "item"
+				}
+				{
+					id: "603529B0326755DE"
+					item: "armageddon_mod:khyros_tear"
+					type: "item"
+				}
+			]
+			title: "Craft an Ankh Tablet"
+			x: -10.0d
+			y: -9.0d
+		}
+		{
+			dependencies: ["4BFFC4F93792C4F7"]
+			description: [
+				"Lord of the Blood Ore... yes, more like Mohg, Lord of Blood from elden ring.."
+				""
+				"&eCocoon of Blood is crafted through Create Heated Mixing."
+			]
+			id: "25326B961DE6B5EA"
+			rewards: [
+				{
+					icon: {
+						Count: 1
+						id: "ftbquests:custom_icon"
+						tag: {
+							Icon: "celestisynth:textures/abilityicon/skill/aquaflora_skill_icon_4.png"
+						}
+					}
+					id: "09BF73DB3D29D473"
+					table_id: 8699295573854160387L
+					type: "random"
+				}
+				{
+					count: 6
+					id: "37C72233877270BF"
+					item: "weapon:residueofmagic"
+					type: "item"
+				}
+			]
+			shape: "square"
+			size: 1.25d
+			subtitle: "&8[Click to read]"
+			tasks: [{
+				id: "4359AEA5A7EC91E3"
+				item: {
+					Count: 1
+					id: "armageddon_mod:cocoon_of_blood"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			title: "Accessing The Blood!"
+			x: -10.0d
+			y: -5.5d
+		}
+		{
+			dependencies: ["25326B961DE6B5EA"]
+			description: [
+				"Umvuthi's older brother....... they look kinda different though."
+				""
+				"&eThe sun Emblem is Crafted through create compacting"
+			]
+			id: "647CCE4CA1600E21"
+			rewards: [{
+				icon: {
+					Count: 1
+					id: "ftbquests:custom_icon"
+					tag: {
+						Icon: "celestisynth:textures/abilityicon/skill/keres_skill_icon_1.png"
+					}
+				}
+				id: "4459A0E2D1E948BF"
+				table_id: 8699295573854160387L
+				type: "random"
+			}]
+			shape: "square"
+			size: 1.45d
+			subtitle: "&8[Click to read]"
+			tasks: [{
+				id: "2A6C4BFBB6B26F6D"
+				item: {
+					Count: 1
+					id: "armageddon_mod:the_sun_emblem"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			title: "Accessing The Helionate!"
+			x: -13.0d
+			y: -5.5d
+		}
+		{
+			dependencies: ["647CCE4CA1600E21"]
+			description: [
+				"Nyxaris is a vile, disgusting, and ruthless creature of pure malice!"
+				""
+				"You will need to bring the Absorbing Stone into the fight in order to ease the difficulty of this encounter."
+				""
+				"It is time to check the prerequisites for this battle:"
+				""
+				"{ \"text\": \"Bosses Questline\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"1877819E0EA0C97B\" } }"
+				""
+				"&eThe Corrupted Tear is Crafted through Create Super-Heated Mixing."
+			]
+			icon: {
+				Count: 1
+				id: "armageddon_mod:the_corrupted_tear"
+				tag: {
+					Damage: 0
+				}
+			}
+			id: "1116B72E3021814D"
+			rewards: [{
+				icon: {
+					Count: 1
+					id: "ftbquests:custom_icon"
+					tag: {
+						Icon: "terramity:item/hellspec_alloy"
+					}
+				}
+				id: "2DCEF425144BF060"
+				table_id: 8699295573854160387L
+				type: "random"
+			}]
+			shape: "gear"
+			size: 2.0d
+			subtitle: "&8[Click to read]"
+			tasks: [
+				{
+					id: "449E223179E59B1B"
+					item: {
+						Count: 1
+						id: "armageddon_mod:the_corrupted_tear"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "3895F14CC093E082"
+					item: {
+						Count: 1
+						id: "armageddon_mod:absorbtion_stone"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+			]
+			title: "The Main Reason Of Corruption"
+			x: -13.0d
+			y: -9.5d
+		}
+		{
+			dependencies: ["297F31BB6030C00F"]
+			description: [
+				"&cThe Ender Dragon&r is among the most ancient creatures in existence. She guards the gates to the End Cities until her final breath."
+				""
+				"There is a profound reason she has survived for so long. Upon her death, she will drop the unique material known as &eKhyros's Tears.&r"
+				""
+				"&dRecommended Armor:&r"
+				""
+				"-Refined Obsidian Armor Set"
+				""
+				"-Dark Metal Armor Set"
+				""
+				"&4&lWARNING!&r This encounter represents a major difficulty jump from previous challenges."
+			]
+			hide_until_deps_complete: true
+			icon: "minecraft:ender_eye"
+			id: "2B69C369F7D0B25C"
+			min_required_tasks: 1
+			rewards: [{
+				icon: {
+					Count: 1
+					id: "ftbquests:custom_icon"
+					tag: {
+						Icon: "celestisynth:textures/abilityicon/skill/keres_skill_icon_1.png"
+					}
+				}
+				id: "6676B496DDE5726D"
+				table_id: 8699295573854160387L
+				title: "&l&4Glorious"
+				type: "random"
+			}]
+			shape: "square"
+			size: 1.25d
+			subtitle: "End / Main island"
+			tasks: [{
+				entity: "minecraft:ender_dragon"
+				icon: "plushie_buddies:plushie_enderdragon"
+				id: "21F49EA7FDB97296"
+				title: "&cEnder Dragon"
+				type: "kill"
+				value: 1L
+			}]
+			title: "Kill&c The Ender Dragon"
+			x: -2.0d
+			y: -7.5d
+		}
+		{
+			dependencies: ["297F31BB6030C00F"]
+			hide_dependent_lines: true
+			icon: {
+				Count: 1
+				id: "ftbquests:custom_icon"
+				tag: {
+					Icon: "ftblibrary:icons/check"
+				}
+			}
+			id: "19F19149E61D93AD"
+			optional: true
+			rewards: [{
+				id: "168B6BD617608009"
+				type: "xp"
+				xp: 1
+			}]
+			shape: "square"
+			size: 1.25d
+			subtitle: "Opens the eye shop"
+			tasks: [{
+				id: "2B699C669419D85D"
+				title: "YES I DO!!!!!!!!"
+				type: "checkmark"
+			}]
+			title: "Missing Any Eyes?"
+			x: -0.5d
+			y: -10.5d
+		}
+		{
+			can_repeat: true
+			dependencies: ["19F19149E61D93AD"]
+			icon: {
+				Count: 1
+				id: "endrem:lost_eye"
+				tag: {
+					Damage: 0
+				}
+			}
+			id: "0C9FD8DD49BD8880"
+			optional: true
+			rewards: [{
+				id: "0470D7532ABFE68D"
+				item: {
+					Count: 1
+					id: "endrem:lost_eye"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			shape: "diamond"
+			size: 1.0d
+			tasks: [{
+				consume_items: true
+				count: 2L
+				id: "1A68BE5BF47BE4AE"
+				item: { Count: 2, id: "minecraft:netherite_ingot" }
+				type: "item"
+			}]
+			title: "Lost Eye"
+			x: 2.0d
+			y: -11.5d
+		}
+		{
+			can_repeat: true
+			dependencies: ["19F19149E61D93AD"]
+			icon: {
+				Count: 1
+				id: "endrem:corrupted_eye"
+				tag: {
+					Damage: 0
+				}
+			}
+			id: "6993578E8C624653"
+			optional: true
+			rewards: [{
+				id: "15BAC5429E091CE7"
+				item: {
+					Count: 1
+					id: "endrem:corrupted_eye"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			shape: "diamond"
+			size: 1.0d
+			tasks: [{
+				consume_items: true
+				count: 2L
+				id: "4D1B78ACA201045D"
+				item: { Count: 2, id: "minecraft:netherite_ingot" }
+				type: "item"
+			}]
+			title: "Corrupted Eye"
+			x: 2.0d
+			y: -12.5d
+		}
+		{
+			can_repeat: true
+			dependencies: ["19F19149E61D93AD"]
+			icon: {
+				Count: 1
+				id: "endrem:cold_eye"
+				tag: {
+					Damage: 0
+				}
+			}
+			id: "2B3359A3BF539163"
+			optional: true
+			rewards: [{
+				id: "45B5CD13F150EC87"
+				item: {
+					Count: 1
+					id: "endrem:cold_eye"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			shape: "diamond"
+			size: 1.0d
+			tasks: [{
+				consume_items: true
+				count: 2L
+				id: "4624CD619841147C"
+				item: { Count: 2, id: "minecraft:netherite_ingot" }
+				type: "item"
+			}]
+			title: "&bCold Eye"
+			x: 3.0d
+			y: -10.5d
+		}
+		{
+			can_repeat: true
+			dependencies: ["19F19149E61D93AD"]
+			icon: {
+				Count: 1
+				id: "endrem:black_eye"
+				tag: {
+					Damage: 0
+				}
+			}
+			id: "1F20F3BEF1E39AF4"
+			optional: true
+			rewards: [{
+				id: "216CFE752AF569CA"
+				item: {
+					Count: 1
+					id: "endrem:black_eye"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			shape: "diamond"
+			size: 1.0d
+			tasks: [{
+				consume_items: true
+				count: 2L
+				id: "758150EBB3AE0ED7"
+				item: { Count: 2, id: "minecraft:netherite_ingot" }
+				type: "item"
+			}]
+			title: "Black Eye"
+			x: 1.5d
+			y: -12.0d
+		}
+		{
+			can_repeat: true
+			dependencies: ["19F19149E61D93AD"]
+			icon: {
+				Count: 1
+				id: "endrem:evil_eye"
+				tag: {
+					Damage: 0
+				}
+			}
+			id: "19ACEFF0281C992D"
+			optional: true
+			rewards: [{
+				id: "6373607E37FC9BFF"
+				item: {
+					Count: 1
+					id: "endrem:evil_eye"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			shape: "diamond"
+			size: 1.0d
+			tasks: [{
+				consume_items: true
+				count: 2L
+				id: "7807D522A257A85C"
+				item: { Count: 2, id: "minecraft:netherite_ingot" }
+				type: "item"
+			}]
+			title: "&bEvil Eye"
+			x: 2.5d
+			y: -12.0d
+		}
+		{
+			can_repeat: true
+			dependencies: ["19F19149E61D93AD"]
+			icon: {
+				Count: 1
+				id: "endrem:rogue_eye"
+				tag: {
+					Damage: 0
+				}
+			}
+			id: "5C303E7BA1022878"
+			optional: true
+			rewards: [{
+				id: "2EFB9203E27840EA"
+				item: {
+					Count: 1
+					id: "endrem:rogue_eye"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			shape: "diamond"
+			size: 1.0d
+			tasks: [{
+				consume_items: true
+				count: 2L
+				id: "13A9E81F624DF21F"
+				item: { Count: 2, id: "minecraft:netherite_ingot" }
+				type: "item"
+			}]
+			title: "Rogue Eye"
+			x: 1.5d
+			y: -11.0d
+		}
+		{
+			can_repeat: true
+			dependencies: ["19F19149E61D93AD"]
+			icon: {
+				Count: 1
+				id: "endrem:old_eye"
+				tag: {
+					Damage: 0
+				}
+			}
+			id: "659C358ABAFA089E"
+			optional: true
+			rewards: [{
+				id: "02B1DD211F5AB12C"
+				item: {
+					Count: 1
+					id: "endrem:old_eye"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			shape: "diamond"
+			size: 1.0d
+			tasks: [{
+				consume_items: true
+				count: 2L
+				id: "068543D707E16EC2"
+				item: { Count: 2, id: "minecraft:netherite_ingot" }
+				type: "item"
+			}]
+			title: "Old Eye"
+			x: 2.5d
+			y: -10.0d
+		}
+		{
+			can_repeat: true
+			dependencies: ["19F19149E61D93AD"]
+			icon: {
+				Count: 1
+				id: "endrem:nether_eye"
+				tag: {
+					Damage: 0
+				}
+			}
+			id: "7B075568B5999A06"
+			optional: true
+			rewards: [{
+				id: "3C3440EEC79F7987"
+				item: {
+					Count: 1
+					id: "endrem:nether_eye"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			shape: "diamond"
+			size: 1.0d
+			tasks: [{
+				consume_items: true
+				count: 2L
+				id: "23DB9C393796FA78"
+				item: { Count: 2, id: "minecraft:netherite_ingot" }
+				type: "item"
+			}]
+			title: "&bNether Eye"
+			x: 2.0d
+			y: -9.5d
+		}
+		{
+			can_repeat: true
+			dependencies: ["19F19149E61D93AD"]
+			icon: {
+				Count: 1
+				id: "endrem:undead_eye"
+				tag: {
+					Damage: 0
+				}
+			}
+			id: "70331FA0269B8924"
+			optional: true
+			rewards: [{
+				id: "60EC0D65D73F89EC"
+				item: {
+					Count: 1
+					id: "endrem:undead_eye"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			shape: "diamond"
+			size: 1.0d
+			tasks: [{
+				consume_items: true
+				count: 2L
+				id: "6B9ECA7C3A524EBF"
+				item: { Count: 2, id: "minecraft:netherite_ingot" }
+				type: "item"
+			}]
+			title: "&dUndead Eye"
+			x: 1.5d
+			y: -9.0d
+		}
+		{
+			can_repeat: true
+			dependencies: ["19F19149E61D93AD"]
+			icon: {
+				Count: 1
+				id: "endrem:witch_eye"
+				tag: {
+					Damage: 0
+				}
+			}
+			id: "51C116F74B449565"
+			optional: true
+			rewards: [{
+				id: "465A7A2C499BB069"
+				item: {
+					Count: 1
+					id: "endrem:witch_eye"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			shape: "diamond"
+			size: 1.0d
+			tasks: [{
+				consume_items: true
+				count: 2L
+				id: "0E9BC881E7C37CEF"
+				item: { Count: 2, id: "minecraft:netherite_ingot" }
+				type: "item"
+			}]
+			title: "Witch Eye"
+			x: 1.5d
+			y: -10.0d
+		}
+		{
+			can_repeat: true
+			dependencies: ["19F19149E61D93AD"]
+			icon: {
+				Count: 1
+				id: "endrem:guardian_eye"
+				tag: {
+					Damage: 0
+				}
+			}
+			id: "31EAF80F4F2415B1"
+			optional: true
+			rewards: [{
+				id: "1A93ED469EC6646F"
+				item: {
+					Count: 1
+					id: "endrem:guardian_eye"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			shape: "diamond"
+			size: 1.0d
+			tasks: [{
+				consume_items: true
+				count: 2L
+				id: "279A82DF7ECB073F"
+				item: { Count: 2, id: "minecraft:netherite_ingot" }
+				type: "item"
+			}]
+			title: "&bGuardian Eye"
+			x: 2.5d
+			y: -11.0d
+		}
+		{
+			can_repeat: true
+			dependencies: ["19F19149E61D93AD"]
+			icon: {
+				Count: 1
+				id: "endrem:wither_eye"
+				tag: {
+					Damage: 0
+				}
+			}
+			id: "6183ED22625BB4A4"
+			optional: true
+			rewards: [{
+				id: "083EAECD0A365A3B"
+				item: {
+					Count: 1
+					id: "endrem:wither_eye"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			shape: "diamond"
+			size: 1.0d
+			tasks: [{
+				consume_items: true
+				count: 2L
+				id: "3242CE5B8F2927AA"
+				item: { Count: 2, id: "minecraft:netherite_ingot" }
+				type: "item"
+			}]
+			title: "&dWither Eye"
+			x: 1.0d
+			y: -10.5d
+		}
+		{
+			dependencies: ["79097B7E3E4E2782"]
+			description: [
+				"Enigmatic Dies are basically a reincarnation of lucky blocks into modern versions!"
+				""
+				"You can obtain them by killing strong entites and getting advancements."
+				""
+				"&8If you are experienced with lucky blocks, you know this is something you should not underestimate!&r"
+			]
+			id: "4F9FDBC9169FEBBF"
+			rewards: [{
+				id: "122BEBEE21620E47"
+				item: "enigmaticdice:enigmatic_die"
+				random_bonus: 1
+				type: "item"
+			}]
+			shape: "gear"
+			size: 1.2d
+			subtitle: "Lucky &mBlocks&r Dices!"
+			tasks: [{
+				id: "6ACEE3AA66C01647"
+				item: "enigmaticdice:enigmatic_die"
+				type: "item"
+			}]
+			x: -10.0d
+			y: -14.0d
+		}
+		{
+			dependencies: ["4E97AB0CAB1A3763"]
+			description: [
+				"If you tick this questline, a gambling page will appear!"
+				""
+				"&n&7You can go with:&r"
+				""
+				"&n-&aLow risk&r&r- = Low possibility of something bad happening but also bad rewards."
+				""
+				"&n-&eMedium Risk&r&r- = High possibility of something bad happening but also decent rewards."
+				""
+				"&n-&6High Risk&r&r- = Extremely High possibility of something bad happening but also nice rewards."
+				""
+				"&n-&cSUPER RISK&r&r- = Would you dare?"
+			]
+			icon: {
+				Count: 1
+				id: "ftbquests:custom_icon"
+				tag: {
+					Icon: "brutality:item/curio/charm/suspicious_slot_machine/suspicious_slot_machine_inventory"
+				}
+			}
+			icon_scale: 1.2d
+			id: "4E71596C7F2A17F4"
+			require_sequential_tasks: false
+			rewards: [{
+				id: "3C11CE8E8CEE76C9"
+				type: "xp"
+				xp: 1
+			}]
+			shape: "square"
+			size: 1.25d
+			subtitle: "Didn't had enough?"
+			tasks: [{
+				id: "2854EB5AD76019A3"
+				title: "HELL YEA"
+				type: "checkmark"
+			}]
+			title: "&dGambling&r &aActivator"
+			x: -6.0d
+			y: -5.5d
+		}
+		{
+			can_repeat: true
+			dependencies: ["4E71596C7F2A17F4"]
+			hide_dependency_lines: true
+			hide_dependent_lines: true
+			icon: {
+				Count: 1
+				id: "ftbquests:custom_icon"
+				tag: {
+					Icon: "born_in_chaos_v1:item/shattered_skull"
+				}
+			}
+			icon_scale: 1.2d
+			id: "0E4DEBB21C0F69E3"
+			rewards: [{
+				auto: "enabled"
+				icon: "minecraft:oak_log"
+				id: "5873C870DB1AB730"
+				table_id: 4067690183644308744L
+				title: "Low risk reward"
+				type: "random"
+			}]
+			shape: "square"
+			size: 1.25d
+			subtitle: "Submit the dices to proceed."
+			tasks: [{
+				consume_items: true
+				count: 4L
+				id: "2BC5B6A39812E897"
+				item: "enigmaticdice:enigmatic_die"
+				type: "item"
+			}]
+			title: "-&aLow risk-"
+			x: -6.5d
+			y: -3.0d
+		}
+		{
+			can_repeat: true
+			dependencies: ["4E71596C7F2A17F4"]
+			hide_dependency_lines: true
+			hide_dependent_lines: true
+			icon: {
+				Count: 1
+				id: "ftbquests:custom_icon"
+				tag: {
+					Icon: "armageddon_mod:item/wither_skull"
+				}
+			}
+			icon_scale: 1.2d
+			id: "52387E83E8FC83F2"
+			rewards: [{
+				icon: "minecraft:iron_block"
+				id: "213F511C9CC6D9DD"
+				table_id: 523655846730814564L
+				title: "Medium Risk"
+				type: "random"
+			}]
+			shape: "square"
+			size: 1.25d
+			subtitle: "Submit the dices to proceed."
+			tasks: [{
+				consume_items: true
+				count: 7L
+				id: "4B528687AB627072"
+				item: { Count: 7, id: "enigmaticdice:enigmatic_die" }
+				type: "item"
+			}]
+			title: "-&eMedium Risk-"
+			x: -5.5d
+			y: -3.0d
+		}
+		{
+			can_repeat: true
+			dependencies: ["4E71596C7F2A17F4"]
+			hide_dependency_lines: true
+			hide_dependent_lines: true
+			icon: {
+				Count: 1
+				id: "ftbquests:custom_icon"
+				tag: {
+					Icon: "armageddon_mod:item/wither_skull_no2"
+				}
+			}
+			icon_scale: 1.2d
+			id: "4BDAC08FA14C1C52"
+			rewards: [{
+				icon: "minecraft:netherite_block"
+				id: "37A83654CB468ABB"
+				table_id: 3488080005486828330L
+				title: "High Risk"
+				type: "random"
+			}]
+			shape: "square"
+			size: 1.25d
+			subtitle: "Submit the dices to proceed."
+			tasks: [{
+				consume_items: true
+				count: 13L
+				id: "6ED43686A44C2E77"
+				item: { Count: 15, id: "enigmaticdice:enigmatic_die" }
+				type: "item"
+			}]
+			title: "-&6High Risk&r-"
+			x: -6.5d
+			y: -4.0d
+		}
+		{
+			can_repeat: true
+			dependencies: ["4E71596C7F2A17F4"]
+			hide_dependency_lines: true
+			hide_dependent_lines: true
+			icon: {
+				Count: 1
+				id: "ftbquests:custom_icon"
+				tag: {
+					Icon: "armageddon_mod:item/wither_skull_no3"
+				}
+			}
+			icon_scale: 1.2d
+			id: "6F07895B639F8B70"
+			rewards: [{
+				icon: "armageddon_mod:bloody_block"
+				id: "45143B090529DEA5"
+				table_id: 8391919521148561960L
+				title: "&4SUPER RISK!"
+				type: "random"
+			}]
+			shape: "square"
+			size: 1.25d
+			subtitle: "Submit the dices to proceed."
+			tasks: [{
+				consume_items: true
+				count: 25L
+				id: "25BAFBC64048332A"
+				item: { Count: 20, id: "enigmaticdice:enigmatic_die" }
+				type: "item"
+			}]
+			title: "-&cSUPER RISK&r-"
+			x: -5.5d
+			y: -4.0d
+		}
+		{
+			disable_toast: true
+			id: "7815ABBBFED86482"
+			rewards: [{
+				auto: "enabled"
+				command: "/clear @p"
+				elevate_perms: true
+				id: "25FE02976C74384C"
+				silent: true
+				type: "command"
+			}]
+			size: 1.0d
+			tasks: [{
+				elapsedTime: 3L
+				id: "1C500F8A4BA14B7E"
+				title: "INVCLEANER"
+				type: "questsadditions:time"
+			}]
+			x: 1.0d
+			y: 37.0d
+		}
+		{
+			dependencies: ["2EAC826E47A3A682"]
+			id: "0DFE0B1CB1D8C4C1"
+			shape: "square"
+			size: 1.0d
+			tasks: [{
+				id: "1E3AA2801A3D9DBF"
+				item: "weapon:vajraironingot"
+				type: "item"
+			}]
+			x: -8.0d
+			y: -10.5d
+		}
+		{
+			dependencies: ["0DFE0B1CB1D8C4C1"]
+			id: "325F688783045519"
+			shape: "square"
+			size: 1.0d
+			subtitle: "Fancy"
+			tasks: [
+				{
+					id: "084CE9B12BC1C569"
+					item: {
+						Count: 1
+						id: "weapon:swordcaneb"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "1F8939FBDE7E0563"
+					item: "weapon:swordcanes"
+					type: "item"
+				}
+			]
+			title: "Sword Cane"
+			x: -8.0d
+			y: -13.0d
+		}
+		{
+			dependencies: ["25326B961DE6B5EA"]
+			id: "08513E13E71CD88C"
+			shape: "netheritetier"
+			size: 1.0d
+			subtitle: "Might disappoint"
+			tasks: [{
+				id: "780ED37AFDF3D989"
+				item: {
+					Count: 1
+					id: "weapon:magicgun"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			x: -11.0d
+			y: -4.5d
+		}
+		{
+			dependencies: ["25326B961DE6B5EA"]
+			id: "3922CCF2B3C24565"
+			shape: "netheritetier"
+			size: 1.0d
+			subtitle: "Shoulder bash so hard"
+			tasks: [{
+				id: "5DA9A7479666B765"
+				item: {
+					Count: 1
+					id: "weapon:magicsword"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			x: -9.0d
+			y: -4.5d
+		}
+		{
+			dependencies: ["338DD0DDABBF130D"]
+			id: "6AEBC2C694F127F5"
+			shape: "netheritetier"
+			size: 1.0d
+			subtitle: "Parrying?!?!"
+			tasks: [
+				{
+					id: "294DC93BAFE11360"
+					item: {
+						Count: 1
+						id: "weapon:iaikatanak"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "7D0EFE5A54A8A74E"
+					item: "weapon:iaikatanas"
+					type: "item"
+				}
+			]
+			x: -8.0d
+			y: -9.0d
+		}
+		{
+			dependencies: ["19F19149E61D93AD"]
+			id: "35DDA00473CAD95A"
+			shape: "diamond"
+			size: 1.0d
+			tasks: [{
+				id: "7FA30093088548D6"
+				item: {
+					Count: 1
+					id: "endrem:magical_eye"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			x: 2.0d
+			y: -8.5d
+		}
+		{
+			dependencies: ["19F19149E61D93AD"]
+			id: "28BC42C468822F49"
+			shape: "diamond"
+			size: 1.0d
+			tasks: [{
+				id: "693E6A8F2827609D"
+				item: {
+					Count: 1
+					id: "endrem:cryptic_eye"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			x: 2.5d
+			y: -9.0d
+		}
+		{
+			dependencies: ["2EAC826E47A3A682"]
+			description: [
+				"You may be asking: Why the suddenly i have to go to the Undergarden?"
+				""
+				"The reason is simple! Crafting the next required boss item needs &cUtherium&r which can be only obtained through &8undergarden."
+				""
+				"To enter the Undergarden, you must construct a portal frame using Stone Bricks, similar to a Nether gateway. However, instead of lighting it with a standard lighter, a special Catalyst is required to ignite the portal."
+				""
+				"&8Check the full questline if interested."
+			]
+			icon: {
+				Count: 1
+				id: "ftbquests:custom_icon"
+				tag: {
+					Icon: "undergarden:item/catalyst"
+				}
+			}
+			icon_scale: 1.4d
+			id: "177DFA9CBE995173"
+			rewards: [{
+				id: "6C98D7D21F87CB1A"
+				item: "minecraft:diamond"
+				type: "item"
+			}]
+			shape: "gear"
+			size: 1.25d
+			subtitle: "&8[Click to read]"
+			tasks: [
+				{
+					id: "41289FFD0ABAA8ED"
+					item: "undergarden:catalyst"
+					type: "item"
+				}
+				{
+					count: 14L
+					id: "232508158C48AB56"
+					item: "minecraft:stone_bricks"
+					type: "item"
+				}
+			]
+			title: "Undergarden!"
+			x: -4.0d
+			y: -10.5d
+		}
+		{
+			id: "7E73ED46222113B3"
+			rewards: [
+				{
+					auto: "enabled"
+					id: "16EBA1E0711ABE62"
+					item: "ftbquests:book"
+					type: "item"
+				}
+				{
+					auto: "enabled"
+					id: "0402C2E301874A0C"
+					item: "covenant_of_the_seven:virtue_ring"
+					type: "item"
+				}
+				{
+					auto: "enabled"
+					id: "7CE7136CC306FB7A"
+					item: "enigmaticlegacy:cursed_ring"
+					type: "item"
+				}
+				{
+					auto: "enabled"
+					id: "1B4F4B002223A35D"
+					item: "enigmaticlegacy:unwitnessed_amulet"
+					type: "item"
+				}
+			]
+			size: 1.0d
+			tasks: [{
+				elapsedTime: 7L
+				id: "301774D23CB3439E"
+				type: "questsadditions:time"
+			}]
+			x: 3.0d
+			y: 37.0d
+		}
+	]
+	title: "Main Progression"
+}

@@ -1,0 +1,48 @@
+{
+  "bag_item": "armageddon_mod:zoranth_treasure_bag",
+  "summon_item": "armageddon_mod:fiery_wither_skull",
+  "drops": [
+    {
+      "item": "armageddon_mod:zoranths_hand",
+      "chance": 0.16,
+      "min_quantity": 1,
+      "max_quantity": 1,
+      "config_flag": "weapons_and_artifacts"
+    },
+    {
+      "item": "armageddon_mod:scytheofthe_withered_shadow",
+      "chance": 0.20,
+      "min_quantity": 1,
+      "max_quantity": 1,
+      "config_flag": "weapons_and_artifacts"
+    },
+    {
+      "item": "armageddon_mod:zoranths_helmet_helmet",
+      "chance": 0.20,
+      "min_quantity": 1,
+      "max_quantity": 1,
+      "config_flag": "weapons_and_artifacts"
+    },
+    {
+      "item": "minecraft:golden_apple",
+      "chance": 1.0,
+      "min_quantity": 6,
+      "max_quantity": 10,
+      "config_flag": "none"
+    },
+    {
+      "item": "minecraft:wither_skeleton_skull",
+      "chance": 0.68,
+      "min_quantity": 1,
+      "max_quantity":1,
+      "config_flag": "none"
+    },
+    {
+      "item": "minecraft:ancient_debris",
+      "chance": 1.0,
+      "min_quantity": 2,
+      "max_quantity": 4,
+      "config_flag": "ores"
+    }
+  ]
+}

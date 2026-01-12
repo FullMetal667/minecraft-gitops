@@ -1,0 +1,13 @@
+{
+	"triggerOwnParticle": true,
+	"showOtherPlayerParticle": true,
+	"particle_alpha": 0.5,
+	"light_particle_alpha": 0.800000011920929,
+	// Camera swing & shake effect
+	"cameraShakeFPP": false,
+	"cameraFPPSwingStrength": 0.5,
+	"cameraFPPShakeTicks": 4,
+	"cameraShakeTPP": true,
+	"cameraTPPSwingStrength": 0.5,
+	"cameraTPPShakeTicks": 4
+}

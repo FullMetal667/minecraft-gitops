@@ -1,0 +1,41 @@
+{
+  "bag_item": "armageddon_mod:sanghor_lord_of_blood_treasure_bag",
+  "summon_item": "armageddon_mod:cocoon_of_blood",
+  "drops": [
+    {
+      "item": "armageddon_mod:vampiric_talisman",
+      "chance": 0.50,
+      "min_quantity": 1,
+      "max_quantity": 1,
+      "config_flag": "weapons_and_artifacts"
+    },
+    {
+      "item": "minecraft:golden_apple",
+      "chance": 1.0,
+      "min_quantity": 10,
+      "max_quantity": 14,
+      "config_flag": "none"
+    },
+    {
+      "item": "armageddon_mod:hemalith_catalyst",
+      "chance": 1.0,
+      "min_quantity": 0,
+      "max_quantity": 1,
+      "config_flag": "none"
+    },
+    {
+      "item": "armageddon_mod:bloody_ingot",
+      "chance": 1.0,
+      "min_quantity": 12,
+      "max_quantity": 20,
+      "config_flag": "ores"
+    },
+    {
+      "item": "armageddon_mod:bloody_block",
+      "chance": 0.09,
+      "min_quantity": 1,
+      "max_quantity": 1,
+      "config_flag": "ores"
+    }
+  ]
+}

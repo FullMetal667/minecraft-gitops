@@ -1,0 +1,30 @@
+[
+    {
+        "section": "Mojang Studios",
+        "disciplines": [
+            {
+                "discipline": "Mojang Studios Leadership",
+                "titles": [
+                    {
+                        "title": "Studio Head of Mojang Studios",
+                        "names": [
+                            "Helen Chiang"
+                        ]
+                    },
+                    {
+                        "title": "Head of Stockholm Studio",
+                        "names": [
+                            "Ulrika Höjgård"
+                        ]
+                    },
+                    {
+                        "title": "Alright cut this extremely long credits screen",
+                        "names": [
+                            "If u wanna see minecraft's official credits please head to https://www.minecraft.net/en-us/credits"
+                        ]
+                    }
+                        ]
+                    }
+                ]
+            }
+        ]

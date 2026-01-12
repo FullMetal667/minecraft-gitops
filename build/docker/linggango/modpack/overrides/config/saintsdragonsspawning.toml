@@ -1,0 +1,49 @@
+
+[spawning]
+	#Dragon spawn configuration - control where and how often dragons spawn
+	#Raevyx spawn settings
+	#Range: 0 ~ 100
+	raevyxSpawnWeight = 1
+	#Range: 1 ~ 10
+	raevyxMinGroupSize = 1
+	#Range: 1 ~ 10
+	raevyxMaxGroupSize = 2
+	#Additional biomes where Raevyx can spawn (e.g., "minecraft:desert", "terralith:volcanic_crater")
+	raevyxAdditionalBiomes = []
+	#Stegonaut spawn settings
+	#Range: 0 ~ 100
+	stegonautSpawnWeight = 5
+	#Range: 1 ~ 10
+	stegonautMinGroupSize = 1
+	#Range: 1 ~ 10
+	stegonautMaxGroupSize = 4
+	#Additional biomes where Stegonaut can spawn (e.g., "minecraft:desert", "terralith:volcanic_crater")
+	stegonautAdditionalBiomes = []
+	#Cindervane spawn settings
+	#Range: 0 ~ 100
+	cindervaneSpawnWeight = 3
+	#Range: 1 ~ 10
+	cindervaneMinGroupSize = 1
+	#Range: 1 ~ 10
+	cindervaneMaxGroupSize = 3
+	#Additional biomes where Cindervane can spawn (e.g., "minecraft:desert", "terralith:volcanic_crater")
+	cindervaneAdditionalBiomes = []
+	#Nulljaw spawn settings
+	#Range: 0 ~ 100
+	nulljawSpawnWeight = 2
+	#Range: 1 ~ 10
+	nulljawMinGroupSize = 1
+	#Range: 1 ~ 10
+	nulljawMaxGroupSize = 2
+	#Additional biomes where Nulljaw can spawn (e.g., "minecraft:desert", "terralith:volcanic_crater")
+	nulljawAdditionalBiomes = []
+	#Ignivorus spawn settings
+	#Range: 0 ~ 100
+	ignivorusSpawnWeight = 1
+	#Range: 1 ~ 10
+	ignivorusMinGroupSize = 1
+	#Range: 1 ~ 10
+	ignivorusMaxGroupSize = 2
+	#Additional biomes where Ignivorus can spawn (e.g., "minecraft:desert", "terralith:volcanic_crater")
+	ignivorusAdditionalBiomes = []
+

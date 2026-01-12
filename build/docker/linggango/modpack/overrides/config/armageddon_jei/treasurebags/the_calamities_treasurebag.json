@@ -1,0 +1,41 @@
+{
+  "bag_item": "armageddon_mod:the_calamities_treasure_bag",
+  "summon_item": "armageddon_mod:sigil_of_calamity",
+  "drops": [
+    {
+      "item": "minecraft:golden_apple",
+      "chance": 1.0,
+      "min_quantity": 8,
+      "max_quantity": 12,
+      "config_flag": "none"
+    },
+    {
+      "item": "armageddon_mod:spiritof_chaos",
+      "chance": 1.0,
+      "min_quantity": 18,
+      "max_quantity": 27,
+      "config_flag": "none"
+    },
+    {
+      "item": "armageddon_mod:spiritof_dread",
+      "chance": 1.0,
+      "min_quantity": 18,
+      "max_quantity": 27,
+      "config_flag": "none"
+    },
+    {
+      "item": "armageddon_mod:spirit_of_despair",
+      "chance": 1.0,
+      "min_quantity": 18,
+      "max_quantity": 27,
+      "config_flag": "none"
+    },
+    {
+      "item": "armageddon_mod:calamitous_core",
+      "chance": 0.25,
+      "min_quantity": 1,
+      "max_quantity": 3,
+      "config_flag": "none"
+    }
+  ]
+}

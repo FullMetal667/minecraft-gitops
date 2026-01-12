@@ -1,0 +1,46 @@
+{
+  // Items in for example mineshaft chests get modifiers
+  "lootContainerModifier": false,
+  // Equipped items on entities get modifiers
+  "entityItemModifier": true,
+  // Crafted items get modifiers
+  "craftingModifier": false,
+  // Merchant items get modifiers
+  "merchantModifier": false,
+  // Decreases the biggest weights by this modifier
+  "reforgeModifier": 0.0,
+  // Modify the biggest weights by this modifier per smithing level
+  "levelzReforgeModifier": 0.0,
+  // Modify the biggest weights by this modifier per luck
+  "luckReforgeModifier": 0.0,
+  // Tier 1 of Reforging (Limestone)
+  // Qualities here will be able to be reforged onto items while using the Tier 1 reforge material, Limestone by default. Can be changed via the item tag tiered:reforge_tier_1
+  "tier_1_qualities": [
+    "Common"
+  ],
+  // Tier 2 of Reforging (Pyrite)
+  // Qualities here will be able to be reforged onto items while using the Tier 2 reforge material, Pyrite by default. Can be changed via the item tag tiered:reforge_tier_2
+  "tier_2_qualities": [
+    "Uncomon"
+  ],
+  // Tier 3 of Reforging (Galena)
+  // Qualities here will be able to be reforged onto items while using the Tier 3 reforge material, Galena by default. Can be changed via the item tag tiered:reforge_tier_3
+  "tier_3_qualities": [
+    "Rare"
+  ],
+  // Tier 4 of Reforging (Eclipsium Alloy)
+  // Qualities here will be able to be reforged onto items while using the Tier 4 reforge material, Eclipsium Alloy by default. Can be changed via the item tag tiered:reforge_tier_4
+  "tier_4_qualities": [
+    "Epic"
+  ],
+  // Tier 5 of Reforging (Hemalith Catalyst)
+  // Qualities here will be able to be reforged onto items while using the Tier 5 reforge material, Hemalith Catalyst by default. Can be changed via the item tag tiered:reforge_tier_5
+  "tier_5_qualities": [
+    "Legendary"
+  ],
+  // Tier 6 of Reforging (Cosmos Shard)
+  // Qualities here will be able to be reforged onto items while using the Tier 6 reforge material, Cosmos Shard by default. Can be changed via the item tag tiered:reforge_tier_6
+  "tier_6_qualities": [
+    "Mythic"
+  ]
+}

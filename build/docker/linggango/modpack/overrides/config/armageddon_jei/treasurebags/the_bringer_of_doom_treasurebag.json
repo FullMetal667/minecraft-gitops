@@ -1,0 +1,34 @@
+{
+  "bag_item": "armageddon_mod:the_bringer_of_doom_treasure_bag",
+  "summon_item": "armageddon_mod:the_key_of_doom",
+  "drops": [
+    {
+      "item": "armageddon_mod:sealed_bottle",
+      "chance": 1.0,
+      "min_quantity": 1,
+      "max_quantity": 1,
+      "config_flag": "weapons_and_artifacts"
+    },
+    {
+      "item": "minecraft:golden_apple",
+      "chance": 1.0,
+      "min_quantity": 8,
+      "max_quantity": 12,
+      "config_flag": "none"
+    },
+    {
+      "item": "armageddon_mod:sigil_of_calamity",
+      "chance": 1.0,
+      "min_quantity": 1,
+      "max_quantity": 1,
+      "config_flag": "none"
+    },
+    {
+      "item": "armageddon_mod:doom_powder",
+      "chance": 1.0,
+      "min_quantity": 32,
+      "max_quantity": 45,
+      "config_flag": "none"
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "bag_item": "armageddon_mod:vaedric_treasure_bag",
+  "summon_item": "armageddon_mod:wanderers_fallen_shard",
+  "drops": [
+    {
+      "item": "armageddon_mod:the_lost_voidblade",
+      "chance": 0.20,
+      "min_quantity": 1,
+      "max_quantity": 1,
+      "config_flag": "weapons_and_artifacts"
+    },
+    {
+      "item": "armageddon_mod:endermen_totem",
+      "chance": 0.25,
+      "min_quantity": 1,
+      "max_quantity": 1,
+      "config_flag": "weapons_and_artifacts"
+    },
+    {
+      "item": "minecraft:golden_apple",
+      "chance": 1.0,
+      "min_quantity": 8,
+      "max_quantity": 10,
+      "config_flag": "none"
+    },
+    {
+      "item": "armageddon_mod:voiderite_ore",
+      "chance": 1.0,
+      "min_quantity": 4,
+      "max_quantity": 8,
+      "config_flag": "ores"
+    },
+    {
+      "item": "armageddon_mod:voiderite",
+      "chance": 1.0,
+      "min_quantity": 4,
+      "max_quantity": 6,
+      "config_flag": "ores"
+    }
+  ]
+}

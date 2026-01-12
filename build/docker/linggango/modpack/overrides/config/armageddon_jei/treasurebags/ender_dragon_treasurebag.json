@@ -1,0 +1,33 @@
+{
+  "bag_item": "armageddon_mod:ender_dragon_treasurebag",
+  "drops": [
+    {
+      "item": "armageddon_mod:rustyswordofthelegendaryhero",
+      "chance": 1.0,
+      "min_quantity": 1,
+      "max_quantity": 1,
+      "config_flag": "weapons_and_artifacts"
+    },
+    {
+      "item": "armageddon_mod:dragons_fang",
+      "chance": 1.0,
+      "min_quantity": 1,
+      "max_quantity": 1,
+      "config_flag": "weapons_and_artifacts"
+    },
+    {
+      "item": "armageddon_mod:khyros_tear",
+      "chance": 1.0,
+      "min_quantity": 28,
+      "max_quantity": 40,
+      "config_flag": "none"
+    },
+    {
+      "item": "armageddon_mod:ender_dragon_bone",
+      "chance": 1.0,
+      "min_quantity": 9,
+      "max_quantity": 15,
+      "config_flag": "none"
+    }
+  ]
+}
