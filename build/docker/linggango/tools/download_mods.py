@@ -6,6 +6,8 @@ key = os.environ["CF_API_KEY"]
 mods_dir = pathlib.Path("/srv/mc/mods")
 mods_dir.mkdir(parents=True, exist_ok=True)
 
+print("CF_API_KEY present:", "CF_API_KEY" in os.environ, "len=", len(os.environ.get("CF_API_KEY","")))
+
 with open("/work/modpack/manifest.json", "r", encoding="utf-8") as f:
     manifest = json.load(f)
 
