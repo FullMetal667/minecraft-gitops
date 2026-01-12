@@ -40,9 +40,6 @@ spec:
           configMap:
             name: minecraft-commands
             defaultMode: 0755
-        - name: env-file
-          secret:
-            secretName: mc-env 
       containers:
         - name: minecraft
           image: "docker.io/chrisroth667/minecraft:0.0.0"
@@ -60,9 +57,6 @@ spec:
             - name: mcrcon-commands
               mountPath: /data/commands.txt
               subPath: commands.txt
-            - name: env-file
-              mountPath: /opt/.env
-              subPath: .env
             - name: world-data
               mountPath: /data/world
             - name: overrides
