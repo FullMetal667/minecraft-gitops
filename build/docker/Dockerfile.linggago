@@ -1,7 +1,7 @@
 FROM registry.access.redhat.com/ubi9/openjdk-17:latest
 
 USER 0
-RUN microdnf -y install python3 python3-pip curl unzip && microdnf clean all
+RUN microdnf -y install python3 python3-pip curl-minimal unzip && microdnf clean all
 RUN pip3 install --no-cache-dir requests
 
 # Build context
