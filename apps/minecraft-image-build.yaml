@@ -72,6 +72,12 @@ objects:
             value: "${ZIP}"
           - name: DIR
             value: "${DIR}"
+        env:
+          - name: CF_API_KEY
+            valueFrom:
+              secretKeyRef:
+                name: secret-curseforge
+                key: CF_API_KEY
         # falls du ein eigenes Dockerfile-Namen hast, hier setzen
         dockerfilePath: Dockerfile.${MOD_NAME}
     output:
