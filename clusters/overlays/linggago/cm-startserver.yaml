@@ -1,3 +1,8 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: startserver
+  namespace: minecraft-linggago
 data:
   startserver.sh: |
     #!/usr/bin/env bash
