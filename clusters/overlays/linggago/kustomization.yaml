@@ -6,8 +6,8 @@ resources:
   - namespace.yaml
   - cm-mcrcon.yaml
   - deployment.yaml
-  - cm-server-properties
-  - cm-user-jvm-args
+  - cm-server-properties.yaml
+  - cm-user-jvm-args.yaml
   - cm-startserver.yaml
 secretGenerator:
   - name: mc-env
