@@ -7,131 +7,118 @@ data:
   startserver.sh: |
     #!/usr/bin/env bash
     set -euo pipefail
-    
+
     APP_DIR="${APP_DIR:-/srv/mc}"
     DATA_DIR="${DATA_DIR:-/data}"
-    
+
     MC_VERSION="${MC_VERSION:-1.20.1}"
     FORGE_VERSION="${FORGE_VERSION:-47.2.0}"
-    FORGE_UNIX_ARGS_REL="libraries/net/minecraftforge/forge/${MC_VERSION}-${FORGE_VERSION}/unix_args.txt"
-    FORGE_UNIX_ARGS="${APP_DIR}/${FORGE_UNIX_ARGS_REL}"
-    
-    # ---- Mods: bevorzugt über ein Archiv (stabilster Weg) ----
-    # Beispiel:
-    # MODS_ARCHIVE_URL="https://minio.example/bucket/mods-linggango-v6.3.tgz"
-    # MODS_ARCHIVE_SHA256="...."   (optional aber empfohlen)
-    MODS_ARCHIVE_URL="${MODS_ARCHIVE_URL:-}"
-    MODS_ARCHIVE_SHA256="${MODS_ARCHIVE_SHA256:-}"
-    
-    # ---- CurseForge Fallback ----
-    CF_API_KEY="${CF_API_KEY:-}"          # kommt aus Secret/env
-    MANIFEST_PATH="${MANIFEST_PATH:-${APP_DIR}/manifest.json}"
-    
-    # ---- RCON (wie bei dir) ----
-    RCON_ENABLE="${RCON_ENABLE:-true}"
-    RCON_HOST="${RCON_HOST:-127.0.0.1}"
-    RCON_PORT="${RCON_PORT:-25575}"
-    RCON_PASSWORD="${RCON_PASSWORD:-mc321}"
-    RCON_WAIT_SECS="${RCON_WAIT_SECS:-1800}"
-    RCON_POLL_INTERVAL="${RCON_POLL_INTERVAL:-5}"
-    
-    NC_BIN="${NC_BIN:-nc}"
-    if ! command -v "${NC_BIN}" >/dev/null 2>&1; then
-      command -v ncat >/dev/null 2>&1 && NC_BIN="ncat"
+    FORGE_UNIX_ARGS="${APP_DIR}/libraries/net/minecraftforge/forge/${MC_VERSION}-${FORGE_VERSION}/unix_args.txt"
+
+    MODPACK_ZIP="${MODPACK_ZIP:-${APP_DIR}/mods/Linggango-V6.3.zip}"
+    MODPACK_DIR="${MODPACK_DIR:-${APP_DIR}/.modpack}"
+    INIT_MARKER="${INIT_MARKER:-/tmp/.modpack_initialized}"   # /tmp ist writebar unter restricted
+
+    MANIFEST_PATH="${MANIFEST_PATH:-${MODPACK_DIR}/manifest.json}"
+    OVERRIDES_DIR="${OVERRIDES_DIR:-${MODPACK_DIR}/overrides}"
+
+    CF_API_KEY="${CF_API_KEY:-}"
+
+    log(){ echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] $*"; }
+    need(){ command -v "$1" >/dev/null 2>&1 || { log "ERROR: missing $1"; exit 1; }; }
+
+    need java
+    need curl
+    need unzip
+    need python3
+
+    cd "${APP_DIR}"
+
+    # ---- EULA muss vorhanden sein (du hast sie im Image) ----
+    if [[ ! -f "${APP_DIR}/eula.txt" ]] || ! grep -q 'eula=true' "${APP_DIR}/eula.txt"; then
+      log "ERROR: eula.txt missing or not accepted in ${APP_DIR}"
+      exit 3
     fi
-    
-    log() { echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] $*"; }
-    
-    require_cmd() {
-      command -v "$1" >/dev/null 2>&1 || { log "ERROR: missing command: $1"; exit 1; }
-    }
-    
-    # ---- Mods helpers ----
+
+    # ---- Forge muss vorhanden sein (du hast libraries/) ----
+    if [[ ! -f "${FORGE_UNIX_ARGS}" ]]; then
+      log "ERROR: Forge unix_args not found: ${FORGE_UNIX_ARGS}"
+      log "This script does not install Forge at runtime."
+      exit 1
+    fi
+
+    # ============================================================
+    # 1) Modpack ZIP entpacken (manifest.json + overrides/)
+    # ============================================================
+    if [[ ! -f "${INIT_MARKER}" ]]; then
+      if [[ ! -f "${MODPACK_ZIP}" ]]; then
+        log "ERROR: Modpack zip not found at ${MODPACK_ZIP}"
+        exit 1
+      fi
+
+      log "MODPACK: extracting ${MODPACK_ZIP} -> ${MODPACK_DIR}"
+      rm -rf "${MODPACK_DIR}"
+      mkdir -p "${MODPACK_DIR}"
+      unzip -q "${MODPACK_ZIP}" -d "${MODPACK_DIR}"
+
+      if [[ ! -f "${MANIFEST_PATH}" ]]; then
+        log "ERROR: manifest.json not found after unzip: ${MANIFEST_PATH}"
+        find "${MODPACK_DIR}" -maxdepth 2 -type f | head || true
+        exit 1
+      fi
+
+      # overrides (config/defaultconfigs/kubejs/...) in APP_DIR spiegeln
+      if [[ -d "${OVERRIDES_DIR}" ]]; then
+        log "MODPACK: applying overrides/ -> ${APP_DIR} (no overwrite)"
+        # kopiert nur wenn Ziel nicht existiert (-n)
+        cp -an "${OVERRIDES_DIR}/." "${APP_DIR}/" 2>/dev/null || true
+      else
+        log "MODPACK: WARN no overrides/ directory found"
+      fi
+
+      touch "${INIT_MARKER}"
+    fi
+
+    # ============================================================
+    # 2) Mods aus manifest.json nach /srv/mc/mods laden
+    #    - API zuerst
+    #    - bei 403 fallback auf curseforge website redirect endpoint
+    # ============================================================
+    mkdir -p "${APP_DIR}/mods"
+
     mods_count() {
       find "${APP_DIR}/mods" -maxdepth 1 -type f -name '*.jar' 2>/dev/null | wc -l | tr -d ' '
     }
-    
-    verify_sha256() {
-      local file="$1" expected="$2"
-      [[ -n "$expected" ]] || return 0
-      require_cmd sha256sum
-      local got
-      got="$(sha256sum "$file" | awk '{print $1}')"
-      if [[ "$got" != "$expected" ]]; then
-        log "ERROR: sha256 mismatch for $file"
-        log "Expected: $expected"
-        log "Got:      $got"
+
+    if [[ "$(mods_count)" -lt 5 ]]; then
+      if [[ -z "${CF_API_KEY}" ]]; then
+        log "ERROR: CF_API_KEY not set - cannot download mods from manifest."
         exit 1
       fi
-    }
-    
-    install_mods_from_archive() {
-      [[ -n "${MODS_ARCHIVE_URL}" ]] || return 1
-      require_cmd curl
-      require_cmd tar
-    
-      mkdir -p "${APP_DIR}/mods"
-      local tmp="/tmp/mods-archive.tgz"
-    
-      log "MODS: downloading archive from ${MODS_ARCHIVE_URL}"
-      curl -fsSL "${MODS_ARCHIVE_URL}" -o "${tmp}"
-    
-      verify_sha256 "${tmp}" "${MODS_ARCHIVE_SHA256}"
-    
-      # Erwartet: Archiv enthält entweder "mods/..." oder direkt "*.jar"
-      log "MODS: extracting archive into ${APP_DIR}"
-      tar -xzf "${tmp}" -C "${APP_DIR}"
-    
-      # Falls Archiv JARs direkt enthält, verschiebe sie nach mods/
-      shopt -s nullglob
-      local direct=( "${APP_DIR}"/*.jar )
-      if (( ${#direct[@]} > 0 )); then
-        log "MODS: moving top-level jars into mods/"
-        mv -n "${APP_DIR}"/*.jar "${APP_DIR}/mods/" || true
-      fi
-      shopt -u nullglob
-    
-      rm -f "${tmp}"
-    
-      local n
-      n="$(mods_count)"
-      if [[ "$n" -lt 5 ]]; then
-        log "ERROR: archive extracted but only ${n} mod jars found. Check archive contents."
-        return 1
-      fi
-    
-      log "MODS: OK - ${n} jars present"
-      return 0
-    }
-    
-    # CurseForge: API + web download fallback ohne slug
-    cf_download_mods() {
-      [[ -f "${MANIFEST_PATH}" ]] || { log "ERROR: manifest.json not found at ${MANIFEST_PATH}"; return 1; }
-      [[ -n "${CF_API_KEY}" ]] || { log "ERROR: CF_API_KEY not set, cannot download mods from manifest"; return 1; }
-      require_cmd python3
-    
-      log "MODS: downloading from CurseForge manifest (${MANIFEST_PATH})"
+
+      log "MODS: downloading from manifest ${MANIFEST_PATH}"
+      export APP_DIR MANIFEST_PATH CF_API_KEY
       python3 - <<'PY'
     import os, json, pathlib, requests, re
     from urllib.parse import urlparse
-    
-    APP_DIR = os.environ.get("APP_DIR","/srv/mc")
-    MANIFEST = os.environ.get("MANIFEST_PATH", f"{APP_DIR}/manifest.json")
+
+    APP_DIR = os.environ["APP_DIR"]
+    MANIFEST = os.environ["MANIFEST_PATH"]
     KEY = os.environ["CF_API_KEY"]
-    
+
     API = "https://api.curseforge.com"
     WEB_DL = "https://www.curseforge.com/api/v1/mods/{pid}/files/{fid}/download"
     HEADERS = {"x-api-key": KEY, "accept": "application/json", "user-agent":"mc-gitops/1.0"}
-    
+
     mods_dir = pathlib.Path(APP_DIR) / "mods"
     mods_dir.mkdir(parents=True, exist_ok=True)
-    
+
     def fname(resp):
         cd = resp.headers.get("content-disposition","")
         m = re.search(r'filename="?([^"]+)"?', cd)
         if m: return m.group(1)
         return pathlib.Path(urlparse(resp.url).path).name
-    
+
     def stream(url):
         with requests.get(url, allow_redirects=True, stream=True, timeout=300, headers={"user-agent":"mc-gitops/1.0"}) as r:
             r.raise_for_status()
@@ -144,135 +131,50 @@ data:
             with open(out,"wb") as w:
                 for ch in r.iter_content(chunk_size=1024*1024):
                     if ch: w.write(ch)
-    
+
     with open(MANIFEST,"r",encoding="utf-8") as f:
         manifest = json.load(f)
-    
-    files = manifest.get("files",[])
+
+    files = manifest.get("files", [])
     for e in files:
         pid = e["projectID"]; fid = e["fileID"]
-    
-        # Try API file endpoint
+
+        # Try API endpoint
         r = requests.get(f"{API}/v1/mods/{pid}/files/{fid}", headers=HEADERS, timeout=60)
         if r.status_code == 200:
             data = r.json()["data"]
-            url = data.get("downloadUrl") or WEB_DL.format(pid=pid,fid=fid)
+            url = data.get("downloadUrl") or WEB_DL.format(pid=pid, fid=fid)
             stream(url)
             continue
+
         if r.status_code == 403:
-            # API blocked -> website download redirect
-            stream(WEB_DL.format(pid=pid,fid=fid))
+            # API blocked -> website redirect endpoint
+            stream(WEB_DL.format(pid=pid, fid=fid))
             continue
+
         r.raise_for_status()
-    
+
     print("Done.")
     PY
-      local n
-      n="$(find "${APP_DIR}/mods" -maxdepth 1 -type f -name '*.jar' | wc -l | tr -d ' ')"
-      if [[ "$n" -lt 5 ]]; then
-        log "ERROR: CurseForge download finished but only ${n} jars found."
-        return 1
-      fi
-      log "MODS: OK - ${n} jars present"
-      return 0
-    }
-    
-    ensure_mods() {
-      mkdir -p "${APP_DIR}/mods"
-    
-      # Falls da noch das Modpack-ZIP liegt -> weg damit
-      if [[ -f "${APP_DIR}/mods/Linggango-V6.3.zip" ]]; then
-        log "MODS: removing modpack zip from mods/"
-        rm -f "${APP_DIR}/mods/Linggango-V6.3.zip"
-      fi
-    
-      local n
+
       n="$(mods_count)"
-      if [[ "$n" -ge 5 ]]; then
-        log "MODS: already present (${n} jars)"
-        return 0
+      log "MODS: jars present: ${n}"
+      if [[ "${n}" -lt 5 ]]; then
+        log "ERROR: mod download did not produce enough jars. Check logs above for 403/404."
+        exit 1
       fi
-    
-      # 1) Archiv bevorzugt
-      if install_mods_from_archive; then
-        return 0
-      fi
-    
-      # 2) Fallback CurseForge manifest
-      if cf_download_mods; then
-        return 0
-      fi
-    
-      log "ERROR: Could not ensure mods. Provide MODS_ARCHIVE_URL (recommended) or CF_API_KEY+manifest.json."
-      exit 1
-    }
-    
-    # ---- Start ----
-    require_cmd java
-    require_cmd curl
-    
-    cd "${APP_DIR}"
-    
-    # EULA: bei dir existiert /srv/mc/eula.txt bereits
-    if [[ ! -f "${APP_DIR}/eula.txt" ]] || ! grep -q 'eula=true' "${APP_DIR}/eula.txt"; then
-      log "ERROR: eula.txt missing or not accepted in ${APP_DIR}. (Put eula=true there.)"
-      exit 3
+    else
+      log "MODS: already present ($(mods_count) jars)"
     fi
-    
-    # Forge muss im Image vorhanden sein (du hast libraries/)
-    if [[ ! -f "${FORGE_UNIX_ARGS}" ]]; then
-      log "ERROR: Forge unix_args not found: ${FORGE_UNIX_ARGS}"
-      log "This script does not install Forge at runtime."
-      exit 1
-    fi
-    
-    # Mods sicherstellen
-    ensure_mods
-    
-    # JVM args file: bei dir existiert /srv/mc/user_jvm_args.txt (oder mountest /data/user-jvm-args.txt)
+
+    # ============================================================
+    # 3) Start Forge Server
+    # ============================================================
+    log "SERVER: starting Forge (${MC_VERSION}-${FORGE_VERSION})"
+
+    # optional: user jvm args file (im image)
     JVM_ARGS_FILE="${JVM_ARGS_FILE:-${APP_DIR}/user_jvm_args.txt}"
-    if [[ -f "${DATA_DIR}/user-jvm-args.txt" ]]; then
-      JVM_ARGS_FILE="${DATA_DIR}/user-jvm-args.txt"
-    fi
-    
-    # Commands file
-    COMMANDS_FILE="${COMMANDS_FILE:-${DATA_DIR}/commands.txt}"
-    
-    while true; do
-      log "[LINGGAGO] starting server ..."
-      if [[ -f "${JVM_ARGS_FILE}" ]]; then
-        java @"${JVM_ARGS_FILE}" @"${FORGE_UNIX_ARGS}" nogui &
-      else
-        java @"${FORGE_UNIX_ARGS}" nogui &
-      fi
-      SERVER_PID=$!
-    
-      # RCON Commands (optional)
-      if [[ "${RCON_ENABLE}" == "true" && -s "${COMMANDS_FILE}" ]]; then
-        log "[RCON] waiting for ${RCON_HOST}:${RCON_PORT} (timeout ${RCON_WAIT_SECS}s) ..."
-        waited=0
-        until command -v "${NC_BIN}" >/dev/null 2>&1 && ${NC_BIN} -z "${RCON_HOST}" "${RCON_PORT}" 2>/dev/null; do
-          sleep "${RCON_POLL_INTERVAL}"
-          waited=$(( waited + RCON_POLL_INTERVAL ))
-          [[ "${waited}" -ge "${RCON_WAIT_SECS}" ]] && break
-        done
-    
-        if command -v "${NC_BIN}" >/dev/null 2>&1 && ${NC_BIN} -z "${RCON_HOST}" "${RCON_PORT}" 2>/dev/null; then
-          sleep 3
-          log "[RCON] sending commands from commands.txt"
-          sed -e 's#^/##' -e '/^\s*#/d' -e '/^\s*$/d' "${COMMANDS_FILE}" | \
-            /usr/local/bin/mcrcon -H "${RCON_HOST}" -P "${RCON_PORT}" -p "${RCON_PASSWORD}" -s || true
-        fi
-      fi
-    
-      wait "${SERVER_PID}" || true
-    
-      if [[ "${LINGGAGO_RESTART:-true}" == "false" ]]; then
-        log "[LINGGAGO] server stopped, automatic restart disabled"
-        exit 0
-      fi
-    
-      log "[LINGGAGO] Restarting in 10 seconds"
-      sleep 10
-    done
+
+    exec java @"${JVM_ARGS_FILE}" @"${FORGE_UNIX_ARGS}" nogui
+
     
