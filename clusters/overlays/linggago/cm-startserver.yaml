@@ -113,7 +113,7 @@ data:
     fi
 
     mkdir -p "${DATA_DIR}"
-    cd "${DATA_DIR}"
+    cd "${APP_DIR}"
 
     # ============================================================
     # 0) Initialisierung: Serverpack einmalig von APP_DIR -> /data
@@ -144,25 +144,7 @@ data:
       exit 1
     fi
 
-    # =======================
-    # Forge installieren (falls libraries/ oder unix_args fehlt)
-    # =======================
-    if [[ ! -f "${FORGE_UNIX_ARGS}" ]]; then
-      echo "[LINGGAGO] Forge not installed (missing ${FORGE_UNIX_ARGS}), installing now."
-      if [[ ! -f "${FORGE_INSTALLER}" ]]; then
-        echo "[LINGGAGO] Downloading Forge installer: ${FORGE_URL}"
-        if command -v wget >/dev/null 2>&1; then
-          wget -O "${FORGE_INSTALLER}" "${FORGE_URL}"
-        elif command -v curl >/dev/null 2>&1; then
-          curl -fsSL -o "${FORGE_INSTALLER}" "${FORGE_URL}"
-        else
-          echo "[LINGGAGO] Neither wget nor curl found in container."
-          exit 1
-        fi
-      fi
-      echo "[LINGGAGO] Running Forge installer."
-      "${MC_JAVA:-java}" -jar "${FORGE_INSTALLER}" --installServer
-    fi
+    FORGE_UNIX_ARGS="${APP_DIR}/${FORGE_UNIX_ARGS}"
 
     # Standard server.properties, falls nicht vorhanden (wird bei dir aber gemountet)
     if [[ ! -e server.properties ]]; then
