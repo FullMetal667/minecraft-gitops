@@ -49,11 +49,8 @@ spec:
           envFrom:
             - secretRef:
                 name: mc-env
-          args:
-            - |
-              set -e
-              cd /srv/mc
-              exec java ${JVM_ARGS:-} -jar forge-1.20.1-47.2.0.jar nogui
+          command: ["/bin/bash","-lc"]
+          args: ["/data/startserver.sh"]
           volumeMounts:
             - name: mcrcon-commands
               mountPath: /data/commands.txt
