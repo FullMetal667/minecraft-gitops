@@ -3,6 +3,7 @@ kind: Kustomization
 namespace: minecraft-linggago
 resources:
   - ../../base
+  - cm-eula.yaml
   - namespace.yaml
   - cm-mcrcon.yaml
   - deployment.yaml

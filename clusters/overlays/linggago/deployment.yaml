@@ -41,6 +41,10 @@ spec:
           configMap:
             name: minecraft-commands
             defaultMode: 0755
+        - name: eula
+          configMap:
+            name: mc-eula
+            defaultMode: 0755
       containers:
         - name: minecraft
           image: "docker.io/chrisroth667/minecraft:0.0.0"
@@ -75,6 +79,9 @@ spec:
             - name: user-jvm-args
               mountPath: /data/user-jvm-args.txt
               subPath: user-jvm-args.txt
+            - name: eula
+              mountPath: /data/eula.txt
+              subPath: eula.txt
           terminationMessagePath: /dev/termination-log
           terminationMessagePolicy: File
       restartPolicy: Always
