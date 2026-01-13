@@ -13,7 +13,7 @@ data:
     DATA_DIR="${DATA_DIR:-/data}"   # PVC / runtime
 
     # Marker für einmalige Initialisierung
-    LINGGAGO_INIT_MARKER="${DATA_DIR}/.linggago_initialized"
+    LINGGAGO_INIT_MARKER="${LINGGAGO_INIT_MARKER:-/tmp/.linggago_initialized}"
 
     # ---- Minecraft / Forge ----
     MC_VERSION="${MC_VERSION:-1.20.1}"
