@@ -5,8 +5,9 @@ resources:
   - ../../base
   - namespace.yaml
   - cm-mcrcon.yaml
-  - cm-startserver.yaml
   - deployment.yaml
+  - cm-server-properties
+  - cm-user-jvm-args
 secretGenerator:
   - name: mc-env
     envs:
@@ -26,4 +27,3 @@ images:
   - name: docker.io/chrisroth667/minecraft
     newName: docker.io/chrisroth667/linggago
     newTag: "v6.3"
-

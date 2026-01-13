@@ -24,10 +24,6 @@ spec:
         - name: overrides
           persistentVolumeClaim:
             claimName: overrides-storage
-        - name: startserver
-          configMap:
-            name: startserver
-            defaultMode: 0755
         - name: server-properties
           configMap:
             name: mc-server-properties
@@ -53,6 +49,11 @@ spec:
           envFrom:
             - secretRef:
                 name: mc-env
+          args:
+            - |
+              set -e
+              cd /srv/mc
+              exec java ${JVM_ARGS:-} -jar forge-1.20.1-47.2.0.jar nogui
           volumeMounts:
             - name: mcrcon-commands
               mountPath: /data/commands.txt
@@ -63,9 +64,6 @@ spec:
               mountPath: /data/overrides
             - name: backup
               mountPath: /data/simplebackups
-            - name: startserver
-              mountPath: /data/startserver.sh
-              subPath: startserver.sh
             - name: server-properties
               mountPath: /data/server.properties
               subPath: server.properties
