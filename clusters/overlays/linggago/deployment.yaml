@@ -13,7 +13,7 @@ spec:
         app: minecraft
     spec:
       securityContext:
-        fsGroup: 1000
+        fsGroup: 1001270000
       serviceAccountName: minecraft-sa
       volumes:
         - name: world-data
