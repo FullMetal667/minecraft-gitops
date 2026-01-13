@@ -28,6 +28,10 @@ spec:
           configMap:
             name: mc-server-properties
             defaultMode: 0755
+        - name: startserver
+          configMap:
+            name: startserver
+            defaultMode: 0755
         - name: user-jvm-args
           configMap:
             name: user-jvm-args
@@ -61,6 +65,9 @@ spec:
               mountPath: /data/overrides
             - name: backup
               mountPath: /data/simplebackups
+            - name: startserver
+              mountPath: /data/startserver.sh
+              subPath: startserver.sh
             - name: server-properties
               mountPath: /data/server.properties
               subPath: server.properties
