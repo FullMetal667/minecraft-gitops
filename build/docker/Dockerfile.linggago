@@ -15,7 +15,7 @@ RUN mkdir -p ${MC_HOME}/mods ${MC_HOME}/config ${MC_HOME}/defaultconfigs
 
 # Forge installieren (Version anpassen!)
 ARG MC_VERSION=1.20.1
-ARG FORGE_VERSION=47.2.0
+ARG FORGE_VERSION=47.4.0
 RUN curl -fsSL -o /tmp/forge-installer.jar \
   https://maven.minecraftforge.net/net/minecraftforge/forge/${MC_VERSION}-${FORGE_VERSION}/forge-${MC_VERSION}-${FORGE_VERSION}-installer.jar \
   && mkdir -p ${MC_HOME} \
