@@ -13,7 +13,23 @@ data:
 
     MC_VERSION="${MC_VERSION:-1.20.1}"
     FORGE_VERSION="${FORGE_VERSION:-47.2.0}"
-    FORGE_UNIX_ARGS="${APP_DIR}/libraries/net/minecraftforge/forge/${MC_VERSION}-${FORGE_VERSION}/unix_args.txt"
+    
+    find_forge_unix_args() {
+      local base="${APP_DIR}/libraries/net/minecraftforge/forge"
+      local f
+      f="$(find "${base}" -maxdepth 3 -type f -name unix_args.txt 2>/dev/null | head -n1 || true)"
+      [[ -n "${f}" ]] && echo "${f}"
+    }
+
+    FORGE_UNIX_ARGS="$(find_forge_unix_args || true)"
+    if [[ -z "${FORGE_UNIX_ARGS}" ]]; then
+      log "ERROR: Forge unix_args not found under ${APP_DIR}/libraries/net/minecraftforge/forge/**/unix_args.txt"
+      log "DEBUG: listing ${APP_DIR}/libraries/net/minecraftforge/forge:"
+      ls -la "${APP_DIR}/libraries/net/minecraftforge/forge" 2>/dev/null || true
+      exit 1
+    fi
+
+    log "Forge unix_args: ${FORGE_UNIX_ARGS}"
 
     MODPACK_ZIP="${MODPACK_ZIP:-${APP_DIR}/mods/Linggango-V6.3.zip}"
     MODPACK_DIR="${MODPACK_DIR:-${APP_DIR}/.modpack}"
