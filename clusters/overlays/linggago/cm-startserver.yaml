@@ -178,20 +178,23 @@ data:
       log "MODS: already present ($(mods_count) jars)"
     fi
 
-    # Remove obvious client-only mods (best effort)
     purge_client_mods() {
       local dir="${APP_DIR}/mods"
-      local patterns=(
-        # bereits bekannte
-        'shoulder.*surf'
-        'xaero'
+
+      # Allowlist (niemals löschen)
+      local allow_patterns=(
+        '^xaeros_waystones_compability-.*\.jar$'
+      )
+
+      # Blacklist (nur echte Client-only Kandidaten)
+      local deny_patterns=(
+        'ShoulderSurfing'
+        '^XaerosWorldMap_'
+        '^Xaeros_Minimap_'
         'embeddium'
-        'entity.*texture.*features'
+        'entity_texture_features'
         'sodiumdynamiclights'
         'sodiumoptions'
-        'xaeros_waystones'
-
-        # neu aus deinem Crash
         'oculus'
         'nolijium'
         'enhanced[_-]?boss[_-]?bars'
@@ -201,8 +204,18 @@ data:
       for f in "${dir}"/*.jar; do
         local base
         base="$(basename "$f")"
-        for p in "${patterns[@]}"; do
-          if echo "$base" | grep -Eqi "$p"; then
+
+        # Allowlist check
+        for ap in "${allow_patterns[@]}"; do
+          if echo "$base" | grep -Eqi "$ap"; then
+            log "MODS: keeping (allowlisted): $base"
+            continue 2
+          fi
+        done
+
+        # Denylist check
+        for dp in "${deny_patterns[@]}"; do
+          if echo "$base" | grep -Eqi "$dp"; then
             log "MODS: removing client-only mod: $base"
             rm -f -- "$f"
             break
