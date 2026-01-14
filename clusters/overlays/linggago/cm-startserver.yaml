@@ -178,19 +178,18 @@ data:
       log "MODS: already present ($(mods_count) jars)"
     fi
 
-    purge_client_mods() {
-      local dir="${APP_DIR}/mods"
+    quarantine_client_mods() {
+      local mods_dir="${APP_DIR}/mods"
+      local client_dir="${mods_dir}/.client"
 
-      # Allowlist (niemals löschen)
-      local allow_patterns=(
-        '^xaeros_waystones_compability-.*\.jar$'
-      )
+      mkdir -p "${client_dir}"
 
-      # Blacklist (nur echte Client-only Kandidaten)
-      local deny_patterns=(
+      # Client-only Mods (dürfen NICHT im Server-mods/ liegen)
+      local client_only_patterns=(
         'ShoulderSurfing'
         '^XaerosWorldMap_'
         '^Xaeros_Minimap_'
+        '^xaeros_waystones_compability-.*\.jar$'
         'embeddium'
         'entity_texture_features'
         'sodiumdynamiclights'
@@ -201,31 +200,26 @@ data:
       )
 
       shopt -s nullglob
-      for f in "${dir}"/*.jar; do
+      for f in "${mods_dir}"/*.jar; do
         local base
         base="$(basename "$f")"
 
-        # Allowlist check
-        for ap in "${allow_patterns[@]}"; do
-          if echo "$base" | grep -Eqi "$ap"; then
-            log "MODS: keeping (allowlisted): $base"
-            continue 2
-          fi
-        done
-
-        # Denylist check
-        for dp in "${deny_patterns[@]}"; do
-          if echo "$base" | grep -Eqi "$dp"; then
-            log "MODS: removing client-only mod: $base"
-            rm -f -- "$f"
+        for p in "${client_only_patterns[@]}"; do
+          if echo "$base" | grep -Eqi "$p"; then
+            log "MODS: moving client-only mod to quarantine: $base"
+            mv -f -- "$f" "${client_dir}/"
             break
           fi
         done
       done
       shopt -u nullglob
+
+      log "MODS: quarantined client-only mods:"
+      ls -1 "${client_dir}" 2>/dev/null || true
     }
 
-    purge_client_mods
+    quarantine_client_mods
+
 
     log "MODS: searching for Oculus jars under ${APP_DIR} (maxdepth 5)"
     mapfile -t OCULUS_JARS < <(find "${APP_DIR}" -maxdepth 5 -type f \( -iname '*oculus*.jar' -o -iname '*mekalus*.jar' -o -iname '*iris*.jar' \) 2>/dev/null || true)
