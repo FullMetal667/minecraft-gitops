@@ -98,13 +98,13 @@ data:
       log "MODS: downloading from manifest ${MANIFEST_PATH}"
 
       python3 -c '
-import os, json, pathlib, re, sys
-from urllib.parse import urlparse
-import requests
+        import os, json, pathlib, re, sys
+        from urllib.parse import urlparse
+        import requests
 
-APP_DIR = os.environ.get("APP_DIR", "/srv/mc")
-MANIFEST = os.environ.get("MANIFEST_PATH")
-KEY = os.environ.get("CF_API_KEY")
+        APP_DIR = os.environ.get("APP_DIR", "/srv/mc")
+        MANIFEST = os.environ.get("MANIFEST_PATH")
+        KEY = os.environ.get("CF_API_KEY")
 
 if not MANIFEST:
     print("MANIFEST_PATH not set", file=sys.stderr)
