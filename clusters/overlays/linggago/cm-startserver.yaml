@@ -178,6 +178,41 @@ data:
       log "MODS: already present ($(mods_count) jars)"
     fi
 
+    # Remove obvious client-only mods (best effort)
+    purge_client_mods() {
+      local dir="${APP_DIR}/mods"
+      local patterns=(
+        'shoulder.*surf'
+        'entity.*texture.*features'
+        'iris'
+        'oculus'
+        'rubidium'
+        'embeddium'
+        'sodium'
+        'replay'
+        'shader'
+        'xaero'
+        'journeymap-client'
+        'map-atlas'
+        'voicechat-fabric' # example, adjust
+      )
+
+      shopt -s nullglob
+      for f in "${dir}"/*.jar; do
+        local base
+        base="$(basename "$f")"
+        for p in "${patterns[@]}"; do
+          if echo "$base" | grep -Eqi "$p"; then
+            log "MODS: removing client-only mod: $base"
+            rm -f -- "$f"
+            break
+          fi
+        done
+      done
+      shopt -u nullglob
+    }
+    purge_client_mods
+
     # ============================================================
     # 3) Start server
     # ============================================================
