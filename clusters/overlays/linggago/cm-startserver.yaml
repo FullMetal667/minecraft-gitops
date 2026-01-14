@@ -214,6 +214,21 @@ data:
 
     purge_client_mods
 
+    # --- HARD PURGE: known client-only mods that MUST NOT be on a dedicated server ---
+    shopt -s nullglob
+    for f in "${APP_DIR}/mods"/*.jar; do
+      b="$(basename "$f")"
+      if echo "$b" | grep -Eqi 'oculus|iris|shader'; then
+        log "MODS: hard-removing client-only jar: $b"
+        rm -f -- "$f"
+      fi
+    done
+    shopt -u nullglob
+
+    # Debug: prove it's gone
+    log "MODS: checking for oculus after purge:"
+    ls -1 "${APP_DIR}/mods" | grep -i oculus || log "MODS: OK - no oculus jar present"
+
     # ============================================================
     # 3) Start server
     # ============================================================
