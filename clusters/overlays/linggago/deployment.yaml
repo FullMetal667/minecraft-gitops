@@ -65,7 +65,7 @@ spec:
               mountPath: /data/commands.txt
               subPath: commands.txt
             - name: world-data
-              mountPath: /data/world
+              mountPath: /srv/mc/world
             - name: overrides
               mountPath: /data/overrides
             - name: backup
@@ -74,10 +74,10 @@ spec:
               mountPath: /data/startserver.sh
               subPath: startserver.sh
             - name: server-properties
-              mountPath: /data/server.properties
+              mountPath: /srv/mc/server.properties
               subPath: server.properties
             - name: user-jvm-args
-              mountPath: /data/user-jvm-args.txt
+              mountPath: /srv/mc/user-jvm-args.txt
               subPath: user-jvm-args.txt
             - name: eula
               mountPath: /data/eula.txt
