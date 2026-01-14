@@ -1,30 +1,21 @@
-kind: ConfigMap
 apiVersion: v1
+kind: ConfigMap
 metadata:
   name: startserver
-  namespace: minecraft-linggago
 data:
   startserver.sh: |
     #!/usr/bin/env bash
     set -euo pipefail
 
-    log(){ echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] $*"; }
-    need(){ command -v "$1" >/dev/null 2>&1 || { log "ERROR: missing $1"; exit 1; }; }
+    log() { echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] $*"; }
+    need() { command -v "$1" >/dev/null 2>&1 || { log "ERROR: missing $1"; exit 1; }; }
 
     APP_DIR="${APP_DIR:-/srv/mc}"
     DATA_DIR="${DATA_DIR:-/data}"
 
-    # Forge-Version NICHT hart verdrahten – wir finden unix_args dynamisch
-    find_forge_unix_args() {
-      local base="${APP_DIR}/libraries/net/minecraftforge/forge"
-      local f
-      f="$(find "${base}" -maxdepth 3 -type f -name unix_args.txt 2>/dev/null | head -n1 || true)"
-      [[ -n "${f}" ]] && echo "${f}"
-    }
-
     MODPACK_ZIP="${MODPACK_ZIP:-${APP_DIR}/mods/Linggango-V6.3.zip}"
     MODPACK_DIR="${MODPACK_DIR:-${APP_DIR}/.modpack}"
-    INIT_MARKER="${INIT_MARKER:-/tmp/.modpack_initialized}"   # /tmp ist writebar unter restricted
+    INIT_MARKER="${INIT_MARKER:-/tmp/.modpack_initialized}"
 
     MANIFEST_PATH="${MANIFEST_PATH:-${MODPACK_DIR}/manifest.json}"
     OVERRIDES_DIR="${OVERRIDES_DIR:-${MODPACK_DIR}/overrides}"
@@ -38,7 +29,13 @@ data:
 
     cd "${APP_DIR}"
 
-    FORGE_UNIX_ARGS="$(find_forge_unix_args || true)"
+    # ---------- Find Forge unix_args dynamically ----------
+    find_forge_unix_args() {
+      local base="${APP_DIR}/libraries/net/minecraftforge/forge"
+      find "${base}" -maxdepth 3 -type f -name unix_args.txt 2>/dev/null | head -n 1 || true
+    }
+
+    FORGE_UNIX_ARGS="$(find_forge_unix_args)"
     if [[ -z "${FORGE_UNIX_ARGS}" ]]; then
       log "ERROR: Forge unix_args not found under ${APP_DIR}/libraries/net/minecraftforge/forge/**/unix_args.txt"
       log "DEBUG: listing ${APP_DIR}/libraries/net/minecraftforge/forge:"
@@ -47,14 +44,14 @@ data:
     fi
     log "Forge unix_args: ${FORGE_UNIX_ARGS}"
 
-    # ---- EULA muss vorhanden sein (du hast sie im Image) ----
+    # ---------- EULA ----------
     if [[ ! -f "${APP_DIR}/eula.txt" ]] || ! grep -q 'eula=true' "${APP_DIR}/eula.txt"; then
       log "ERROR: eula.txt missing or not accepted in ${APP_DIR}"
       exit 3
     fi
 
     # ============================================================
-    # 1) Modpack ZIP entpacken (manifest.json + overrides/)
+    # 1) Extract modpack zip -> manifest.json + overrides/
     # ============================================================
     if [[ ! -f "${INIT_MARKER}" ]]; then
       if [[ ! -f "${MODPACK_ZIP}" ]]; then
@@ -69,11 +66,10 @@ data:
 
       if [[ ! -f "${MANIFEST_PATH}" ]]; then
         log "ERROR: manifest.json not found after unzip: ${MANIFEST_PATH}"
-        find "${MODPACK_DIR}" -maxdepth 2 -type f | head || true
+        find "${MODPACK_DIR}" -maxdepth 2 -type f | head -n 50 || true
         exit 1
       fi
 
-      # overrides (config/defaultconfigs/kubejs/...) in APP_DIR spiegeln
       if [[ -d "${OVERRIDES_DIR}" ]]; then
         log "MODPACK: applying overrides/ -> ${APP_DIR} (no overwrite)"
         cp -an "${OVERRIDES_DIR}/." "${APP_DIR}/" 2>/dev/null || true
@@ -85,7 +81,7 @@ data:
     fi
 
     # ============================================================
-    # 2) Mods aus manifest.json nach /srv/mc/mods laden
+    # 2) Ensure mods/*.jar from manifest.json
     # ============================================================
     mkdir -p "${APP_DIR}/mods"
 
@@ -100,42 +96,49 @@ data:
       fi
 
       log "MODS: downloading from manifest ${MANIFEST_PATH}"
-      export APP_DIR MANIFEST_PATH CF_API_KEY
-      python3 - <<'PY'
-import os, json, pathlib, requests, re
-from urllib.parse import urlparse
 
-APP_DIR = os.environ["APP_DIR"]
-MANIFEST = os.environ["MANIFEST_PATH"]
-KEY = os.environ["CF_API_KEY"]
+      python3 -c '
+import os, json, pathlib, re, sys
+from urllib.parse import urlparse
+import requests
+
+APP_DIR = os.environ.get("APP_DIR", "/srv/mc")
+MANIFEST = os.environ.get("MANIFEST_PATH")
+KEY = os.environ.get("CF_API_KEY")
+
+if not MANIFEST:
+    print("MANIFEST_PATH not set", file=sys.stderr)
+    sys.exit(1)
 
 API = "https://api.curseforge.com"
 WEB_DL = "https://www.curseforge.com/api/v1/mods/{pid}/files/{fid}/download"
-HEADERS = {"x-api-key": KEY, "accept": "application/json", "user-agent":"mc-gitops/1.0"}
+HEADERS = {"x-api-key": KEY, "accept": "application/json", "user-agent": "mc-gitops/1.0"}
 
 mods_dir = pathlib.Path(APP_DIR) / "mods"
 mods_dir.mkdir(parents=True, exist_ok=True)
 
-def fname(resp):
-    cd = resp.headers.get("content-disposition","")
-    m = re.search(r'filename="?([^"]+)"?', cd)
-    if m: return m.group(1)
+def filename(resp: requests.Response) -> str:
+    cd = resp.headers.get("content-disposition", "")
+    m = re.search(r"filename=\"?([^\"]+)\"?", cd)
+    if m:
+        return m.group(1)
     return pathlib.Path(urlparse(resp.url).path).name
 
-def stream(url):
+def stream(url: str):
     with requests.get(url, allow_redirects=True, stream=True, timeout=300, headers={"user-agent":"mc-gitops/1.0"}) as r:
         r.raise_for_status()
-        name = fname(r)
+        name = filename(r)
         out = mods_dir / name
         if out.exists():
             print("OK (exists):", name)
             return
         print("Downloading:", name)
-        with open(out,"wb") as w:
+        with open(out, "wb") as w:
             for ch in r.iter_content(chunk_size=1024*1024):
-                if ch: w.write(ch)
+                if ch:
+                    w.write(ch)
 
-with open(MANIFEST,"r",encoding="utf-8") as f:
+with open(MANIFEST, "r", encoding="utf-8") as f:
     manifest = json.load(f)
 
 for e in manifest.get("files", []):
@@ -155,7 +158,8 @@ for e in manifest.get("files", []):
     r.raise_for_status()
 
 print("Done.")
-PY
+' \
+      APP_DIR="${APP_DIR}" MANIFEST_PATH="${MANIFEST_PATH}" CF_API_KEY="${CF_API_KEY}"
 
       n="$(mods_count)"
       log "MODS: jars present: ${n}"
@@ -168,9 +172,8 @@ PY
     fi
 
     # ============================================================
-    # 3) Start Forge Server
+    # 3) Start server
     # ============================================================
-    log "SERVER: starting Forge"
-
     JVM_ARGS_FILE="${JVM_ARGS_FILE:-${APP_DIR}/user_jvm_args.txt}"
+    log "SERVER: starting Forge"
     exec java @"${JVM_ARGS_FILE}" @"${FORGE_UNIX_ARGS}" nogui
