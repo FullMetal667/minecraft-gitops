@@ -8,28 +8,19 @@ data:
     #!/usr/bin/env bash
     set -euo pipefail
 
+    log(){ echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] $*"; }
+    need(){ command -v "$1" >/dev/null 2>&1 || { log "ERROR: missing $1"; exit 1; }; }
+
     APP_DIR="${APP_DIR:-/srv/mc}"
     DATA_DIR="${DATA_DIR:-/data}"
 
-    MC_VERSION="${MC_VERSION:-1.20.1}"
-    FORGE_VERSION="${FORGE_VERSION:-47.2.0}"
-    
+    # Forge-Version NICHT hart verdrahten – wir finden unix_args dynamisch
     find_forge_unix_args() {
       local base="${APP_DIR}/libraries/net/minecraftforge/forge"
       local f
       f="$(find "${base}" -maxdepth 3 -type f -name unix_args.txt 2>/dev/null | head -n1 || true)"
       [[ -n "${f}" ]] && echo "${f}"
     }
-
-    FORGE_UNIX_ARGS="$(find_forge_unix_args || true)"
-    if [[ -z "${FORGE_UNIX_ARGS}" ]]; then
-      log "ERROR: Forge unix_args not found under ${APP_DIR}/libraries/net/minecraftforge/forge/**/unix_args.txt"
-      log "DEBUG: listing ${APP_DIR}/libraries/net/minecraftforge/forge:"
-      ls -la "${APP_DIR}/libraries/net/minecraftforge/forge" 2>/dev/null || true
-      exit 1
-    fi
-
-    log "Forge unix_args: ${FORGE_UNIX_ARGS}"
 
     MODPACK_ZIP="${MODPACK_ZIP:-${APP_DIR}/mods/Linggango-V6.3.zip}"
     MODPACK_DIR="${MODPACK_DIR:-${APP_DIR}/.modpack}"
@@ -40,9 +31,6 @@ data:
 
     CF_API_KEY="${CF_API_KEY:-}"
 
-    log(){ echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] $*"; }
-    need(){ command -v "$1" >/dev/null 2>&1 || { log "ERROR: missing $1"; exit 1; }; }
-
     need java
     need curl
     need unzip
@@ -50,17 +38,19 @@ data:
 
     cd "${APP_DIR}"
 
+    FORGE_UNIX_ARGS="$(find_forge_unix_args || true)"
+    if [[ -z "${FORGE_UNIX_ARGS}" ]]; then
+      log "ERROR: Forge unix_args not found under ${APP_DIR}/libraries/net/minecraftforge/forge/**/unix_args.txt"
+      log "DEBUG: listing ${APP_DIR}/libraries/net/minecraftforge/forge:"
+      ls -la "${APP_DIR}/libraries/net/minecraftforge/forge" 2>/dev/null || true
+      exit 1
+    fi
+    log "Forge unix_args: ${FORGE_UNIX_ARGS}"
+
     # ---- EULA muss vorhanden sein (du hast sie im Image) ----
     if [[ ! -f "${APP_DIR}/eula.txt" ]] || ! grep -q 'eula=true' "${APP_DIR}/eula.txt"; then
       log "ERROR: eula.txt missing or not accepted in ${APP_DIR}"
       exit 3
-    fi
-
-    # ---- Forge muss vorhanden sein (du hast libraries/) ----
-    if [[ ! -f "${FORGE_UNIX_ARGS}" ]]; then
-      log "ERROR: Forge unix_args not found: ${FORGE_UNIX_ARGS}"
-      log "This script does not install Forge at runtime."
-      exit 1
     fi
 
     # ============================================================
@@ -86,7 +76,6 @@ data:
       # overrides (config/defaultconfigs/kubejs/...) in APP_DIR spiegeln
       if [[ -d "${OVERRIDES_DIR}" ]]; then
         log "MODPACK: applying overrides/ -> ${APP_DIR} (no overwrite)"
-        # kopiert nur wenn Ziel nicht existiert (-n)
         cp -an "${OVERRIDES_DIR}/." "${APP_DIR}/" 2>/dev/null || true
       else
         log "MODPACK: WARN no overrides/ directory found"
@@ -97,8 +86,6 @@ data:
 
     # ============================================================
     # 2) Mods aus manifest.json nach /srv/mc/mods laden
-    #    - API zuerst
-    #    - bei 403 fallback auf curseforge website redirect endpoint
     # ============================================================
     mkdir -p "${APP_DIR}/mods"
 
@@ -115,63 +102,60 @@ data:
       log "MODS: downloading from manifest ${MANIFEST_PATH}"
       export APP_DIR MANIFEST_PATH CF_API_KEY
       python3 - <<'PY'
-    import os, json, pathlib, requests, re
-    from urllib.parse import urlparse
+import os, json, pathlib, requests, re
+from urllib.parse import urlparse
 
-    APP_DIR = os.environ["APP_DIR"]
-    MANIFEST = os.environ["MANIFEST_PATH"]
-    KEY = os.environ["CF_API_KEY"]
+APP_DIR = os.environ["APP_DIR"]
+MANIFEST = os.environ["MANIFEST_PATH"]
+KEY = os.environ["CF_API_KEY"]
 
-    API = "https://api.curseforge.com"
-    WEB_DL = "https://www.curseforge.com/api/v1/mods/{pid}/files/{fid}/download"
-    HEADERS = {"x-api-key": KEY, "accept": "application/json", "user-agent":"mc-gitops/1.0"}
+API = "https://api.curseforge.com"
+WEB_DL = "https://www.curseforge.com/api/v1/mods/{pid}/files/{fid}/download"
+HEADERS = {"x-api-key": KEY, "accept": "application/json", "user-agent":"mc-gitops/1.0"}
 
-    mods_dir = pathlib.Path(APP_DIR) / "mods"
-    mods_dir.mkdir(parents=True, exist_ok=True)
+mods_dir = pathlib.Path(APP_DIR) / "mods"
+mods_dir.mkdir(parents=True, exist_ok=True)
 
-    def fname(resp):
-        cd = resp.headers.get("content-disposition","")
-        m = re.search(r'filename="?([^"]+)"?', cd)
-        if m: return m.group(1)
-        return pathlib.Path(urlparse(resp.url).path).name
+def fname(resp):
+    cd = resp.headers.get("content-disposition","")
+    m = re.search(r'filename="?([^"]+)"?', cd)
+    if m: return m.group(1)
+    return pathlib.Path(urlparse(resp.url).path).name
 
-    def stream(url):
-        with requests.get(url, allow_redirects=True, stream=True, timeout=300, headers={"user-agent":"mc-gitops/1.0"}) as r:
-            r.raise_for_status()
-            name = fname(r)
-            out = mods_dir / name
-            if out.exists():
-                print("OK (exists):", name)
-                return
-            print("Downloading:", name)
-            with open(out,"wb") as w:
-                for ch in r.iter_content(chunk_size=1024*1024):
-                    if ch: w.write(ch)
-
-    with open(MANIFEST,"r",encoding="utf-8") as f:
-        manifest = json.load(f)
-
-    files = manifest.get("files", [])
-    for e in files:
-        pid = e["projectID"]; fid = e["fileID"]
-
-        # Try API endpoint
-        r = requests.get(f"{API}/v1/mods/{pid}/files/{fid}", headers=HEADERS, timeout=60)
-        if r.status_code == 200:
-            data = r.json()["data"]
-            url = data.get("downloadUrl") or WEB_DL.format(pid=pid, fid=fid)
-            stream(url)
-            continue
-
-        if r.status_code == 403:
-            # API blocked -> website redirect endpoint
-            stream(WEB_DL.format(pid=pid, fid=fid))
-            continue
-
+def stream(url):
+    with requests.get(url, allow_redirects=True, stream=True, timeout=300, headers={"user-agent":"mc-gitops/1.0"}) as r:
         r.raise_for_status()
+        name = fname(r)
+        out = mods_dir / name
+        if out.exists():
+            print("OK (exists):", name)
+            return
+        print("Downloading:", name)
+        with open(out,"wb") as w:
+            for ch in r.iter_content(chunk_size=1024*1024):
+                if ch: w.write(ch)
 
-    print("Done.")
-    PY
+with open(MANIFEST,"r",encoding="utf-8") as f:
+    manifest = json.load(f)
+
+for e in manifest.get("files", []):
+    pid = e["projectID"]; fid = e["fileID"]
+
+    r = requests.get(f"{API}/v1/mods/{pid}/files/{fid}", headers=HEADERS, timeout=60)
+    if r.status_code == 200:
+        data = r.json()["data"]
+        url = data.get("downloadUrl") or WEB_DL.format(pid=pid, fid=fid)
+        stream(url)
+        continue
+
+    if r.status_code == 403:
+        stream(WEB_DL.format(pid=pid, fid=fid))
+        continue
+
+    r.raise_for_status()
+
+print("Done.")
+PY
 
       n="$(mods_count)"
       log "MODS: jars present: ${n}"
@@ -186,11 +170,7 @@ data:
     # ============================================================
     # 3) Start Forge Server
     # ============================================================
-    log "SERVER: starting Forge (${MC_VERSION}-${FORGE_VERSION})"
+    log "SERVER: starting Forge"
 
-    # optional: user jvm args file (im image)
     JVM_ARGS_FILE="${JVM_ARGS_FILE:-${APP_DIR}/user_jvm_args.txt}"
-
     exec java @"${JVM_ARGS_FILE}" @"${FORGE_UNIX_ARGS}" nogui
-
-    
