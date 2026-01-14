@@ -182,19 +182,19 @@ data:
     purge_client_mods() {
       local dir="${APP_DIR}/mods"
       local patterns=(
+        # bereits bekannte
         'shoulder.*surf'
-        'entity.*texture.*features'
-        'iris'
-        'oculus'
-        'rubidium'
-        'embeddium'
-        'sodium'
-        'replay'
-        'shader'
         'xaero'
-        'journeymap-client'
-        'map-atlas'
-        'voicechat-fabric' # example, adjust
+        'embeddium'
+        'entity.*texture.*features'
+        'sodiumdynamiclights'
+        'sodiumoptions'
+        'xaeros_waystones'
+
+        # neu aus deinem Crash
+        'oculus'
+        'nolijium'
+        'enhanced[_-]?boss[_-]?bars'
       )
 
       shopt -s nullglob
@@ -211,6 +211,7 @@ data:
       done
       shopt -u nullglob
     }
+
     purge_client_mods
 
     # ============================================================
