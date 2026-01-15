@@ -77,8 +77,8 @@ spec:
               mountPath: /srv/mc/server.properties
               subPath: server.properties
             - name: user-jvm-args
-              mountPath: /srv/mc/user-jvm-args.txt
-              subPath: user-jvm-args.txt
+              mountPath: /srv/mc/user_jvm_args.txt
+              subPath: user_jvm_args.txt
             - name: eula
               mountPath: /data/eula.txt
               subPath: eula.txt
