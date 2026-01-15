@@ -22,6 +22,167 @@ data:
 
     CF_API_KEY="${CF_API_KEY:-}"
 
+    # ---- SimpleBackups (Forge 1.20.1) ----
+    BACKUP_MOD="${BACKUP_MOD:-simplebackups}"   # simplebackups | none
+    SB_FILE_ID="${SB_FILE_ID:-7451460}"
+    SB_FILE_NAME="${SB_FILE_NAME:-SimpleBackups-1.20.1-3.1.24.jar}"
+    SB_DIR1=$(( SB_FILE_ID / 1000 ))
+    SB_DIR2=$(( SB_FILE_ID % 1000 ))
+    SIMPLEBACKUPS_URL="${SIMPLEBACKUPS_URL:-https://mediafilez.forgecdn.net/files/${SB_DIR1}/${SB_DIR2}/${SB_FILE_NAME}}"
+
+    selected_backup_filename() {
+      case "${BACKUP_MOD}" in
+        simplebackups) echo "${SB_FILE_NAME}" ;;
+        none|"") echo "" ;;
+      esac
+    }
+
+    selected_backup_url() {
+      case "${BACKUP_MOD}" in
+        simplebackups) echo "${SIMPLEBACKUPS_URL}" ;;
+        none|"") echo "" ;;
+      esac
+    }
+
+    stage_backup_mod() {
+      local fname url
+      fname="$(selected_backup_filename)"
+      url="$(selected_backup_url)"
+      [[ -n "${fname}" ]] || return 0
+
+      mkdir -p "${DATA_DIR}/overlays/mods"
+
+      # already staged
+      if [[ -f "${DATA_DIR}/overlays/mods/${fname}" ]]; then
+        return 0
+      fi
+
+      # if manually provided in /data
+      if [[ -f "${DATA_DIR}/${fname}" ]]; then
+        cp -n "${DATA_DIR}/${fname}" "${DATA_DIR}/overlays/mods/${fname}" 2>/dev/null || true
+        return 0
+      fi
+
+      # download
+      if [[ -n "${url}" ]]; then
+        log "[BK] downloading ${fname} from ${url}"
+        if ! curl -fsSL "${url}" -o "${DATA_DIR}/overlays/mods/${fname}"; then
+          log "[BK] WARN: download failed for ${fname} (continuing without backup mod)"
+          rm -f "${DATA_DIR}/overlays/mods/${fname}" || true
+        fi
+      fi
+    }
+
+    place_backup_mod() {
+      local fname src
+      fname="$(selected_backup_filename)"
+      [[ -n "${fname}" ]] || return 0
+
+      mkdir -p "${APP_DIR}/mods"
+
+      if [[ -f "${DATA_DIR}/overlays/mods/${fname}" ]]; then
+        src="${DATA_DIR}/overlays/mods/${fname}"
+      else
+        return 0
+      fi
+
+      if [[ -f "${APP_DIR}/mods/${fname}" ]]; then
+        log "[BK] ${fname} already present in mods/ - not overwriting"
+        return 0
+      fi
+
+      cp -n "${src}" "${APP_DIR}/mods/${fname}" 2>/dev/null || true
+      log "[BK] placed ${fname} into ${APP_DIR}/mods"
+    }
+
+    # ---- RCON / mcrcon ----
+    RCON_ENABLE="${RCON_ENABLE:-true}"
+    RCON_HOST="${RCON_HOST:-127.0.0.1}"
+    RCON_PORT="${RCON_PORT:-25575}"
+    RCON_PASSWORD="${RCON_PASSWORD:-mc321}"
+    RCON_WAIT_SECS="${RCON_WAIT_SECS:-1800}"
+    RCON_POLL_INTERVAL="${RCON_POLL_INTERVAL:-5}"
+    COMMANDS_FILE="${COMMANDS_FILE:-${DATA_DIR}/commands.txt}"
+
+    MCRCON_BIN="${MCRCON_BIN:-/usr/local/bin/mcrcon}"
+    MCRCON_VERSION="${MCRCON_VERSION:-0.7.2}"
+    MCRCON_URL="${MCRCON_URL:-https://github.com/Tiiffi/mcrcon/releases/download/v${MCRCON_VERSION}/mcrcon-${MCRCON_VERSION}-linux-x86-64-static.zip}"
+
+    ensure_mcrcon() {
+      if command -v mcrcon >/dev/null 2>&1; then
+        MCRCON_BIN="$(command -v mcrcon)"
+        return 0
+      fi
+      if [[ -x "${MCRCON_BIN}" ]]; then
+        return 0
+      fi
+
+      need curl
+      need unzip
+
+      local tmp="/tmp/mcrcon.zip"
+      local outdir="/tmp/mcrcon"
+      rm -rf "${outdir}"
+      mkdir -p "${outdir}"
+
+      log "[RCON] mcrcon not found - downloading ${MCRCON_URL}"
+      curl -fsSL "${MCRCON_URL}" -o "${tmp}"
+      unzip -q "${tmp}" -d "${outdir}"
+
+      # typical: extracted binary named "mcrcon"
+      if [[ -f "${outdir}/mcrcon" ]]; then
+        install -m 0755 "${outdir}/mcrcon" "${MCRCON_BIN}"
+      else
+        # fallback: find any "mcrcon" file
+        local found
+        found="$(find "${outdir}" -maxdepth 2 -type f -name mcrcon | head -n 1 || true)"
+        if [[ -n "${found}" ]]; then
+          install -m 0755 "${found}" "${MCRCON_BIN}"
+        else
+          log "[RCON] ERROR: could not find mcrcon in zip"
+          exit 1
+        fi
+      fi
+
+      log "[RCON] mcrcon installed at ${MCRCON_BIN}"
+    }
+
+    rcon_wait_port() {
+      local host="$1" port="$2" timeout="$3" interval="$4"
+      local waited=0
+
+      while (( waited < timeout )); do
+        # bash TCP check
+        if (exec 3<>"/dev/tcp/${host}/${port}") >/dev/null 2>&1; then
+          exec 3<&- 3>&-
+          return 0
+        fi
+        sleep "${interval}"
+        waited=$(( waited + interval ))
+      done
+      return 1
+    }
+
+    rcon_send_commands() {
+      [[ "${RCON_ENABLE}" == "true" ]] || return 0
+      [[ -s "${COMMANDS_FILE}" ]] || return 0
+
+      ensure_mcrcon
+
+      log "[RCON] waiting for ${RCON_HOST}:${RCON_PORT} (timeout ${RCON_WAIT_SECS}s) ..."
+      if ! rcon_wait_port "${RCON_HOST}" "${RCON_PORT}" "${RCON_WAIT_SECS}" "${RCON_POLL_INTERVAL}"; then
+        log "[RCON] timeout (${RCON_WAIT_SECS}s) – skip commands"
+        return 0
+      fi
+
+      sleep 3
+      log "[RCON] sending commands from ${COMMANDS_FILE}"
+      # remove leading "/" (MC commands), remove comments/empty lines
+      sed -e 's#^/##' -e '/^[[:space:]]*#/d' -e '/^[[:space:]]*$/d' "${COMMANDS_FILE}" | \
+        "${MCRCON_BIN}" -H "${RCON_HOST}" -P "${RCON_PORT}" -p "${RCON_PASSWORD}" -s || true
+    }
+
+    # ---- base deps ----
     need java
     need curl
     need unzip
@@ -178,13 +339,20 @@ data:
       log "MODS: already present ($(mods_count) jars)"
     fi
 
+    # ============================================================
+    # 2b) SimpleBackups bereitstellen (staging -> mods/)
+    # ============================================================
+    stage_backup_mod || true
+    place_backup_mod || true
+
+    # ============================================================
+    # 2c) Client-only Mods quarantäne (Server lädt sie nicht)
+    # ============================================================
     quarantine_client_mods() {
       local mods_dir="${APP_DIR}/mods"
       local client_dir="${mods_dir}/.client"
-
       mkdir -p "${client_dir}"
 
-      # Client-only Mods (dürfen NICHT im Server-mods/ liegen)
       local client_only_patterns=(
         'ShoulderSurfing'
         '^XaerosWorldMap_'
@@ -203,7 +371,6 @@ data:
       for f in "${mods_dir}"/*.jar; do
         local base
         base="$(basename "$f")"
-
         for p in "${client_only_patterns[@]}"; do
           if echo "$base" | grep -Eqi "$p"; then
             log "MODS: moving client-only mod to quarantine: $base"
@@ -213,33 +380,42 @@ data:
         done
       done
       shopt -u nullglob
-
-      log "MODS: quarantined client-only mods:"
-      ls -1 "${client_dir}" 2>/dev/null || true
     }
 
     quarantine_client_mods
 
-
+    # hard-remove any oculus/iris remnants anywhere under APP_DIR
     log "MODS: searching for Oculus jars under ${APP_DIR} (maxdepth 5)"
     mapfile -t OCULUS_JARS < <(find "${APP_DIR}" -maxdepth 5 -type f \( -iname '*oculus*.jar' -o -iname '*mekalus*.jar' -o -iname '*iris*.jar' \) 2>/dev/null || true)
-
     if [[ "${#OCULUS_JARS[@]}" -gt 0 ]]; then
       for f in "${OCULUS_JARS[@]}"; do
         log "MODS: removing client-only jar (found): ${f}"
         rm -f -- "${f}" || true
       done
-    else
-      log "MODS: OK - no oculus/mekalus/iris jars found under ${APP_DIR}"
     fi
 
-    log "MODS: sanity check (grep for oculus in mods listing)"
-    ls -R "${APP_DIR}/mods" 2>/dev/null | grep -i oculus || log "MODS: OK - no oculus in mods tree"
-
-
     # ============================================================
-    # 3) Start server
+    # 3) Start server + RCON commands
     # ============================================================
     JVM_ARGS_FILE="${JVM_ARGS_FILE:-${APP_DIR}/user_jvm_args.txt}"
-    log "SERVER: starting Forge"
-    exec java @"${JVM_ARGS_FILE}" @"${FORGE_UNIX_ARGS}" nogui
+    RESTART="${RESTART:-false}"  # true/false
+
+    while true; do
+      log "SERVER: starting Forge"
+      java @"${JVM_ARGS_FILE}" @"${FORGE_UNIX_ARGS}" nogui &
+      SERVER_PID=$!
+
+      # send RCON commands (if commands.txt exists)
+      rcon_send_commands || true
+
+      # wait for server exit
+      wait "${SERVER_PID}" || true
+
+      if [[ "${RESTART}" != "true" ]]; then
+        log "SERVER: stopped - restart disabled (RESTART!=true)"
+        exit 0
+      fi
+
+      log "SERVER: stopped - restarting in 10s (RESTART=true)"
+      sleep 10
+    done
