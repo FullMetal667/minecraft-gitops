@@ -22,78 +22,91 @@ data:
 
     CF_API_KEY="${CF_API_KEY:-}"
 
-    # ---- SimpleBackups (Forge 1.20.1) ----
+    # ---- SimpleBackups (Runtime Install) ----
     BACKUP_MOD="${BACKUP_MOD:-simplebackups}"   # simplebackups | none
+
+    SB_PROJECT_ID="${SB_PROJECT_ID:-583228}"
     SB_FILE_ID="${SB_FILE_ID:-7451460}"
     SB_FILE_NAME="${SB_FILE_NAME:-SimpleBackups-1.20.1-3.1.24.jar}"
+
+    # Ziel: PVC ist unter /data/simplebackups gemountet
+    BACKUP_ENABLE="${BACKUP_ENABLE:-true}"
+    BACKUP_DIR="${BACKUP_DIR:-/data/simplebackups}"
+
+    # Fallback Download URL (ohne API) – funktioniert auch ohne CF_API_KEY
     SB_DIR1=$(( SB_FILE_ID / 1000 ))
     SB_DIR2=$(( SB_FILE_ID % 1000 ))
-    SIMPLEBACKUPS_URL="${SIMPLEBACKUPS_URL:-https://mediafilez.forgecdn.net/files/${SB_DIR1}/${SB_DIR2}/${SB_FILE_NAME}}"
+    SIMPLEBACKUPS_FALLBACK_URL="https://mediafilez.forgecdn.net/files/${SB_DIR1}/${SB_DIR2}/${SB_FILE_NAME}"
 
-    selected_backup_filename() {
-      case "${BACKUP_MOD}" in
-        simplebackups) echo "${SB_FILE_NAME}" ;;
-        none|"") echo "" ;;
-      esac
-    }
-
-    selected_backup_url() {
-      case "${BACKUP_MOD}" in
-        simplebackups) echo "${SIMPLEBACKUPS_URL}" ;;
-        none|"") echo "" ;;
-      esac
-    }
-
-    stage_backup_mod() {
-      local fname url
-      fname="$(selected_backup_filename)"
-      url="$(selected_backup_url)"
-      [[ -n "${fname}" ]] || return 0
-
-      mkdir -p "${DATA_DIR}/overlays/mods"
-
-      # already staged
-      if [[ -f "${DATA_DIR}/overlays/mods/${fname}" ]]; then
-        return 0
-      fi
-
-      # if manually provided in /data
-      if [[ -f "${DATA_DIR}/${fname}" ]]; then
-        cp -n "${DATA_DIR}/${fname}" "${DATA_DIR}/overlays/mods/${fname}" 2>/dev/null || true
-        return 0
-      fi
-
-      # download
-      if [[ -n "${url}" ]]; then
-        log "[BK] downloading ${fname} from ${url}"
-        if ! curl -fsSL "${url}" -o "${DATA_DIR}/overlays/mods/${fname}"; then
-          log "[BK] WARN: download failed for ${fname} (continuing without backup mod)"
-          rm -f "${DATA_DIR}/overlays/mods/${fname}" || true
-        fi
-      fi
-    }
-
-    place_backup_mod() {
-      local fname src
-      fname="$(selected_backup_filename)"
-      [[ -n "${fname}" ]] || return 0
+    install_simplebackups_mod() {
+      [[ "${BACKUP_MOD}" == "simplebackups" ]] || return 0
 
       mkdir -p "${APP_DIR}/mods"
 
-      if [[ -f "${DATA_DIR}/overlays/mods/${fname}" ]]; then
-        src="${DATA_DIR}/overlays/mods/${fname}"
+      # Wenn schon vorhanden: fertig
+      if [[ -f "${APP_DIR}/mods/${SB_FILE_NAME}" ]]; then
+        log "[BK] SimpleBackups already present: ${SB_FILE_NAME}"
+        return 0
+      fi
+
+      # Download-URL bevorzugt per CurseForge API (mit ProjectID + FileID)
+      local url=""
+      if [[ -n "${CF_API_KEY:-}" ]]; then
+        log "[BK] resolving SimpleBackups downloadUrl via CurseForge API (project=${SB_PROJECT_ID} file=${SB_FILE_ID})"
+        url="$(
+          curl -fsSL \
+            -H "x-api-key: ${CF_API_KEY}" \
+            -H "accept: application/json" \
+            "https://api.curseforge.com/v1/mods/${SB_PROJECT_ID}/files/${SB_FILE_ID}" \
+          | python3 -c 'import sys, json; d=json.load(sys.stdin); print((d.get("data") or {}).get("downloadUrl") or "")' \
+          || true
+        )"
+      fi
+
+      # Wenn API keine URL liefert: Fallback
+      if [[ -z "${url}" ]]; then
+        url="${SIMPLEBACKUPS_FALLBACK_URL}"
+        log "[BK] using fallback URL for SimpleBackups: ${url}"
       else
-        return 0
+        log "[BK] got API downloadUrl for SimpleBackups"
       fi
 
-      if [[ -f "${APP_DIR}/mods/${fname}" ]]; then
-        log "[BK] ${fname} already present in mods/ - not overwriting"
-        return 0
+      log "[BK] downloading SimpleBackups -> ${APP_DIR}/mods/${SB_FILE_NAME}"
+      if ! curl -fsSL "${url}" -o "${APP_DIR}/mods/${SB_FILE_NAME}"; then
+        log "[BK] ERROR: failed to download SimpleBackups from ${url}"
+        exit 1
       fi
 
-      cp -n "${src}" "${APP_DIR}/mods/${fname}" 2>/dev/null || true
-      log "[BK] placed ${fname} into ${APP_DIR}/mods"
+      log "[BK] installed SimpleBackups: ${SB_FILE_NAME}"
     }
+
+    # Optional aber sehr hilfreich: Backup-Ziel ins PVC lenken OHNE TOML
+    # (Viele Versionen nutzen standardmäßig ./simplebackups im Server-Root)
+    setup_backup_path_symlink() {
+      [[ "${BACKUP_ENABLE}" == "true" ]] || return 0
+      mkdir -p "${BACKUP_DIR}"
+
+      # Wenn im APP_DIR bereits ein echtes Verzeichnis existiert, einmal migrieren
+      if [[ -e "${APP_DIR}/simplebackups" && ! -L "${APP_DIR}/simplebackups" ]]; then
+        local ts
+        ts="$(date -u +%Y%m%dT%H%M%SZ)"
+        log "[BK] moving existing ${APP_DIR}/simplebackups -> ${APP_DIR}/simplebackups.migrated.${ts}"
+        mv -f "${APP_DIR}/simplebackups" "${APP_DIR}/simplebackups.migrated.${ts}" || true
+      fi
+
+      ln -sfn "${BACKUP_DIR}" "${APP_DIR}/simplebackups"
+
+      # Write test
+      touch "${BACKUP_DIR}/.write_test" 2>/dev/null || {
+        log "[BK] ERROR: backup dir not writable: ${BACKUP_DIR}"
+        ls -ld "${BACKUP_DIR}" || true
+        exit 1
+      }
+      rm -f "${BACKUP_DIR}/.write_test" || true
+
+      log "[BK] backup path ready: ${APP_DIR}/simplebackups -> ${BACKUP_DIR}"
+    }
+
 
     # ---- RCON / mcrcon ----
     RCON_ENABLE="${RCON_ENABLE:-true}"
@@ -342,8 +355,9 @@ data:
     # ============================================================
     # 2b) SimpleBackups bereitstellen (staging -> mods/)
     # ============================================================
-    stage_backup_mod || true
-    place_backup_mod || true
+    install_simplebackups_mod
+    setup_backup_path_symlink
+
 
     # ============================================================
     # 2c) Client-only Mods quarantäne (Server lädt sie nicht)
