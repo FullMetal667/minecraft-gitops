@@ -13,195 +13,13 @@ data:
     APP_DIR="${APP_DIR:-/srv/mc}"
     DATA_DIR="${DATA_DIR:-/data}"
 
-    MODPACK_ZIP="${MODPACK_ZIP:-$(ls -1t ${APP_DIR}/mods/Linggango-V*.zip 2>/dev/null | head -n 1 || true)}"
-    if [[ -z "${MODPACK_ZIP}" ]]; then
-      log "ERROR: No modpack zip found at ${APP_DIR}/mods/Linggango-V*.zip"
-      exit 1
-    fi
-    
-    MODPACK_DIR="${MODPACK_DIR:-${APP_DIR}/.modpack}"
-    MODPACK_VERSION="${MODPACK_VERSION:-6.4}"
-    INIT_MARKER="${INIT_MARKER:-/tmp/.modpack_initialized_${MODPACK_VERSION}}"
-
-    MANIFEST_PATH="${MANIFEST_PATH:-${MODPACK_DIR}/manifest.json}"
-    OVERRIDES_DIR="${OVERRIDES_DIR:-${MODPACK_DIR}/overrides}"
+    MODPACK_ZIP_URL="${MODPACK_ZIP_URL:-}"
+    MODPACK_ZIP_PATH="${MODPACK_ZIP_PATH:-}"   # z.B. PVC: /data/modpack/Linggango-V6.4.zip
+    ZIP_DST="${DATA_DIR}/modpack.zip"
+    MODPACK_DIR="${DATA_DIR}/.modpack"
 
     CF_API_KEY="${CF_API_KEY:-}"
 
-    # ---- SimpleBackups (Runtime Install) ----
-    BACKUP_MOD="${BACKUP_MOD:-simplebackups}"   # simplebackups | none
-
-    SB_PROJECT_ID="${SB_PROJECT_ID:-583228}"
-    SB_FILE_ID="${SB_FILE_ID:-7451460}"
-    SB_FILE_NAME="${SB_FILE_NAME:-SimpleBackups-1.20.1-3.1.24.jar}"
-
-    # Ziel: PVC ist unter /data/simplebackups gemountet
-    BACKUP_ENABLE="${BACKUP_ENABLE:-true}"
-    BACKUP_DIR="${BACKUP_DIR:-/data/simplebackups}"
-
-    # Fallback Download URL (ohne API) – funktioniert auch ohne CF_API_KEY
-    SB_DIR1=$(( SB_FILE_ID / 1000 ))
-    SB_DIR2=$(( SB_FILE_ID % 1000 ))
-    SIMPLEBACKUPS_FALLBACK_URL="https://mediafilez.forgecdn.net/files/${SB_DIR1}/${SB_DIR2}/${SB_FILE_NAME}"
-
-    install_simplebackups_mod() {
-      [[ "${BACKUP_MOD}" == "simplebackups" ]] || return 0
-
-      mkdir -p "${APP_DIR}/mods"
-
-      # Wenn schon vorhanden: fertig
-      if [[ -f "${APP_DIR}/mods/${SB_FILE_NAME}" ]]; then
-        log "[BK] SimpleBackups already present: ${SB_FILE_NAME}"
-        return 0
-      fi
-
-      # Download-URL bevorzugt per CurseForge API (mit ProjectID + FileID)
-      local url=""
-      if [[ -n "${CF_API_KEY:-}" ]]; then
-        log "[BK] resolving SimpleBackups downloadUrl via CurseForge API (project=${SB_PROJECT_ID} file=${SB_FILE_ID})"
-        url="$(
-          curl -fsSL \
-            -H "x-api-key: ${CF_API_KEY}" \
-            -H "accept: application/json" \
-            "https://api.curseforge.com/v1/mods/${SB_PROJECT_ID}/files/${SB_FILE_ID}" \
-          | python3 -c 'import sys, json; d=json.load(sys.stdin); print((d.get("data") or {}).get("downloadUrl") or "")' \
-          || true
-        )"
-      fi
-
-      # Wenn API keine URL liefert: Fallback
-      if [[ -z "${url}" ]]; then
-        url="${SIMPLEBACKUPS_FALLBACK_URL}"
-        log "[BK] using fallback URL for SimpleBackups: ${url}"
-      else
-        log "[BK] got API downloadUrl for SimpleBackups"
-      fi
-
-      log "[BK] downloading SimpleBackups -> ${APP_DIR}/mods/${SB_FILE_NAME}"
-      if ! curl -fsSL "${url}" -o "${APP_DIR}/mods/${SB_FILE_NAME}"; then
-        log "[BK] ERROR: failed to download SimpleBackups from ${url}"
-        exit 1
-      fi
-
-      log "[BK] installed SimpleBackups: ${SB_FILE_NAME}"
-    }
-
-    # Optional aber sehr hilfreich: Backup-Ziel ins PVC lenken OHNE TOML
-    # (Viele Versionen nutzen standardmäßig ./simplebackups im Server-Root)
-    setup_backup_path_symlink() {
-      [[ "${BACKUP_ENABLE}" == "true" ]] || return 0
-      mkdir -p "${BACKUP_DIR}"
-
-      # Wenn im APP_DIR bereits ein echtes Verzeichnis existiert, einmal migrieren
-      if [[ -e "${APP_DIR}/simplebackups" && ! -L "${APP_DIR}/simplebackups" ]]; then
-        local ts
-        ts="$(date -u +%Y%m%dT%H%M%SZ)"
-        log "[BK] moving existing ${APP_DIR}/simplebackups -> ${APP_DIR}/simplebackups.migrated.${ts}"
-        mv -f "${APP_DIR}/simplebackups" "${APP_DIR}/simplebackups.migrated.${ts}" || true
-      fi
-
-      ln -sfn "${BACKUP_DIR}" "${APP_DIR}/simplebackups"
-
-      # Write test
-      touch "${BACKUP_DIR}/.write_test" 2>/dev/null || {
-        log "[BK] ERROR: backup dir not writable: ${BACKUP_DIR}"
-        ls -ld "${BACKUP_DIR}" || true
-        exit 1
-      }
-      rm -f "${BACKUP_DIR}/.write_test" || true
-
-      log "[BK] backup path ready: ${APP_DIR}/simplebackups -> ${BACKUP_DIR}"
-    }
-
-
-    # ---- RCON / mcrcon ----
-    RCON_ENABLE="${RCON_ENABLE:-true}"
-    RCON_HOST="${RCON_HOST:-127.0.0.1}"
-    RCON_PORT="${RCON_PORT:-25575}"
-    RCON_PASSWORD="${RCON_PASSWORD:-mc321}"
-    RCON_WAIT_SECS="${RCON_WAIT_SECS:-1800}"
-    RCON_POLL_INTERVAL="${RCON_POLL_INTERVAL:-5}"
-    COMMANDS_FILE="${COMMANDS_FILE:-${DATA_DIR}/commands.txt}"
-
-    MCRCON_BIN="${MCRCON_BIN:-/usr/local/bin/mcrcon}"
-    MCRCON_VERSION="${MCRCON_VERSION:-0.7.2}"
-    MCRCON_URL="${MCRCON_URL:-https://github.com/Tiiffi/mcrcon/releases/download/v${MCRCON_VERSION}/mcrcon-${MCRCON_VERSION}-linux-x86-64-static.zip}"
-
-    ensure_mcrcon() {
-      if command -v mcrcon >/dev/null 2>&1; then
-        MCRCON_BIN="$(command -v mcrcon)"
-        return 0
-      fi
-      if [[ -x "${MCRCON_BIN}" ]]; then
-        return 0
-      fi
-
-      need curl
-      need unzip
-
-      local tmp="/tmp/mcrcon.zip"
-      local outdir="/tmp/mcrcon"
-      rm -rf "${outdir}"
-      mkdir -p "${outdir}"
-
-      log "[RCON] mcrcon not found - downloading ${MCRCON_URL}"
-      curl -fsSL "${MCRCON_URL}" -o "${tmp}"
-      unzip -q "${tmp}" -d "${outdir}"
-
-      # typical: extracted binary named "mcrcon"
-      if [[ -f "${outdir}/mcrcon" ]]; then
-        install -m 0755 "${outdir}/mcrcon" "${MCRCON_BIN}"
-      else
-        # fallback: find any "mcrcon" file
-        local found
-        found="$(find "${outdir}" -maxdepth 2 -type f -name mcrcon | head -n 1 || true)"
-        if [[ -n "${found}" ]]; then
-          install -m 0755 "${found}" "${MCRCON_BIN}"
-        else
-          log "[RCON] ERROR: could not find mcrcon in zip"
-          exit 1
-        fi
-      fi
-
-      log "[RCON] mcrcon installed at ${MCRCON_BIN}"
-    }
-
-    rcon_wait_port() {
-      local host="$1" port="$2" timeout="$3" interval="$4"
-      local waited=0
-
-      while (( waited < timeout )); do
-        # bash TCP check
-        if (exec 3<>"/dev/tcp/${host}/${port}") >/dev/null 2>&1; then
-          exec 3<&- 3>&-
-          return 0
-        fi
-        sleep "${interval}"
-        waited=$(( waited + interval ))
-      done
-      return 1
-    }
-
-    rcon_send_commands() {
-      [[ "${RCON_ENABLE}" == "true" ]] || return 0
-      [[ -s "${COMMANDS_FILE}" ]] || return 0
-
-      ensure_mcrcon
-
-      log "[RCON] waiting for ${RCON_HOST}:${RCON_PORT} (timeout ${RCON_WAIT_SECS}s) ..."
-      if ! rcon_wait_port "${RCON_HOST}" "${RCON_PORT}" "${RCON_WAIT_SECS}" "${RCON_POLL_INTERVAL}"; then
-        log "[RCON] timeout (${RCON_WAIT_SECS}s) – skip commands"
-        return 0
-      fi
-
-      sleep 3
-      log "[RCON] sending commands from ${COMMANDS_FILE}"
-      # remove leading "/" (MC commands), remove comments/empty lines
-      sed -e 's#^/##' -e '/^[[:space:]]*#/d' -e '/^[[:space:]]*$/d' "${COMMANDS_FILE}" | \
-        "${MCRCON_BIN}" -H "${RCON_HOST}" -P "${RCON_PORT}" -p "${RCON_PASSWORD}" -s || true
-    }
-
-    # ---- base deps ----
     need java
     need curl
     need unzip
@@ -209,40 +27,76 @@ data:
 
     cd "${APP_DIR}"
 
-    # ---------- Find Forge unix_args dynamically ----------
-    find_forge_unix_args() {
-      local base="${APP_DIR}/libraries/net/minecraftforge/forge"
-      find "${base}" -maxdepth 3 -type f -name unix_args.txt 2>/dev/null | head -n 1 || true
-    }
-
-    FORGE_UNIX_ARGS="$(find_forge_unix_args)"
-    if [[ -z "${FORGE_UNIX_ARGS}" ]]; then
-      log "ERROR: Forge unix_args not found under ${APP_DIR}/libraries/net/minecraftforge/forge/**/unix_args.txt"
-      log "DEBUG: listing ${APP_DIR}/libraries/net/minecraftforge/forge:"
-      ls -la "${APP_DIR}/libraries/net/minecraftforge/forge" 2>/dev/null || true
-      exit 1
-    fi
-    log "Forge unix_args: ${FORGE_UNIX_ARGS}"
-
     # ---------- EULA ----------
     if [[ ! -f "${APP_DIR}/eula.txt" ]] || ! grep -q 'eula=true' "${APP_DIR}/eula.txt"; then
       log "ERROR: eula.txt missing or not accepted in ${APP_DIR}"
       exit 3
     fi
 
+    # ---------- Find Forge unix_args dynamically ----------
+    find_forge_unix_args() {
+      local base="${APP_DIR}/libraries/net/minecraftforge/forge"
+      find "${base}" -maxdepth 3 -type f -name unix_args.txt 2>/dev/null | head -n 1 || true
+    }
+    FORGE_UNIX_ARGS="$(find_forge_unix_args)"
+    if [[ -z "${FORGE_UNIX_ARGS}" ]]; then
+      log "ERROR: Forge unix_args not found under ${APP_DIR}/libraries/net/minecraftforge/forge/**/unix_args.txt"
+      ls -la "${APP_DIR}/libraries/net/minecraftforge/forge" 2>/dev/null || true
+      exit 1
+    fi
+    log "Forge unix_args: ${FORGE_UNIX_ARGS}"
+
     # ============================================================
-    # 1) Extract modpack zip -> manifest.json + overrides/
+    # 0) Acquire modpack zip (URL or path)
     # ============================================================
-    if [[ ! -f "${INIT_MARKER}" ]]; then
-      if [[ ! -f "${MODPACK_ZIP}" ]]; then
-        log "ERROR: Modpack zip not found at ${MODPACK_ZIP}"
-        exit 1
+    acquire_zip() {
+      mkdir -p "${DATA_DIR}"
+
+      if [[ -n "${MODPACK_ZIP_URL}" ]]; then
+        log "MODPACK: downloading zip from MODPACK_ZIP_URL -> ${ZIP_DST}"
+        curl -fL --retry 3 --retry-delay 2 -o "${ZIP_DST}.new" "${MODPACK_ZIP_URL}"
+        mv -f "${ZIP_DST}.new" "${ZIP_DST}"
+        return 0
       fi
 
-      log "MODPACK: extracting ${MODPACK_ZIP} -> ${MODPACK_DIR}"
+      if [[ -n "${MODPACK_ZIP_PATH}" ]]; then
+        if [[ ! -f "${MODPACK_ZIP_PATH}" ]]; then
+          log "ERROR: MODPACK_ZIP_PATH not found: ${MODPACK_ZIP_PATH}"
+          exit 1
+        fi
+        log "MODPACK: using zip from MODPACK_ZIP_PATH -> ${ZIP_DST}"
+        cp -f "${MODPACK_ZIP_PATH}" "${ZIP_DST}"
+        return 0
+      fi
+
+      # Fallback (not recommended): newest zip in APP_DIR/mods
+      local fallback
+      fallback="$(ls -1t "${APP_DIR}"/mods/Linggango-V*.zip 2>/dev/null | head -n 1 || true)"
+      if [[ -z "${fallback}" ]]; then
+        log "ERROR: No modpack zip found. Set MODPACK_ZIP_URL or MODPACK_ZIP_PATH."
+        exit 1
+      fi
+      log "MODPACK: fallback to newest zip in ${APP_DIR}/mods: ${fallback}"
+      cp -f "${fallback}" "${ZIP_DST}"
+    }
+
+    acquire_zip
+
+    ZIP_HASH="$(sha256sum "${ZIP_DST}" | awk '{print $1}')"
+    INIT_MARKER="${DATA_DIR}/.modpack_initialized_${ZIP_HASH}"
+
+    MANIFEST_PATH="${MODPACK_DIR}/manifest.json"
+    OVERRIDES_DIR="${MODPACK_DIR}/overrides"
+
+    # ============================================================
+    # 1) (Re-)Init when zip changed (hash marker)
+    # ============================================================
+    if [[ ! -f "${INIT_MARKER}" ]]; then
+      log "MODPACK: new zip detected (hash=${ZIP_HASH}) -> re-initializing"
+
       rm -rf "${MODPACK_DIR}"
       mkdir -p "${MODPACK_DIR}"
-      unzip -q "${MODPACK_ZIP}" -d "${MODPACK_DIR}"
+      unzip -q "${ZIP_DST}" -d "${MODPACK_DIR}"
 
       if [[ ! -f "${MANIFEST_PATH}" ]]; then
         log "ERROR: manifest.json not found after unzip: ${MANIFEST_PATH}"
@@ -250,6 +104,7 @@ data:
         exit 1
       fi
 
+      # Apply overrides into APP_DIR (no overwrite)
       if [[ -d "${OVERRIDES_DIR}" ]]; then
         log "MODPACK: applying overrides/ -> ${APP_DIR} (no overwrite)"
         cp -an "${OVERRIDES_DIR}/." "${APP_DIR}/" 2>/dev/null || true
@@ -257,14 +112,22 @@ data:
         log "MODPACK: WARN no overrides/ directory found"
       fi
 
+      # IMPORTANT: clear old jars to prevent mixed modsets
+      log "MODS: clearing existing .jar in ${APP_DIR}/mods to avoid mixed versions"
+      mkdir -p "${APP_DIR}/mods"
+      find "${APP_DIR}/mods" -maxdepth 1 -type f -name "*.jar" -delete || true
+
+      # Remove old markers (optional cleanup)
+      rm -f "${DATA_DIR}/.modpack_initialized_"* 2>/dev/null || true
+
       touch "${INIT_MARKER}"
+    else
+      log "MODPACK: already initialized for hash=${ZIP_HASH}"
     fi
 
     # ============================================================
-    # 2) Ensure mods/*.jar from manifest.json
+    # 2) Ensure mods from manifest.json
     # ============================================================
-    mkdir -p "${APP_DIR}/mods"
-
     mods_count() {
       find "${APP_DIR}/mods" -maxdepth 1 -type f -name "*.jar" 2>/dev/null | wc -l | tr -d " "
     }
@@ -276,82 +139,71 @@ data:
       fi
 
       log "MODS: downloading from manifest ${MANIFEST_PATH}"
-
       export APP_DIR MANIFEST_PATH CF_API_KEY
-      python3 <<-'PY'
-    	import os, json, pathlib, re, sys
-    	from urllib.parse import urlparse
-    	import requests
 
-    	APP_DIR = os.environ.get("APP_DIR", "/srv/mc")
-    	MANIFEST = os.environ.get("MANIFEST_PATH")
-    	KEY = os.environ.get("CF_API_KEY")
+      python3 <<'PY'
+    import os, json, pathlib, re, sys
+    from urllib.parse import urlparse
+    import requests
 
-    	if not MANIFEST:
-    	    print("MANIFEST_PATH not set", file=sys.stderr)
-    	    sys.exit(1)
+    APP_DIR = os.environ["APP_DIR"]
+    MANIFEST = os.environ["MANIFEST_PATH"]
+    KEY = os.environ["CF_API_KEY"]
 
-    	API = "https://api.curseforge.com"
-    	WEB_DL = "https://www.curseforge.com/api/v1/mods/{pid}/files/{fid}/download"
-    	HEADERS = {"x-api-key": KEY, "accept": "application/json", "user-agent": "mc-gitops/1.0"}
+    API = "https://api.curseforge.com"
+    WEB_DL = "https://www.curseforge.com/api/v1/mods/{pid}/files/{fid}/download"
+    HEADERS = {"x-api-key": KEY, "accept": "application/json", "user-agent": "mc-gitops/1.0"}
 
-    	mods_dir = pathlib.Path(APP_DIR) / "mods"
-    	mods_dir.mkdir(parents=True, exist_ok=True)
+    mods_dir = pathlib.Path(APP_DIR) / "mods"
+    mods_dir.mkdir(parents=True, exist_ok=True)
 
-    	def filename(resp: requests.Response) -> str:
-    	    cd = resp.headers.get("content-disposition", "")
-    	    m = re.search(r'filename="?([^"]+)"?', cd)
-    	    if m:
-    	        return m.group(1)
-    	    return pathlib.Path(urlparse(resp.url).path).name
+    def filename(resp: requests.Response) -> str:
+        cd = resp.headers.get("content-disposition", "")
+        m = re.search(r'filename="?([^"]+)"?', cd)
+        if m:
+            return m.group(1)
+        return pathlib.Path(urlparse(resp.url).path).name
 
-    	def stream(url: str):
-    	    with requests.get(
-    	        url,
-    	        allow_redirects=True,
-    	        stream=True,
-    	        timeout=300,
-    	        headers={"user-agent": "mc-gitops/1.0"},
-    	    ) as r:
-    	        r.raise_for_status()
-    	        name = filename(r)
-    	        out = mods_dir / name
-    	        if out.exists():
-    	            print("OK (exists):", name)
-    	            return
-    	        print("Downloading:", name)
-    	        with open(out, "wb") as w:
-    	            for ch in r.iter_content(chunk_size=1024 * 1024):
-    	                if ch:
-    	                    w.write(ch)
+    def stream(url: str):
+        with requests.get(url, allow_redirects=True, stream=True, timeout=300,
+                          headers={"user-agent": "mc-gitops/1.0"}) as r:
+            r.raise_for_status()
+            name = filename(r)
+            out = mods_dir / name
+            if out.exists():
+                print("OK (exists):", name)
+                return
+            print("Downloading:", name)
+            with open(out, "wb") as w:
+                for ch in r.iter_content(chunk_size=1024 * 1024):
+                    if ch:
+                        w.write(ch)
 
-    	with open(MANIFEST, "r", encoding="utf-8") as f:
-    	    manifest = json.load(f)
+    with open(MANIFEST, "r", encoding="utf-8") as f:
+        manifest = json.load(f)
 
-    	for e in manifest.get("files", []):
-    	    pid = e["projectID"]
-    	    fid = e["fileID"]
+    for e in manifest.get("files", []):
+        pid = e["projectID"]
+        fid = e["fileID"]
 
-    	    r = requests.get(f"{API}/v1/mods/{pid}/files/{fid}", headers=HEADERS, timeout=60)
-    	    if r.status_code == 200:
-    	        data = r.json()["data"]
-    	        url = data.get("downloadUrl") or WEB_DL.format(pid=pid, fid=fid)
-    	        stream(url)
-    	        continue
+        r = requests.get(f"{API}/v1/mods/{pid}/files/{fid}", headers=HEADERS, timeout=60)
+        if r.status_code == 200:
+            data = r.json()["data"]
+            url = data.get("downloadUrl") or WEB_DL.format(pid=pid, fid=fid)
+            stream(url)
+            continue
+        if r.status_code == 403:
+            stream(WEB_DL.format(pid=pid, fid=fid))
+            continue
+        r.raise_for_status()
 
-    	    if r.status_code == 403:
-    	        stream(WEB_DL.format(pid=pid, fid=fid))
-    	        continue
-
-    	    r.raise_for_status()
-
-    	print("Done.")
-    	PY
+    print("Done.")
+    PY
 
       n="$(mods_count)"
       log "MODS: jars present: ${n}"
       if [[ "${n}" -lt 5 ]]; then
-        log "ERROR: mod download did not produce enough jars. Check logs above for 403/404."
+        log "ERROR: mod download did not produce enough jars."
         exit 1
       fi
     else
@@ -359,141 +211,22 @@ data:
     fi
 
     # ============================================================
-    # 2b) SimpleBackups bereitstellen (staging -> mods/)
-    # ============================================================
-    install_simplebackups_mod
-    setup_backup_path_symlink
-
-
-    # ============================================================
-    # 2c) Client-only Mods quarantäne (Server lädt sie nicht)
-    # ============================================================
-    quarantine_client_mods() {
-      local mods_dir="${APP_DIR}/mods"
-      local client_dir="${mods_dir}/.client"
-      mkdir -p "${client_dir}"
-
-      local client_only_patterns=(
-        'ShoulderSurfing'
-        '^XaerosWorldMap_'
-        '^Xaeros_Minimap_'
-        '^xaeros_waystones_compability-.*\.jar$'
-        'embeddium'
-        'entity_texture_features'
-        'sodiumdynamiclights'
-        'sodiumoptions'
-        'oculus'
-        'nolijium'
-        'enhanced[_-]?boss[_-]?bars'
-      )
-
-      shopt -s nullglob
-      for f in "${mods_dir}"/*.jar; do
-        local base
-        base="$(basename "$f")"
-        for p in "${client_only_patterns[@]}"; do
-          if echo "$base" | grep -Eqi "$p"; then
-            log "MODS: moving client-only mod to quarantine: $base"
-            mv -f -- "$f" "${client_dir}/"
-            break
-          fi
-        done
-      done
-      shopt -u nullglob
-    }
-
-    quarantine_client_mods
-
-    # hard-remove any oculus/iris remnants anywhere under APP_DIR
-    log "MODS: searching for Oculus jars under ${APP_DIR} (maxdepth 5)"
-    mapfile -t OCULUS_JARS < <(find "${APP_DIR}" -maxdepth 5 -type f \( -iname '*oculus*.jar' -o -iname '*mekalus*.jar' -o -iname '*iris*.jar' \) 2>/dev/null || true)
-    if [[ "${#OCULUS_JARS[@]}" -gt 0 ]]; then
-      for f in "${OCULUS_JARS[@]}"; do
-        log "MODS: removing client-only jar (found): ${f}"
-        rm -f -- "${f}" || true
-      done
-    fi
-
-    # ============================================================
-    # BACKUPS: SimpleBackups -> PVC path (/data/simplebackups)
-    # ============================================================
-    BACKUP_ENABLE="${BACKUP_ENABLE:-true}"
-    BACKUP_DIR="${BACKUP_DIR:-/data/simplebackups}"
-
-    ensure_backup_dir() {
-      [[ "${BACKUP_ENABLE}" == "true" ]] || return 0
-      mkdir -p "${BACKUP_DIR}"
-      # optional: sanity check writeability
-      touch "${BACKUP_DIR}/.write_test" 2>/dev/null || {
-        log "ERROR: backup dir not writable: ${BACKUP_DIR}"
-        ls -ld "${BACKUP_DIR}" || true
-        exit 1
-      }
-      rm -f "${BACKUP_DIR}/.write_test" || true
-      log "[BK] backup dir ready: ${BACKUP_DIR}"
-    }
-
-    configure_simplebackups() {
-      [[ "${BACKUP_ENABLE}" == "true" ]] || return 0
-
-      # Config path candidates (varies slightly by mod version)
-      local cfg_dir="${APP_DIR}/config"
-      mkdir -p "${cfg_dir}"
-
-      local cfg_toml="${cfg_dir}/simplebackups-common.toml"
-      local cfg_alt1="${cfg_dir}/simplebackups.toml"
-      local cfg_alt2="${cfg_dir}/simplebackups-server.toml"
-
-      # Pick first existing, otherwise create the common one
-      local cfg="${cfg_toml}"
-      if [[ -f "${cfg_alt1}" ]]; then cfg="${cfg_alt1}"; fi
-      if [[ -f "${cfg_alt2}" ]]; then cfg="${cfg_alt2}"; fi
-
-      # If file doesn't exist, create minimal config with path
-      if [[ ! -f "${cfg}" ]]; then
-        cat > "${cfg}" <<EOF
-    # Generated by startserver.sh
-    backupPath="${BACKUP_DIR}"
-    EOF
-        log "[BK] created ${cfg} with backupPath=${BACKUP_DIR}"
-        return 0
-      fi
-
-      # Patch existing config: set or replace backupPath key
-      if grep -Eq '^\s*backupPath\s*=' "${cfg}"; then
-        sed -i -E "s|^\s*backupPath\s*=.*|backupPath=\"${BACKUP_DIR}\"|g" "${cfg}"
-        log "[BK] patched ${cfg}: backupPath=${BACKUP_DIR}"
-      else
-        printf '\nbackupPath="%s"\n' "${BACKUP_DIR}" >> "${cfg}"
-        log "[BK] appended ${cfg}: backupPath=${BACKUP_DIR}"
-      fi
-    }
-
-    ensure_backup_dir
-    configure_simplebackups
-
-    # ============================================================
-    # 3) Start server + RCON commands
+    # 3) Start server
     # ============================================================
     JVM_ARGS_FILE="${JVM_ARGS_FILE:-${APP_DIR}/user_jvm_args.txt}"
-    RESTART="${RESTART:-false}"  # true/false
+    RESTART="${RESTART:-false}"
 
     while true; do
       log "SERVER: starting Forge"
       java @"${JVM_ARGS_FILE}" @"${FORGE_UNIX_ARGS}" nogui &
-      SERVER_PID=$!
-
-      # send RCON commands (if commands.txt exists)
-      rcon_send_commands || true
-
-      # wait for server exit
-      wait "${SERVER_PID}" || true
+      pid=$!
+      wait "${pid}" || true
 
       if [[ "${RESTART}" != "true" ]]; then
-        log "SERVER: stopped - restart disabled (RESTART!=true)"
+        log "SERVER: stopped - restart disabled"
         exit 0
       fi
 
-      log "SERVER: stopped - restarting in 10s (RESTART=true)"
+      log "SERVER: stopped - restarting in 10s"
       sleep 10
     done

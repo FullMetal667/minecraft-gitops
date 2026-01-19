@@ -33,7 +33,6 @@ COPY --from=mcrcon-builder --chmod=0755 --chown=0:0 /src/mcrcon/mcrcon /usr/loca
 
 # Build context
 WORKDIR /work
-COPY linggango/modpack/ /work/modpack/
 COPY linggango/tools/ /work/tools/
 
 # Zielpfad im Image (immutable)
@@ -48,14 +47,6 @@ RUN curl -fsSL -o /tmp/forge-installer.jar \
   && cd "${MC_HOME}" \
   && java -jar /tmp/forge-installer.jar --installServer \
   && rm -f /tmp/forge-installer.jar
-
-# Mods downloaden (benötigt CF_API_KEY zur Buildzeit!)
-ARG CF_API_KEY
-ENV CF_API_KEY="${CF_API_KEY}"
-RUN python3 /work/tools/download_mods.py
-
-# Overrides (configs/scripts/kubejs/...) ins Image kopieren
-RUN cp -rT /work/modpack/overrides "${MC_HOME}"
 
 # EULA im Image
 RUN echo "eula=true" > "${MC_HOME}/eula.txt"
