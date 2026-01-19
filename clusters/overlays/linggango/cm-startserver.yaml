@@ -64,6 +64,19 @@ data:
 
     install_forge_if_needed
 
+    log "FORGE: installing ${MC_VERSION}-${FORGE_VERSION} into ${FORGE_HOME}"
+    mkdir -p "${FORGE_HOME}" || { log "ERROR: cannot mkdir ${FORGE_HOME}"; exit 1; }
+    ls -ld "${FORGE_HOME}" || true
+
+    curl -fL --retry 3 --retry-delay 2 -o /tmp/forge-installer.jar \
+      "https://maven.minecraftforge.net/net/minecraftforge/forge/${MC_VERSION}-${FORGE_VERSION}/forge-${MC_VERSION}-${FORGE_VERSION}-installer.jar"
+
+    log "FORGE: running installer (this can take a while)..."
+    ( cd "${FORGE_HOME}" && java -jar /tmp/forge-installer.jar --installServer ) 2>&1 | sed -u 's/^/[FORGE-INSTALL] /'
+    rc=${PIPESTATUS[0]}
+    log "FORGE: installer exit code=${rc}"
+    [[ "${rc}" -eq 0 ]] || exit "${rc}"
+
     # ---------- Find Forge unix_args dynamically ----------
     find_forge_unix_args() {
       local base="${APP_DIR}/libraries/net/minecraftforge/forge"
