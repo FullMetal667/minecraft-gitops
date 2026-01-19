@@ -16,6 +16,7 @@ data:
 
     DATA_DIR="${DATA_DIR:-/data}"
     APP_DIR="${APP_DIR:-${DATA_DIR}/forge}"
+    mkdir -p "${DATA_DIR}" "${APP_DIR}"
 
     MODPACK_ZIP_URL="${MODPACK_ZIP_URL:-}"
     MODPACK_ZIP_PATH="${MODPACK_ZIP_PATH:-}"   # z.B. /data/modpack/Linggango-V6.4.zip
