@@ -39,6 +39,31 @@ data:
       exit 3
     fi
 
+    MC_VERSION="${MC_VERSION:-1.20.1}"
+    FORGE_VERSION="${FORGE_VERSION:-47.4.0}"
+
+    FORGE_HOME="${DATA_DIR}/forge"              # writebar
+    FORGE_MARKER="${FORGE_HOME}/.forge_${MC_VERSION}_${FORGE_VERSION}_installed"
+
+    install_forge_if_needed() {
+      mkdir -p "${FORGE_HOME}"
+      if [[ -f "${FORGE_MARKER}" ]]; then
+        log "FORGE: already installed (${MC_VERSION}-${FORGE_VERSION}) in ${FORGE_HOME}"
+        return 0
+      fi
+
+      log "FORGE: installing ${MC_VERSION}-${FORGE_VERSION} into ${FORGE_HOME}"
+      curl -fsSL -o /tmp/forge-installer.jar \
+        "https://maven.minecraftforge.net/net/minecraftforge/forge/${MC_VERSION}-${FORGE_VERSION}/forge-${MC_VERSION}-${FORGE_VERSION}-installer.jar"
+
+      ( cd "${FORGE_HOME}" && java -jar /tmp/forge-installer.jar --installServer )
+      rm -f /tmp/forge-installer.jar
+
+      touch "${FORGE_MARKER}"
+    }
+
+    install_forge_if_needed
+
     # ---------- Find Forge unix_args dynamically ----------
     find_forge_unix_args() {
       local base="${APP_DIR}/libraries/net/minecraftforge/forge"

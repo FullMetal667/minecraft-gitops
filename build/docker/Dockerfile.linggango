@@ -18,47 +18,45 @@ FROM registry.access.redhat.com/ubi9/openjdk-17:latest
 SHELL ["/bin/bash","-o","pipefail","-c"]
 USER 0
 
-# Tools für Build/Runtime
+# ------------------------------------------------------------
+# Runtime tools (keep minimal)
+# ------------------------------------------------------------
 RUN microdnf -y install \
       python3 python3-pip \
       curl-minimal unzip \
       which nmap-ncat \
     && microdnf clean all
 
-# Python deps
+# Python deps (for manifest download)
 RUN pip3 install --no-cache-dir requests
 
-# mcrcon rein
+# mcrcon binary
 COPY --from=mcrcon-builder --chmod=0755 --chown=0:0 /src/mcrcon/mcrcon /usr/local/bin/mcrcon
 
-# Build context
+# Optional: copy helper tools/scripts from repo
 WORKDIR /work
 COPY linggango/tools/ /work/tools/
 
-# Zielpfad im Image (immutable)
+# ------------------------------------------------------------
+# Immutable base path in image (no Forge install here!)
+# ------------------------------------------------------------
 ENV MC_HOME=/srv/mc
 RUN mkdir -p "${MC_HOME}/mods" "${MC_HOME}/config" "${MC_HOME}/defaultconfigs"
 
-# Forge installieren
-ARG MC_VERSION=1.20.1
-ARG FORGE_VERSION=47.4.0
-RUN curl -fsSL -o /tmp/forge-installer.jar \
-      "https://maven.minecraftforge.net/net/minecraftforge/forge/${MC_VERSION}-${FORGE_VERSION}/forge-${MC_VERSION}-${FORGE_VERSION}-installer.jar" \
-  && cd "${MC_HOME}" \
-  && java -jar /tmp/forge-installer.jar --installServer \
-  && rm -f /tmp/forge-installer.jar
-
-# ----------------------------
-# Modpack ZIP ins Image legen (aus FILE_ID + ZIP)
-# ----------------------------
+# ------------------------------------------------------------
+# Optional: Modpack ZIP ins Image legen (aus FILE_ID + ZIP)
+# - Recommended to do at runtime to avoid ForgeCDN/Cloudflare 403
+# - If you keep it, make it "best effort" so builds don't fail.
+# ------------------------------------------------------------
 ARG FILE_ID
-ARG ZIP
-ARG MOD_NAME
-ARG IMAGE_TAG
+ARG ZIP=""
+ARG MOD_NAME=""
+ARG IMAGE_TAG=""
 
 RUN set -euo pipefail; \
     if [[ -z "${FILE_ID:-}" ]]; then \
-      echo "[BUILD] FILE_ID not set -> skipping modpack zip download"; exit 0; \
+      echo "[BUILD] FILE_ID not set -> skipping modpack zip download"; \
+      exit 0; \
     fi; \
     DIR1=$(( FILE_ID / 1000 )); \
     DIR2=$(( FILE_ID % 1000 )); \
@@ -66,19 +64,38 @@ RUN set -euo pipefail; \
       if [[ -n "${MOD_NAME}" && -n "${IMAGE_TAG}" ]]; then \
         ZIP="${MOD_NAME}-${IMAGE_TAG}.zip"; \
       else \
-        echo "[BUILD] ZIP not set and MOD_NAME/IMAGE_TAG missing -> skipping"; exit 0; \
+        echo "[BUILD] ZIP not set and MOD_NAME/IMAGE_TAG missing -> skipping"; \
+        exit 0; \
       fi; \
     fi; \
-    MODPACK_ZIP_URL="https://mediafilez.forgecdn.net/files/${DIR1}/${DIR2}/${ZIP}"; \
-    echo "[BUILD] Downloading modpack zip: ${MODPACK_ZIP_URL}"; \
-    curl -fL --retry 3 --retry-delay 2 -A "mc-gitops/1.0" -o "${MC_HOME}/mods/${ZIP}" "${MODPACK_ZIP_URL}"; \
-    ls -lh "${MC_HOME}/mods/${ZIP}"
+    echo "[BUILD] Want modpack zip: ${ZIP} (FILE_ID=${FILE_ID} -> ${DIR1}/${DIR2})"; \
+    mkdir -p "${MC_HOME}/mods"; \
+    ok="false"; \
+    for HOST in mediafilez.forgecdn.net media.forgecdn.net edge.forgecdn.net; do \
+      URL="https://${HOST}/files/${DIR1}/${DIR2}/${ZIP}"; \
+      echo "[BUILD] Trying download: ${URL}"; \
+      if curl -fL --retry 2 --retry-delay 2 \
+        -A "Mozilla/5.0" \
+        -H "Referer: https://www.curseforge.com/" \
+        -H "Accept: */*" \
+        -o "${MC_HOME}/mods/${ZIP}.new" "${URL}"; then \
+          mv -f "${MC_HOME}/mods/${ZIP}.new" "${MC_HOME}/mods/${ZIP}"; \
+          ls -lh "${MC_HOME}/mods/${ZIP}"; \
+          ok="true"; \
+          break; \
+      fi; \
+    done; \
+    if [[ "${ok}" != "true" ]]; then \
+      echo "[BUILD] WARN: could not download modpack zip during build (likely 403)."; \
+      echo "[BUILD]       -> will need MODPACK_ZIP_URL or MODPACK_ZIP_PATH at runtime."; \
+      rm -f "${MC_HOME}/mods/${ZIP}.new" 2>/dev/null || true; \
+      exit 0; \
+    fi
 
-
-# EULA im Image
+# EULA in image (startscript checks it)
 RUN echo "eula=true" > "${MC_HOME}/eula.txt"
 
-# OpenShift arbitrary UID kompatibel
+# OpenShift arbitrary UID compatible perms
 RUN chgrp -R 0 "${MC_HOME}" /usr/local/bin/mcrcon \
  && chmod -R g=u "${MC_HOME}" \
  && chmod g=u /usr/local/bin/mcrcon \
