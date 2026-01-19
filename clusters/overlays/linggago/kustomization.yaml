@@ -10,6 +10,7 @@ resources:
   - cm-server-properties.yaml
   - cm-user-jvm-args.yaml
   - cm-startserver.yaml
+  - secret-curseforge.yaml
 secretGenerator:
   - name: mc-env
     envs:
