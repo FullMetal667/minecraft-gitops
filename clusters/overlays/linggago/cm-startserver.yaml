@@ -13,7 +13,12 @@ data:
     APP_DIR="${APP_DIR:-/srv/mc}"
     DATA_DIR="${DATA_DIR:-/data}"
 
-    MODPACK_ZIP="${MODPACK_ZIP:-${APP_DIR}/mods/Linggango-V6.3.zip}"
+    MODPACK_ZIP="${MODPACK_ZIP:-$(ls -1t ${APP_DIR}/mods/Linggango-V*.zip 2>/dev/null | head -n 1 || true)}"
+    if [[ -z "${MODPACK_ZIP}" ]]; then
+      log "ERROR: No modpack zip found at ${APP_DIR}/mods/Linggango-V*.zip"
+      exit 1
+    fi
+    
     MODPACK_DIR="${MODPACK_DIR:-${APP_DIR}/.modpack}"
     MODPACK_VERSION="${MODPACK_VERSION:-6.4}"
     INIT_MARKER="${INIT_MARKER:-/tmp/.modpack_initialized_${MODPACK_VERSION}}"
