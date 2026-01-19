@@ -10,23 +10,28 @@ data:
     log() { echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] $*"; }
     need() { command -v "$1" >/dev/null 2>&1 || { log "ERROR: missing $1"; exit 1; }; }
 
-    mkdir -p "${APP_DIR}" "${DATA_DIR}"
-    log "Using APP_DIR=${APP_DIR} DATA_DIR=${DATA_DIR}"
-    cd "${APP_DIR}"
-
+    # -----------------------------
+    # Paths / Defaults (MUST be set before any use because of -u)
+    # -----------------------------
     DATA_DIR="${DATA_DIR:-/data}"
-    APP_DIR="${DATA_DIR}/forge}"
-    mkdir -p "${DATA_DIR}" "${APP_DIR}"
+    APP_DIR="${APP_DIR:-${DATA_DIR}/forge}"     # Forge install + runtime lives here (writeable)
 
+    mkdir -p "${DATA_DIR}" "${APP_DIR}"
+    log "Using APP_DIR=${APP_DIR} DATA_DIR=${DATA_DIR}"
+
+    # Optional: where immutable image content may live (for EULA seed etc.)
+    IMAGE_MC_HOME="${IMAGE_MC_HOME:-/srv/mc}"
+
+    # Runtime inputs
     MODPACK_ZIP_URL="${MODPACK_ZIP_URL:-}"
-    MODPACK_ZIP_PATH="${MODPACK_ZIP_PATH:-}"   # z.B. /data/modpack/Linggango-V6.4.zip
+    MODPACK_ZIP_PATH="${MODPACK_ZIP_PATH:-}"   # z.B. /data/modpack/Linggago-v6.4.zip
     CF_API_KEY="${CF_API_KEY:-}"
 
-    # ZIP soll in /srv/mc/mods landen
+    # ZIP should live in APP_DIR/mods
     ZIP_DIR="${APP_DIR}/mods"
-    ZIP_DST=""  # wird in acquire_zip gesetzt
+    ZIP_DST=""  # set in acquire_zip
 
-    # Entpacken nach /data (writebar)
+    # Unpack modpack into DATA_DIR (writeable)
     MODPACK_DIR="${DATA_DIR}/.modpack"
     MANIFEST_PATH="${MODPACK_DIR}/manifest.json"
     OVERRIDES_DIR="${MODPACK_DIR}/overrides"
@@ -36,62 +41,73 @@ data:
     need unzip
     need python3
 
-    cd "${APP_DIR}"
-
-    # ---------- EULA ----------
-    if [[ ! -f "${APP_DIR}/eula.txt" ]] || ! grep -q 'eula=true' "${APP_DIR}/eula.txt"; then
-      log "ERROR: eula.txt missing or not accepted in ${APP_DIR}"
-      exit 3
-    fi
-
-    MC_VERSION="${MC_VERSION:-1.20.1}"
-    FORGE_VERSION="${FORGE_VERSION:-47.4.0}"
-    FORGE_HOME="${APP_DIR}"
-
-    FORGE_MARKER="${FORGE_HOME}/.forge_${MC_VERSION}_${FORGE_VERSION}_installed"
-
-    install_forge_if_needed() {
-      mkdir -p "${FORGE_HOME}"
-
-      if [[ -f "${FORGE_MARKER}" ]]; then
-        log "FORGE: already installed (${MC_VERSION}-${FORGE_VERSION}) in ${FORGE_HOME}"
+    # -----------------------------
+    # Ensure EULA exists in APP_DIR
+    # -----------------------------
+    ensure_eula() {
+      # If already accepted in APP_DIR, ok
+      if [[ -f "${APP_DIR}/eula.txt" ]] && grep -q 'eula=true' "${APP_DIR}/eula.txt"; then
         return 0
       fi
 
-      log "FORGE: installing ${MC_VERSION}-${FORGE_VERSION} into ${FORGE_HOME}"
+      # If image has eula, seed it into APP_DIR once
+      if [[ -f "${IMAGE_MC_HOME}/eula.txt" ]] && grep -q 'eula=true' "${IMAGE_MC_HOME}/eula.txt"; then
+        log "EULA: seeding accepted eula.txt from ${IMAGE_MC_HOME} -> ${APP_DIR}"
+        cp -f "${IMAGE_MC_HOME}/eula.txt" "${APP_DIR}/eula.txt"
+        return 0
+      fi
+
+      log "ERROR: eula.txt missing or not accepted in ${APP_DIR} (and no accepted seed found in ${IMAGE_MC_HOME})"
+      exit 3
+    }
+
+    # -----------------------------
+    # Install Forge (idempotent) into APP_DIR
+    # -----------------------------
+    MC_VERSION="${MC_VERSION:-1.20.1}"
+    FORGE_VERSION="${FORGE_VERSION:-47.4.0}"
+    FORGE_MARKER="${APP_DIR}/.forge_${MC_VERSION}_${FORGE_VERSION}_installed"
+
+    install_forge_if_needed() {
+      if [[ -f "${FORGE_MARKER}" ]]; then
+        log "FORGE: already installed (${MC_VERSION}-${FORGE_VERSION}) in ${APP_DIR}"
+        return 0
+      fi
+
+      log "FORGE: installing ${MC_VERSION}-${FORGE_VERSION} into ${APP_DIR}"
+
       curl -fL --retry 3 --retry-delay 2 -o /tmp/forge-installer.jar \
         "https://maven.minecraftforge.net/net/minecraftforge/forge/${MC_VERSION}-${FORGE_VERSION}/forge-${MC_VERSION}-${FORGE_VERSION}-installer.jar"
 
-      ( cd "${FORGE_HOME}" && java -jar /tmp/forge-installer.jar --installServer ) 2>&1 | sed -u 's/^/[FORGE-INSTALL] /'
+      # Stream installer output into pod logs so you can see progress/errors
+      ( cd "${APP_DIR}" && java -jar /tmp/forge-installer.jar --installServer ) 2>&1 | sed -u 's/^/[FORGE-INSTALL] /'
       rc=${PIPESTATUS[0]}
+
       rm -f /tmp/forge-installer.jar || true
       [[ "${rc}" -eq 0 ]] || { log "FORGE: installer failed rc=${rc}"; exit "${rc}"; }
 
       touch "${FORGE_MARKER}"
+      log "FORGE: install finished"
     }
 
-    install_forge_if_needed
-
-    # ---------- Find Forge unix_args dynamically ----------
+    # -----------------------------
+    # Find Forge unix_args.txt dynamically
+    # -----------------------------
     find_forge_unix_args() {
       local base="${APP_DIR}/libraries/net/minecraftforge/forge"
-      find "${base}" -maxdepth 3 -type f -name unix_args.txt 2>/dev/null | head -n 1 || true
+      find "${base}" -maxdepth 4 -type f -name unix_args.txt 2>/dev/null | head -n 1 || true
     }
-    FORGE_UNIX_ARGS="$(find_forge_unix_args)"
-    if [[ -z "${FORGE_UNIX_ARGS}" ]]; then
-      log "ERROR: Forge unix_args not found under ${APP_DIR}/libraries/net/minecraftforge/forge/**/unix_args.txt"
-      ls -la "${APP_DIR}/libraries/net/minecraftforge/forge" 2>/dev/null || true
-      exit 1
-    fi
-    log "Forge unix_args: ${FORGE_UNIX_ARGS}"
 
+    # -----------------------------
+    # Acquire ZIP (URL / PATH / fallback)
+    # -----------------------------
     acquire_zip() {
       mkdir -p "${ZIP_DIR}" "${DATA_DIR}"
 
       if [[ -n "${MODPACK_ZIP_URL}" ]]; then
         local name
         name="$(basename "${MODPACK_ZIP_URL%%\?*}")"
-        [[ -n "${name}" && "${name}" == *.zip ]] || name="Linggango.zip"
+        [[ -n "${name}" && "${name}" == *.zip ]] || name="modpack.zip"
         ZIP_DST="${ZIP_DIR}/${name}"
 
         log "MODPACK: downloading zip from MODPACK_ZIP_URL -> ${ZIP_DST}"
@@ -112,17 +128,31 @@ data:
         return 0
       fi
 
-      # Fallback: newest zip in /srv/mc/mods
+      # Fallback: newest zip in APP_DIR/mods
       local fallback
-      fallback="$(ls -1t "${ZIP_DIR}"/Linggango-*.zip "${ZIP_DIR}"/Linggango-*.zip 2>/dev/null | head -n 1 || true)"
+      fallback="$(ls -1t "${ZIP_DIR}"/*.zip 2>/dev/null | head -n 1 || true)"
       if [[ -z "${fallback}" ]]; then
-        log "ERROR: No modpack zip found. Set MODPACK_ZIP_URL or MODPACK_ZIP_PATH."
+        log "ERROR: No modpack zip found. Set MODPACK_ZIP_URL or MODPACK_ZIP_PATH or place a .zip into ${ZIP_DIR}."
         exit 1
       fi
 
       ZIP_DST="${fallback}"
       log "MODPACK: fallback to newest zip in ${ZIP_DIR}: ${ZIP_DST}"
     }
+
+    # -----------------------------
+    # Main flow
+    # -----------------------------
+    ensure_eula
+    install_forge_if_needed
+
+    FORGE_UNIX_ARGS="$(find_forge_unix_args)"
+    if [[ -z "${FORGE_UNIX_ARGS}" ]]; then
+      log "ERROR: Forge unix_args not found under ${APP_DIR}/libraries/net/minecraftforge/forge/**/unix_args.txt"
+      ls -la "${APP_DIR}/libraries/net/minecraftforge/forge" 2>/dev/null || true
+      exit 1
+    fi
+    log "Forge unix_args: ${FORGE_UNIX_ARGS}"
 
     acquire_zip
 
@@ -134,9 +164,7 @@ data:
     ZIP_HASH="$(sha256sum "${ZIP_DST}" | awk '{print $1}')"
     INIT_MARKER="${DATA_DIR}/.modpack_initialized_${ZIP_HASH}"
 
-    # ============================================================
     # 1) (Re-)Init when zip changed (hash marker)
-    # ============================================================
     if [[ ! -f "${INIT_MARKER}" ]]; then
       log "MODPACK: new zip detected (hash=${ZIP_HASH}) -> re-initializing"
 
@@ -171,9 +199,7 @@ data:
       log "MODPACK: already initialized for hash=${ZIP_HASH}"
     fi
 
-    # ============================================================
     # 2) Ensure mods from manifest.json
-    # ============================================================
     mods_count() {
       find "${APP_DIR}/mods" -maxdepth 1 -type f -name "*.jar" 2>/dev/null | wc -l | tr -d " "
     }
@@ -188,63 +214,63 @@ data:
       export APP_DIR MANIFEST_PATH CF_API_KEY
 
       python3 <<'PY'
-        import os, json, pathlib, re
-        from urllib.parse import urlparse
-        import requests
+    import os, json, pathlib, re
+    from urllib.parse import urlparse
+    import requests
 
-        APP_DIR = os.environ["APP_DIR"]
-        MANIFEST = os.environ["MANIFEST_PATH"]
-        KEY = os.environ["CF_API_KEY"]
+    APP_DIR = os.environ["APP_DIR"]
+    MANIFEST = os.environ["MANIFEST_PATH"]
+    KEY = os.environ["CF_API_KEY"]
 
-        API = "https://api.curseforge.com"
-        WEB_DL = "https://www.curseforge.com/api/v1/mods/{pid}/files/{fid}/download"
-        HEADERS = {"x-api-key": KEY, "accept": "application/json", "user-agent": "mc-gitops/1.0"}
+    API = "https://api.curseforge.com"
+    WEB_DL = "https://www.curseforge.com/api/v1/mods/{pid}/files/{fid}/download"
+    HEADERS = {"x-api-key": KEY, "accept": "application/json", "user-agent": "mc-gitops/1.0"}
 
-        mods_dir = pathlib.Path(APP_DIR) / "mods"
-        mods_dir.mkdir(parents=True, exist_ok=True)
+    mods_dir = pathlib.Path(APP_DIR) / "mods"
+    mods_dir.mkdir(parents=True, exist_ok=True)
 
-        def filename(resp: requests.Response) -> str:
-            cd = resp.headers.get("content-disposition", "")
-            m = re.search(r'filename="?([^"]+)"?', cd)
-            if m:
-                return m.group(1)
-            return pathlib.Path(urlparse(resp.url).path).name
+    def filename(resp: requests.Response) -> str:
+        cd = resp.headers.get("content-disposition", "")
+        m = re.search(r'filename="?([^"]+)"?', cd)
+        if m:
+            return m.group(1)
+        return pathlib.Path(urlparse(resp.url).path).name
 
-        def stream(url: str):
-            with requests.get(url, allow_redirects=True, stream=True, timeout=300,
-                              headers={"user-agent": "mc-gitops/1.0"}) as r:
-                r.raise_for_status()
-                name = filename(r)
-                out = mods_dir / name
-                if out.exists():
-                    print("OK (exists):", name)
-                    return
-                print("Downloading:", name)
-                with open(out, "wb") as w:
-                    for ch in r.iter_content(chunk_size=1024 * 1024):
-                        if ch:
-                            w.write(ch)
-
-        with open(MANIFEST, "r", encoding="utf-8") as f:
-            manifest = json.load(f)
-
-        for e in manifest.get("files", []):
-            pid = e["projectID"]
-            fid = e["fileID"]
-
-            r = requests.get(f"{API}/v1/mods/{pid}/files/{fid}", headers=HEADERS, timeout=60)
-            if r.status_code == 200:
-                data = r.json()["data"]
-                url = data.get("downloadUrl") or WEB_DL.format(pid=pid, fid=fid)
-                stream(url)
-                continue
-            if r.status_code == 403:
-                stream(WEB_DL.format(pid=pid, fid=fid))
-                continue
+    def stream(url: str):
+        with requests.get(url, allow_redirects=True, stream=True, timeout=300,
+                          headers={"user-agent": "mc-gitops/1.0"}) as r:
             r.raise_for_status()
+            name = filename(r)
+            out = mods_dir / name
+            if out.exists():
+                print("OK (exists):", name)
+                return
+            print("Downloading:", name)
+            with open(out, "wb") as w:
+                for ch in r.iter_content(chunk_size=1024 * 1024):
+                    if ch:
+                        w.write(ch)
 
-        print("Done.")
-        PY
+    with open(MANIFEST, "r", encoding="utf-8") as f:
+        manifest = json.load(f)
+
+    for e in manifest.get("files", []):
+        pid = e["projectID"]
+        fid = e["fileID"]
+
+        r = requests.get(f"{API}/v1/mods/{pid}/files/{fid}", headers=HEADERS, timeout=60)
+        if r.status_code == 200:
+            data = r.json()["data"]
+            url = data.get("downloadUrl") or WEB_DL.format(pid=pid, fid=fid)
+            stream(url)
+            continue
+        if r.status_code == 403:
+            stream(WEB_DL.format(pid=pid, fid=fid))
+            continue
+        r.raise_for_status()
+
+    print("Done.")
+    PY
 
       n="$(mods_count)"
       log "MODS: jars present: ${n}"
@@ -256,9 +282,9 @@ data:
       log "MODS: already present ($(mods_count) jars)"
     fi
 
-    # ============================================================
     # 3) Start server
-    # ============================================================
+    cd "${APP_DIR}"
+
     JVM_ARGS_FILE="${JVM_ARGS_FILE:-${APP_DIR}/user_jvm_args.txt}"
     RESTART="${RESTART:-false}"
 
@@ -276,3 +302,4 @@ data:
       log "SERVER: stopped - restarting in 10s"
       sleep 10
     done
+
