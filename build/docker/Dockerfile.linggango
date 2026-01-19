@@ -53,18 +53,27 @@ RUN curl -fsSL -o /tmp/forge-installer.jar \
 # ----------------------------
 ARG FILE_ID
 ARG ZIP
+ARG MOD_NAME
+ARG IMAGE_TAG
 
 RUN set -euo pipefail; \
-    if [[ -z "${FILE_ID:-}" || -z "${ZIP:-}" ]]; then \
-      echo "[BUILD] FILE_ID/ZIP not set -> skipping modpack zip download"; \
-      exit 0; \
+    if [[ -z "${FILE_ID:-}" ]]; then \
+      echo "[BUILD] FILE_ID not set -> skipping modpack zip download"; exit 0; \
     fi; \
     DIR1=$(( FILE_ID / 1000 )); \
     DIR2=$(( FILE_ID % 1000 )); \
+    if [[ -z "${ZIP}" ]]; then \
+      if [[ -n "${MOD_NAME}" && -n "${IMAGE_TAG}" ]]; then \
+        ZIP="${MOD_NAME}-${IMAGE_TAG}.zip"; \
+      else \
+        echo "[BUILD] ZIP not set and MOD_NAME/IMAGE_TAG missing -> skipping"; exit 0; \
+      fi; \
+    fi; \
     MODPACK_ZIP_URL="https://mediafilez.forgecdn.net/files/${DIR1}/${DIR2}/${ZIP}"; \
     echo "[BUILD] Downloading modpack zip: ${MODPACK_ZIP_URL}"; \
-    curl -fL --retry 3 --retry-delay 2 -o "${MC_HOME}/mods/${ZIP}" "${MODPACK_ZIP_URL}"; \
+    curl -fL --retry 3 --retry-delay 2 -A "mc-gitops/1.0" -o "${MC_HOME}/mods/${ZIP}" "${MODPACK_ZIP_URL}"; \
     ls -lh "${MC_HOME}/mods/${ZIP}"
+
 
 # EULA im Image
 RUN echo "eula=true" > "${MC_HOME}/eula.txt"
