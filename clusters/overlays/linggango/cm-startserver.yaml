@@ -10,8 +10,8 @@ data:
     log() { echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] $*"; }
     need() { command -v "$1" >/dev/null 2>&1 || { log "ERROR: missing $1"; exit 1; }; }
 
-    APP_DIR="${APP_DIR:-/srv/mc}"
     DATA_DIR="${DATA_DIR:-/data}"
+    APP_DIR="${APP_DIR:-${DATA_DIR}/forge}"
 
     MODPACK_ZIP_URL="${MODPACK_ZIP_URL:-}"
     MODPACK_ZIP_PATH="${MODPACK_ZIP_PATH:-}"   # z.B. /data/modpack/Linggango-V6.4.zip
@@ -41,36 +41,26 @@ data:
 
     MC_VERSION="${MC_VERSION:-1.20.1}"
     FORGE_VERSION="${FORGE_VERSION:-47.4.0}"
+    FORGE_HOME="${APP_DIR}"
 
-    FORGE_HOME="${DATA_DIR}/forge"              # writebar
     FORGE_MARKER="${FORGE_HOME}/.forge_${MC_VERSION}_${FORGE_VERSION}_installed"
-
-    log "FORGE: installing ${MC_VERSION}-${FORGE_VERSION} into ${FORGE_HOME}"
-    mkdir -p "${FORGE_HOME}" || { log "ERROR: cannot mkdir ${FORGE_HOME}"; exit 1; }
-    ls -ld "${FORGE_HOME}" || true
-
-    curl -fL --retry 3 --retry-delay 2 -o /tmp/forge-installer.jar \
-      "https://maven.minecraftforge.net/net/minecraftforge/forge/${MC_VERSION}-${FORGE_VERSION}/forge-${MC_VERSION}-${FORGE_VERSION}-installer.jar"
-
-    log "FORGE: running installer (this can take a while)..."
-    ( cd "${FORGE_HOME}" && java -jar /tmp/forge-installer.jar --installServer ) 2>&1 | sed -u 's/^/[FORGE-INSTALL] /'
-    rc=${PIPESTATUS[0]}
-    log "FORGE: installer exit code=${rc}"
-    [[ "${rc}" -eq 0 ]] || exit "${rc}"
 
     install_forge_if_needed() {
       mkdir -p "${FORGE_HOME}"
+
       if [[ -f "${FORGE_MARKER}" ]]; then
         log "FORGE: already installed (${MC_VERSION}-${FORGE_VERSION}) in ${FORGE_HOME}"
         return 0
       fi
 
       log "FORGE: installing ${MC_VERSION}-${FORGE_VERSION} into ${FORGE_HOME}"
-      curl -fsSL -o /tmp/forge-installer.jar \
+      curl -fL --retry 3 --retry-delay 2 -o /tmp/forge-installer.jar \
         "https://maven.minecraftforge.net/net/minecraftforge/forge/${MC_VERSION}-${FORGE_VERSION}/forge-${MC_VERSION}-${FORGE_VERSION}-installer.jar"
 
-      ( cd "${FORGE_HOME}" && java -jar /tmp/forge-installer.jar --installServer )
-      rm -f /tmp/forge-installer.jar
+      ( cd "${FORGE_HOME}" && java -jar /tmp/forge-installer.jar --installServer ) 2>&1 | sed -u 's/^/[FORGE-INSTALL] /'
+      rc=${PIPESTATUS[0]}
+      rm -f /tmp/forge-installer.jar || true
+      [[ "${rc}" -eq 0 ]] || { log "FORGE: installer failed rc=${rc}"; exit "${rc}"; }
 
       touch "${FORGE_MARKER}"
     }
