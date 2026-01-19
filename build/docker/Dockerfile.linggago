@@ -48,6 +48,21 @@ RUN curl -fsSL -o /tmp/forge-installer.jar \
   && java -jar /tmp/forge-installer.jar --installServer \
   && rm -f /tmp/forge-installer.jar
 
+# ----------------------------
+# Modpack ZIP ins Image legen
+# ----------------------------
+# Empfohlen: MODPACK_ZIP_URL setzen (z.B. mediafilez.forgecdn.net/files/.../Linggago-v6.4.zip)
+ARG MODPACK_ZIP_URL=""
+ARG ZIP_NAME="Linggago.zip"
+
+RUN if [[ -n "${MODPACK_ZIP_URL}" ]]; then \
+      echo "[BUILD] Downloading modpack zip: ${MODPACK_ZIP_URL}" && \
+      curl -fL --retry 3 --retry-delay 2 -o "${MC_HOME}/mods/${ZIP_NAME}" "${MODPACK_ZIP_URL}" && \
+      ls -lh "${MC_HOME}/mods/${ZIP_NAME}" ; \
+    else \
+      echo "[BUILD] MODPACK_ZIP_URL not set -> skipping modpack zip download"; \
+    fi
+
 # EULA im Image
 RUN echo "eula=true" > "${MC_HOME}/eula.txt"
 

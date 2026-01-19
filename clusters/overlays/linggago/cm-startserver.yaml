@@ -81,7 +81,7 @@ data:
 
       # Fallback: newest zip in /srv/mc/mods
       local fallback
-      fallback="$(ls -1t "${ZIP_DIR}"/Linggango-V*.zip 2>/dev/null | head -n 1 || true)"
+      fallback="$(ls -1t "${ZIP_DIR}"/Linggago-*.zip "${ZIP_DIR}"/Linggango-*.zip 2>/dev/null | head -n 1 || true)"
       if [[ -z "${fallback}" ]]; then
         log "ERROR: No modpack zip found. Set MODPACK_ZIP_URL or MODPACK_ZIP_PATH."
         exit 1
