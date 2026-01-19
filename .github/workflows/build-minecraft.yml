@@ -20,7 +20,7 @@ jobs:
 
     strategy:
       matrix:
-        modpack: [aof7, atm10, bmc4, sb4, ssv3, linggago]
+        modpack: [aof7, atm10, bmc4, sb4, ssv3, linggango]
 
     steps:
       - name: Checkout

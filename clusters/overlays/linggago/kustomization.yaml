@@ -1,6 +1,6 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-namespace: minecraft-linggago
+namespace: minecraft-linggango
 resources:
   - ../../base
   - cm-eula.yaml
@@ -20,13 +20,13 @@ patches:
   - path: patch-resources.yaml
     target:
       kind: Deployment
-      name: linggago
-      namespace: minecraft-linggago
+      name: linggango
+      namespace: minecraft-linggango
   - path: patch-delete-minecraft-container.yaml
     target:
       name: all-the-mods-10
-      namespace: minecraft-linggago
+      namespace: minecraft-linggango
 images: 
   - name: docker.io/chrisroth667/minecraft
-    newName: docker.io/chrisroth667/linggago
+    newName: docker.io/chrisroth667/linggango
     newTag: "v6.4"
