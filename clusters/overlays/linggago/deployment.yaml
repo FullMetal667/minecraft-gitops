@@ -55,6 +55,8 @@ spec:
           env:
             - name: EULA
               value: "true"
+            - name: CF_API_KEY
+              value: NULL
           envFrom:
             - secretRef:
                 name: mc-env
