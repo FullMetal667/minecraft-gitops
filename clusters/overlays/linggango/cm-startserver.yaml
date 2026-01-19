@@ -10,6 +10,10 @@ data:
     log() { echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] $*"; }
     need() { command -v "$1" >/dev/null 2>&1 || { log "ERROR: missing $1"; exit 1; }; }
 
+    mkdir -p "${APP_DIR}" "${DATA_DIR}"
+    log "Using APP_DIR=${APP_DIR} DATA_DIR=${DATA_DIR}"
+    cd "${APP_DIR}"
+
     DATA_DIR="${DATA_DIR:-/data}"
     APP_DIR="${APP_DIR:-${DATA_DIR}/forge}"
 
