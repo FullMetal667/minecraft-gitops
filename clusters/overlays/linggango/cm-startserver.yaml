@@ -15,7 +15,7 @@ data:
     cd "${APP_DIR}"
 
     DATA_DIR="${DATA_DIR:-/data}"
-    APP_DIR="${APP_DIR:-${DATA_DIR}/forge}"
+    APP_DIR="${DATA_DIR}/forge}"
     mkdir -p "${DATA_DIR}" "${APP_DIR}"
 
     MODPACK_ZIP_URL="${MODPACK_ZIP_URL:-}"
