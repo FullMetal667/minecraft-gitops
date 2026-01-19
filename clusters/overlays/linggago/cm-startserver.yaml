@@ -14,11 +14,17 @@ data:
     DATA_DIR="${DATA_DIR:-/data}"
 
     MODPACK_ZIP_URL="${MODPACK_ZIP_URL:-}"
-    MODPACK_ZIP_PATH="${MODPACK_ZIP_PATH:-}"   # z.B. PVC: /data/modpack/Linggango-V6.4.zip
-    ZIP_DST="${DATA_DIR}/modpack.zip"
-    MODPACK_DIR="${DATA_DIR}/.modpack"
-
+    MODPACK_ZIP_PATH="${MODPACK_ZIP_PATH:-}"   # z.B. /data/modpack/Linggango-V6.4.zip
     CF_API_KEY="${CF_API_KEY:-}"
+
+    # ZIP soll in /srv/mc/mods landen
+    ZIP_DIR="${APP_DIR}/mods"
+    ZIP_DST=""  # wird in acquire_zip gesetzt
+
+    # Entpacken nach /data (writebar)
+    MODPACK_DIR="${DATA_DIR}/.modpack"
+    MANIFEST_PATH="${MODPACK_DIR}/manifest.json"
+    OVERRIDES_DIR="${MODPACK_DIR}/overrides"
 
     need java
     need curl
@@ -46,13 +52,15 @@ data:
     fi
     log "Forge unix_args: ${FORGE_UNIX_ARGS}"
 
-    # ============================================================
-    # 0) Acquire modpack zip (URL or path)
-    # ============================================================
     acquire_zip() {
-      mkdir -p "${DATA_DIR}"
+      mkdir -p "${ZIP_DIR}" "${DATA_DIR}"
 
       if [[ -n "${MODPACK_ZIP_URL}" ]]; then
+        local name
+        name="$(basename "${MODPACK_ZIP_URL%%\?*}")"
+        [[ -n "${name}" && "${name}" == *.zip ]] || name="Linggango.zip"
+        ZIP_DST="${ZIP_DIR}/${name}"
+
         log "MODPACK: downloading zip from MODPACK_ZIP_URL -> ${ZIP_DST}"
         curl -fL --retry 3 --retry-delay 2 -o "${ZIP_DST}.new" "${MODPACK_ZIP_URL}"
         mv -f "${ZIP_DST}.new" "${ZIP_DST}"
@@ -64,29 +72,34 @@ data:
           log "ERROR: MODPACK_ZIP_PATH not found: ${MODPACK_ZIP_PATH}"
           exit 1
         fi
+
+        ZIP_DST="${ZIP_DIR}/$(basename "${MODPACK_ZIP_PATH}")"
         log "MODPACK: using zip from MODPACK_ZIP_PATH -> ${ZIP_DST}"
         cp -f "${MODPACK_ZIP_PATH}" "${ZIP_DST}"
         return 0
       fi
 
-      # Fallback (not recommended): newest zip in APP_DIR/mods
+      # Fallback: newest zip in /srv/mc/mods
       local fallback
-      fallback="$(ls -1t "${APP_DIR}"/mods/Linggango-V*.zip 2>/dev/null | head -n 1 || true)"
+      fallback="$(ls -1t "${ZIP_DIR}"/Linggango-V*.zip 2>/dev/null | head -n 1 || true)"
       if [[ -z "${fallback}" ]]; then
         log "ERROR: No modpack zip found. Set MODPACK_ZIP_URL or MODPACK_ZIP_PATH."
         exit 1
       fi
-      log "MODPACK: fallback to newest zip in ${APP_DIR}/mods: ${fallback}"
-      cp -f "${fallback}" "${ZIP_DST}"
+
+      ZIP_DST="${fallback}"
+      log "MODPACK: fallback to newest zip in ${ZIP_DIR}: ${ZIP_DST}"
     }
 
     acquire_zip
 
+    if [[ ! -f "${ZIP_DST}" ]]; then
+      log "ERROR: ZIP_DST does not exist after acquire_zip: ${ZIP_DST}"
+      exit 1
+    fi
+
     ZIP_HASH="$(sha256sum "${ZIP_DST}" | awk '{print $1}')"
     INIT_MARKER="${DATA_DIR}/.modpack_initialized_${ZIP_HASH}"
-
-    MANIFEST_PATH="${MODPACK_DIR}/manifest.json"
-    OVERRIDES_DIR="${MODPACK_DIR}/overrides"
 
     # ============================================================
     # 1) (Re-)Init when zip changed (hash marker)
@@ -100,7 +113,7 @@ data:
 
       if [[ ! -f "${MANIFEST_PATH}" ]]; then
         log "ERROR: manifest.json not found after unzip: ${MANIFEST_PATH}"
-        find "${MODPACK_DIR}" -maxdepth 2 -type f | head -n 50 || true
+        find "${MODPACK_DIR}" -maxdepth 3 -type f | head -n 50 || true
         exit 1
       fi
 
@@ -117,7 +130,7 @@ data:
       mkdir -p "${APP_DIR}/mods"
       find "${APP_DIR}/mods" -maxdepth 1 -type f -name "*.jar" -delete || true
 
-      # Remove old markers (optional cleanup)
+      # Remove old markers
       rm -f "${DATA_DIR}/.modpack_initialized_"* 2>/dev/null || true
 
       touch "${INIT_MARKER}"
@@ -142,63 +155,63 @@ data:
       export APP_DIR MANIFEST_PATH CF_API_KEY
 
       python3 <<'PY'
-    import os, json, pathlib, re, sys
-    from urllib.parse import urlparse
-    import requests
+        import os, json, pathlib, re
+        from urllib.parse import urlparse
+        import requests
 
-    APP_DIR = os.environ["APP_DIR"]
-    MANIFEST = os.environ["MANIFEST_PATH"]
-    KEY = os.environ["CF_API_KEY"]
+        APP_DIR = os.environ["APP_DIR"]
+        MANIFEST = os.environ["MANIFEST_PATH"]
+        KEY = os.environ["CF_API_KEY"]
 
-    API = "https://api.curseforge.com"
-    WEB_DL = "https://www.curseforge.com/api/v1/mods/{pid}/files/{fid}/download"
-    HEADERS = {"x-api-key": KEY, "accept": "application/json", "user-agent": "mc-gitops/1.0"}
+        API = "https://api.curseforge.com"
+        WEB_DL = "https://www.curseforge.com/api/v1/mods/{pid}/files/{fid}/download"
+        HEADERS = {"x-api-key": KEY, "accept": "application/json", "user-agent": "mc-gitops/1.0"}
 
-    mods_dir = pathlib.Path(APP_DIR) / "mods"
-    mods_dir.mkdir(parents=True, exist_ok=True)
+        mods_dir = pathlib.Path(APP_DIR) / "mods"
+        mods_dir.mkdir(parents=True, exist_ok=True)
 
-    def filename(resp: requests.Response) -> str:
-        cd = resp.headers.get("content-disposition", "")
-        m = re.search(r'filename="?([^"]+)"?', cd)
-        if m:
-            return m.group(1)
-        return pathlib.Path(urlparse(resp.url).path).name
+        def filename(resp: requests.Response) -> str:
+            cd = resp.headers.get("content-disposition", "")
+            m = re.search(r'filename="?([^"]+)"?', cd)
+            if m:
+                return m.group(1)
+            return pathlib.Path(urlparse(resp.url).path).name
 
-    def stream(url: str):
-        with requests.get(url, allow_redirects=True, stream=True, timeout=300,
-                          headers={"user-agent": "mc-gitops/1.0"}) as r:
+        def stream(url: str):
+            with requests.get(url, allow_redirects=True, stream=True, timeout=300,
+                              headers={"user-agent": "mc-gitops/1.0"}) as r:
+                r.raise_for_status()
+                name = filename(r)
+                out = mods_dir / name
+                if out.exists():
+                    print("OK (exists):", name)
+                    return
+                print("Downloading:", name)
+                with open(out, "wb") as w:
+                    for ch in r.iter_content(chunk_size=1024 * 1024):
+                        if ch:
+                            w.write(ch)
+
+        with open(MANIFEST, "r", encoding="utf-8") as f:
+            manifest = json.load(f)
+
+        for e in manifest.get("files", []):
+            pid = e["projectID"]
+            fid = e["fileID"]
+
+            r = requests.get(f"{API}/v1/mods/{pid}/files/{fid}", headers=HEADERS, timeout=60)
+            if r.status_code == 200:
+                data = r.json()["data"]
+                url = data.get("downloadUrl") or WEB_DL.format(pid=pid, fid=fid)
+                stream(url)
+                continue
+            if r.status_code == 403:
+                stream(WEB_DL.format(pid=pid, fid=fid))
+                continue
             r.raise_for_status()
-            name = filename(r)
-            out = mods_dir / name
-            if out.exists():
-                print("OK (exists):", name)
-                return
-            print("Downloading:", name)
-            with open(out, "wb") as w:
-                for ch in r.iter_content(chunk_size=1024 * 1024):
-                    if ch:
-                        w.write(ch)
 
-    with open(MANIFEST, "r", encoding="utf-8") as f:
-        manifest = json.load(f)
-
-    for e in manifest.get("files", []):
-        pid = e["projectID"]
-        fid = e["fileID"]
-
-        r = requests.get(f"{API}/v1/mods/{pid}/files/{fid}", headers=HEADERS, timeout=60)
-        if r.status_code == 200:
-            data = r.json()["data"]
-            url = data.get("downloadUrl") or WEB_DL.format(pid=pid, fid=fid)
-            stream(url)
-            continue
-        if r.status_code == 403:
-            stream(WEB_DL.format(pid=pid, fid=fid))
-            continue
-        r.raise_for_status()
-
-    print("Done.")
-    PY
+        print("Done.")
+        PY
 
       n="$(mods_count)"
       log "MODS: jars present: ${n}"
