@@ -55,6 +55,8 @@ spec:
           env:
             - name: EULA
               value: "true"
+            - name: MODPACK_VERSION
+              value: "6.4"
           envFrom:
             - secretRef:
                 name: mc-env

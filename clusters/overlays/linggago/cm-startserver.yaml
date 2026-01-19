@@ -15,7 +15,8 @@ data:
 
     MODPACK_ZIP="${MODPACK_ZIP:-${APP_DIR}/mods/Linggango-V6.3.zip}"
     MODPACK_DIR="${MODPACK_DIR:-${APP_DIR}/.modpack}"
-    INIT_MARKER="${INIT_MARKER:-/tmp/.modpack_initialized}"
+    MODPACK_VERSION="${MODPACK_VERSION:-6.4}"
+    INIT_MARKER="${INIT_MARKER:-/tmp/.modpack_initialized_${MODPACK_VERSION}}"
 
     MANIFEST_PATH="${MANIFEST_PATH:-${MODPACK_DIR}/manifest.json}"
     OVERRIDES_DIR="${OVERRIDES_DIR:-${MODPACK_DIR}/overrides}"
