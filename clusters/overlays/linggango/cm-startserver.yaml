@@ -15,7 +15,9 @@ data:
     MOD_NAME="${MOD_NAME:-}"
     IMAGE_TAG="${IMAGE_TAG:-}"
     ZIP_DIR="${ZIP_DIR:-/data/forge/}"
-
+    DATA_DIR="${DATA_DIR:-/data}"
+    APP_DIR="${APP_DIR:-${DATA_DIR}/forge}"
+    
       mkdir -p "${ZIP_DIR}" "${DATA_DIR}"
 
     acquire_zip() {
@@ -65,8 +67,6 @@ data:
     # -----------------------------
     # Paths / Defaults (MUST be set before any use because of -u)
     # -----------------------------
-    DATA_DIR="${DATA_DIR:-/data}"
-    APP_DIR="${APP_DIR:-${DATA_DIR}/forge}"     # Forge install + runtime lives here (writeable)
 
     mkdir -p "${DATA_DIR}" "${APP_DIR}"
     log "Using APP_DIR=${APP_DIR} DATA_DIR=${DATA_DIR}"
