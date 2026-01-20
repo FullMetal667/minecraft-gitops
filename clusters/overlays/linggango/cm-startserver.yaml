@@ -11,38 +11,56 @@ data:
     need() { command -v "$1" >/dev/null 2>&1 || { log "ERROR: missing $1"; exit 1; }; }
 
     # ------------------------------------------------------------
-    # Defaults / Env (must be defined before any use because of -u)
+    # Defaults / Env
     # ------------------------------------------------------------
     DATA_DIR="${DATA_DIR:-/data}"
-    APP_DIR="${APP_DIR:-${DATA_DIR}/forge}"          # writeable forge/server home on PVC
-    IMAGE_MC_HOME="${IMAGE_MC_HOME:-/srv/mc}"        # immutable image content (eula seed, optional zip seed)
-
-    MODPACK_ZIP_URL="${MODPACK_ZIP_URL:-}"
-    MODPACK_ZIP_PATH="${MODPACK_ZIP_PATH:-}"         # optional, but will NOT hard-fail if missing
-    CF_API_KEY="${CF_API_KEY:-}"
-
-    FILE_ID="${FILE_ID:-}"
-    ZIP="${ZIP:-}"                                   # your env uses ZIP="linggango-v6.4.zip"
-    ZIP_NAME="${ZIP_NAME:-}"                         # optional fallback
-    MOD_NAME="${MOD_NAME:-}"
-    IMAGE_TAG="${IMAGE_TAG:-}"
+    APP_DIR="${APP_DIR:-${DATA_DIR}/forge}"          # writable forge/server home on PVC
+    IMAGE_MC_HOME="${IMAGE_MC_HOME:-/srv/mc}"        # immutable image content (eula seed)
 
     MC_VERSION="${MC_VERSION:-1.20.1}"
     FORGE_VERSION="${FORGE_VERSION:-47.4.0}"
 
-    mkdir -p "${DATA_DIR}" "${APP_DIR}"
-    log "Using APP_DIR=${APP_DIR} DATA_DIR=${DATA_DIR}"
+    CF_API_KEY="${CF_API_KEY:-}"
 
-    ZIP_DIR="${APP_DIR}/mods"
-    ZIP_DST=""                                       # set by acquire_zip
-    MODPACK_DIR="${DATA_DIR}/.modpack"
-    MANIFEST_PATH="${MODPACK_DIR}/manifest.json"
-    OVERRIDES_DIR="${MODPACK_DIR}/overrides"
+    MODPACK_ZIP_URL="${MODPACK_ZIP_URL:-}"
+    MODPACK_ZIP_PATH="${MODPACK_ZIP_PATH:-}"         # optional local path
+
+    FILE_ID="${FILE_ID:-}"
+    ZIP="${ZIP:-}"                                   # e.g. linggango-v6.4.zip
+    ZIP_NAME="${ZIP_NAME:-}"                         # optional
+    MOD_NAME="${MOD_NAME:-}"
+    IMAGE_TAG="${IMAGE_TAG:-}"
+
+    # Layout
+    MODS_DIR="${APP_DIR}/mods"
+    DISABLED_DIR="${APP_DIR}/mods.disabled"
+    MODPACK_DIR="${APP_DIR}/modpack"                 # keep zip away from mods filter
+    MODPACK_ZIP="${MODPACK_DIR}/Linggango.zip"
+
+    UNPACK_DIR="${DATA_DIR}/.modpack"
+    MANIFEST_PATH="${UNPACK_DIR}/manifest.json"
+    OVERRIDES_DIR="${UNPACK_DIR}/overrides"
+
+    mkdir -p "${DATA_DIR}" "${APP_DIR}" "${MODS_DIR}" "${DISABLED_DIR}" "${MODPACK_DIR}"
+    log "Using APP_DIR=${APP_DIR} DATA_DIR=${DATA_DIR}"
 
     need java
     need curl
-    need unzip
     need python3
+
+    # unzip is optional: we can install it if missing (UBI image -> microdnf)
+    ensure_unzip() {
+      if command -v unzip >/dev/null 2>&1; then return 0; fi
+      log "TOOLS: unzip missing -> installing"
+      if command -v microdnf >/dev/null 2>&1; then
+        microdnf -y install unzip && microdnf clean all
+      else
+        log "ERROR: unzip missing and microdnf not available"
+        exit 1
+      fi
+    }
+    ensure_unzip
+    need unzip
 
     # ------------------------------------------------------------
     # Ensure EULA exists in APP_DIR
@@ -90,45 +108,24 @@ data:
     }
 
     # ------------------------------------------------------------
-    # Seed ZIP from image (optional)
-    # ------------------------------------------------------------
-    seed_zip_from_image() {
-      mkdir -p "${ZIP_DIR}"
-
-      if [[ -f "${ZIP_DIR}/Linggango.zip" ]]; then
-        return 0
-      fi
-
-      if [[ -f "${IMAGE_MC_HOME}/mods/Linggango.zip" ]]; then
-        log "MODPACK: seeding zip from image -> ${ZIP_DIR}/Linggango.zip"
-        cp -f "${IMAGE_MC_HOME}/mods/Linggango.zip" "${ZIP_DIR}/Linggango.zip"
-      fi
-    }
-
-    # ------------------------------------------------------------
-    # Acquire ZIP (URL / derived URL / PATH / fallback)
-    # Always normalize to ${ZIP_DIR}/Linggango.zip
+    # Acquire Modpack ZIP -> normalize to ${MODPACK_ZIP}
     # ------------------------------------------------------------
     acquire_zip() {
-      mkdir -p "${ZIP_DIR}" "${DATA_DIR}"
-
-      # 0) If already present in volume, use it
-      if [[ -f "${ZIP_DIR}/Linggango.zip" ]]; then
-        ZIP_DST="${ZIP_DIR}/Linggango.zip"
-        log "MODPACK: using existing ${ZIP_DST}"
+      # already exists
+      if [[ -f "${MODPACK_ZIP}" ]]; then
+        log "MODPACK: using existing ${MODPACK_ZIP}"
         return 0
       fi
 
-      # 1) Explicit URL
+      # explicit URL
       if [[ -n "${MODPACK_ZIP_URL}" ]]; then
-        log "MODPACK: downloading from MODPACK_ZIP_URL -> ${ZIP_DIR}/Linggango.zip"
-        curl -fL --retry 3 --retry-delay 2 -o "${ZIP_DIR}/Linggango.zip.new" "${MODPACK_ZIP_URL}"
-        mv -f "${ZIP_DIR}/Linggango.zip.new" "${ZIP_DIR}/Linggango.zip"
-        ZIP_DST="${ZIP_DIR}/Linggango.zip"
+        log "MODPACK: downloading from MODPACK_ZIP_URL -> ${MODPACK_ZIP}"
+        curl -fL --retry 3 --retry-delay 2 -o "${MODPACK_ZIP}.new" "${MODPACK_ZIP_URL}"
+        mv -f "${MODPACK_ZIP}.new" "${MODPACK_ZIP}"
         return 0
       fi
 
-      # 2) Derive URL from FILE_ID + ZIP (or ZIP_NAME, or MOD_NAME+IMAGE_TAG)
+      # derive name
       local name=""
       if [[ -n "${ZIP}" ]]; then
         name="${ZIP}"
@@ -138,50 +135,165 @@ data:
         name="${MOD_NAME}-${IMAGE_TAG}.zip"
       fi
 
+      # derived ForgeCDN URL
       if [[ -n "${FILE_ID}" && -n "${name}" ]]; then
         local dir1 dir2 url
         dir1=$(( FILE_ID / 1000 ))
         dir2=$(( FILE_ID % 1000 ))
         url="https://mediafilez.forgecdn.net/files/${dir1}/${dir2}/${name}"
 
-        log "MODPACK: downloading from derived URL -> ${ZIP_DIR}/Linggango.zip"
+        log "MODPACK: downloading from derived URL -> ${MODPACK_ZIP}"
         log "MODPACK: url=${url}"
         curl -fL --retry 3 --retry-delay 2 \
           -A "Mozilla/5.0" \
           -H "Referer: https://www.curseforge.com/" \
           -H "Accept: */*" \
-          -o "${ZIP_DIR}/Linggango.zip.new" "${url}"
-        mv -f "${ZIP_DIR}/Linggango.zip.new" "${ZIP_DIR}/Linggango.zip"
-        ZIP_DST="${ZIP_DIR}/Linggango.zip"
+          -o "${MODPACK_ZIP}.new" "${url}"
+        mv -f "${MODPACK_ZIP}.new" "${MODPACK_ZIP}"
         return 0
       fi
 
-      # 3) Optional PATH (do not hard-fail if missing)
-      if [[ -n "${MODPACK_ZIP_PATH}" ]]; then
-        if [[ -f "${MODPACK_ZIP_PATH}" ]]; then
-          log "MODPACK: using zip from MODPACK_ZIP_PATH -> ${ZIP_DIR}/Linggango.zip"
-          cp -f "${MODPACK_ZIP_PATH}" "${ZIP_DIR}/Linggango.zip"
-          ZIP_DST="${ZIP_DIR}/Linggango.zip"
-          return 0
-        fi
-        log "MODPACK: WARN MODPACK_ZIP_PATH not found: ${MODPACK_ZIP_PATH} -> ignoring"
-      fi
-
-      # 4) Fallback: any .zip in ZIP_DIR
-      local fallback
-      fallback="$(ls -1t "${ZIP_DIR}"/*.zip 2>/dev/null | head -n 1 || true)"
-      if [[ -n "${fallback}" ]]; then
-        ZIP_DST="${fallback}"
-        log "MODPACK: fallback to newest zip in ${ZIP_DIR}: ${ZIP_DST}"
+      # optional local path
+      if [[ -n "${MODPACK_ZIP_PATH}" && -f "${MODPACK_ZIP_PATH}" ]]; then
+        log "MODPACK: using zip from MODPACK_ZIP_PATH -> ${MODPACK_ZIP}"
+        cp -f "${MODPACK_ZIP_PATH}" "${MODPACK_ZIP}"
         return 0
       fi
 
-      log "ERROR: No modpack zip found. Provide MODPACK_ZIP_URL or FILE_ID+ZIP (or MOD_NAME+IMAGE_TAG)."
+      log "ERROR: No modpack zip found. Provide MODPACK_ZIP_URL or FILE_ID+ZIP (or MOD_NAME+IMAGE_TAG) or MODPACK_ZIP_PATH."
       exit 1
     }
 
     # ------------------------------------------------------------
-    # Main flow
+    # Unpack and initialize when zip changes
+    # ------------------------------------------------------------
+    zip_hash() { sha256sum "${MODPACK_ZIP}" | awk '{print $1}'; }
+
+    init_modpack_if_needed() {
+      local h marker
+      h="$(zip_hash)"
+      marker="${DATA_DIR}/.modpack_initialized_${h}"
+
+      if [[ -f "${marker}" ]]; then
+        log "MODPACK: already initialized for hash=${h}"
+        return 0
+      fi
+
+      log "MODPACK: new zip detected (hash=${h}) -> initializing"
+      rm -rf "${UNPACK_DIR}"
+      mkdir -p "${UNPACK_DIR}"
+      log "MODPACK: unzipping ${MODPACK_ZIP} -> ${UNPACK_DIR}"
+      unzip -q "${MODPACK_ZIP}" -d "${UNPACK_DIR}"
+
+      if [[ ! -f "${MANIFEST_PATH}" ]]; then
+        log "ERROR: manifest.json not found after unzip: ${MANIFEST_PATH}"
+        find "${UNPACK_DIR}" -maxdepth 3 -type f | head -n 80 || true
+        exit 1
+      fi
+
+      # prepare for your existing downloader
+      mkdir -p /work/modpack
+      cp -f "${MANIFEST_PATH}" /work/modpack/manifest.json
+
+      # clear jars BEFORE downloading
+      log "MODS: clearing existing jars in ${MODS_DIR}"
+      find "${MODS_DIR}" -maxdepth 1 -type f -name "*.jar" -delete || true
+
+      # apply overrides first (config/scripts/etc), keep no-overwrite
+      if [[ -d "${OVERRIDES_DIR}" ]]; then
+        log "MODPACK: applying overrides/ -> ${APP_DIR} (no overwrite)"
+        cp -an "${OVERRIDES_DIR}/." "${APP_DIR}/" 2>/dev/null || true
+      else
+        log "MODPACK: WARN no overrides/ directory found"
+      fi
+
+      # download mods
+      if [[ -z "${CF_API_KEY}" ]]; then
+        log "ERROR: CF_API_KEY not set - cannot download mods from manifest."
+        exit 1
+      fi
+      log "MODS: downloading from manifest (download_mods.py)"
+      python3 /work/tools/download_mods.py
+
+      # remove old markers + set new
+      rm -f "${DATA_DIR}/.modpack_initialized_"* 2>/dev/null || true
+      touch "${marker}"
+    }
+
+    mods_count() {
+      find "${MODS_DIR}" -maxdepth 1 -type f -name "*.jar" 2>/dev/null | wc -l | tr -d " "
+    }
+
+    # ------------------------------------------------------------
+    # Disable client-only or wrong artifacts on dedicated server
+    # ------------------------------------------------------------
+    disable_client_only_mods() {
+      mkdir -p "${DISABLED_DIR}"
+
+      shopt -s nullglob
+      for f in "${MODS_DIR}/"*; do
+        [[ -f "$f" ]] || continue
+        base="$(basename "$f")"
+        lower="${base,,}"
+
+        # move zips from mods dir (shouldn't happen, but safe)
+        if [[ "${lower}" != *.jar ]]; then
+          log "MODS: disabling non-jar in mods/: ${base}"
+          mv -f "$f" "${DISABLED_DIR}/${base}" 2>/dev/null || true
+          continue
+        fi
+
+        # known client-only / rendering stacks
+        if [[ "${lower}" == *entity_model_features* ]] \
+          || [[ "${lower}" == *entity_texture_features* ]] \
+          || [[ "${lower}" == *sodium* ]] \
+          || [[ "${lower}" == *iris* ]] \
+          || [[ "${lower}" == *oculus* ]] \
+          || [[ "${lower}" == *embeddium* ]] \
+          || [[ "${lower}" == *rubidium* ]] \
+          || [[ "${lower}" == *dynamicfps* ]] \
+          || [[ "${lower}" == *shader* ]] \
+          || [[ "${lower}" == xaeros_minimap_* ]] \
+          || [[ "${lower}" == *xaeros*minimap* ]] \
+          || [[ "${lower}" == xaeros_waystones_compability* ]]; then
+          log "MODS: disabling client-only: ${base}"
+          mv -f "$f" "${DISABLED_DIR}/${base}" 2>/dev/null || true
+          continue
+        fi
+      done
+      shopt -u nullglob
+    }
+
+    # ------------------------------------------------------------
+    # Optional: run mcrcon commands
+    # (runs in background after server start)
+    # ------------------------------------------------------------
+    run_mcrcon_commands_bg() {
+      [[ "${RCON_ENABLED:-false}" == "true" ]] || return 0
+      [[ -n "${RCON_PASSWORD:-}" ]] || { log "MCRCON: RCON_PASSWORD missing"; return 0; }
+      [[ -f "/data/commands.txt" ]] || { log "MCRCON: no /data/commands.txt found"; return 0; }
+      command -v mcrcon >/dev/null 2>&1 || { log "MCRCON: binary not present"; return 0; }
+
+      (
+        log "MCRCON: waiting for RCON..."
+        for i in {1..60}; do
+          if mcrcon -H "${RCON_HOST:-127.0.0.1}" -P "${RCON_PORT:-25575}" -p "${RCON_PASSWORD}" "list" >/dev/null 2>&1; then
+            break
+          fi
+          sleep 2
+        done
+
+        log "MCRCON: executing /data/commands.txt"
+        while IFS= read -r cmd; do
+          [[ -z "${cmd}" || "${cmd}" =~ ^# ]] && continue
+          log "MCRCON: > ${cmd}"
+          mcrcon -H "${RCON_HOST:-127.0.0.1}" -P "${RCON_PORT:-25575}" -p "${RCON_PASSWORD}" "${cmd}" || true
+        done < /data/commands.txt
+      ) &
+    }
+
+    # ------------------------------------------------------------
+    # Main
     # ------------------------------------------------------------
     ensure_eula
     install_forge_if_needed
@@ -194,150 +306,20 @@ data:
     fi
     log "Forge unix_args: ${FORGE_UNIX_ARGS}"
 
-    seed_zip_from_image
     acquire_zip
+    init_modpack_if_needed
 
-    if [[ ! -f "${ZIP_DST}" ]]; then
-      log "ERROR: ZIP_DST does not exist after acquire_zip: ${ZIP_DST}"
+    n="$(mods_count)"
+    log "MODS: jars present: ${n}"
+    if [[ "${n}" -lt 5 ]]; then
+      log "ERROR: mod download did not produce enough jars."
       exit 1
     fi
 
-    ZIP_HASH="$(sha256sum "${ZIP_DST}" | awk '{print $1}')"
-    INIT_MARKER="${DATA_DIR}/.modpack_initialized_${ZIP_HASH}"
+    disable_client_only_mods
 
-    # 1) (Re-)Init when zip changed (hash marker)
-    if [[ ! -f "${INIT_MARKER}" ]]; then
-      log "MODPACK: new zip detected (hash=${ZIP_HASH}) -> re-initializing"
-
-      rm -rf "${MODPACK_DIR}"
-      mkdir -p "${MODPACK_DIR}"
-
-      log "MODPACK: unzipping ${ZIP_DST} -> ${MODPACK_DIR}"
-      unzip -q "${ZIP_DST}" -d "${MODPACK_DIR}"
-
-      if [[ ! -f "${MANIFEST_PATH}" ]]; then
-        log "ERROR: manifest.json not found after unzip: ${MANIFEST_PATH}"
-        find "${MODPACK_DIR}" -maxdepth 3 -type f | head -n 50 || true
-        exit 1
-      fi
-
-      mkdir -p "${APP_DIR}/mods"
-      cd "${APP_DIR}"
-      export APP_DIR MANIFEST_PATH CF_API_KEY
-      python3 /work/tools/download_mods.py
-
-      # If your download_mods.py expects /work/modpack/manifest.json, copy it there
-      mkdir -p /work/modpack
-      cp -f "${MANIFEST_PATH}" /work/modpack/manifest.json
-
-      # Apply overrides into APP_DIR (no overwrite)
-      if [[ -d "${OVERRIDES_DIR}" ]]; then
-        log "MODPACK: applying overrides/ -> ${APP_DIR} (no overwrite)"
-        cp -an "${OVERRIDES_DIR}/." "${APP_DIR}/" 2>/dev/null || true
-      else
-        log "MODPACK: WARN no overrides/ directory found"
-      fi
-
-      # IMPORTANT: clear old jars to prevent mixed modsets
-      log "MODS: clearing existing .jar in ${APP_DIR}/mods to avoid mixed versions"
-      mkdir -p "${APP_DIR}/mods"
-      find "${APP_DIR}/mods" -maxdepth 1 -type f -name "*.jar" -delete || true
-
-      # Remove old markers
-      rm -f "${DATA_DIR}/.modpack_initialized_"* 2>/dev/null || true
-
-      touch "${INIT_MARKER}"
-    else
-      log "MODPACK: already initialized for hash=${ZIP_HASH}"
-    fi
-
-    # 2) Ensure mods from manifest.json (via download_mods.py)
-    mods_count() {
-      find "${APP_DIR}/mods" -maxdepth 1 -type f -name "*.jar" 2>/dev/null | wc -l | tr -d " "
-    }
-
-    if [[ "$(mods_count)" -lt 5 ]]; then
-      if [[ -z "${CF_API_KEY}" ]]; then
-        log "ERROR: CF_API_KEY not set - cannot download mods from manifest."
-        exit 1
-      fi
-
-      log "MODS: downloading from manifest ${MANIFEST_PATH}"
-      export APP_DIR MANIFEST_PATH CF_API_KEY
-
-      # Prefer MANIFEST_PATH-driven download if your script supports it,
-      # otherwise it will use /work/modpack/manifest.json (we copied it above)
-      python3 /work/tools/download_mods.py
-
-      n="$(mods_count)"
-      log "MODS: jars present: ${n}"
-      if [[ "${n}" -lt 5 ]]; then
-        log "ERROR: mod download did not produce enough jars."
-        exit 1
-      fi
-    else
-      log "MODS: already present ($(mods_count) jars)"
-    fi
-
-    mods_count() {
-      find "${APP_DIR}/mods" -type f -name "*.jar" 2>/dev/null | wc -l | tr -d " "
-    }
-
-    # --- Disable client-only / non-jar artifacts on dedicated server ---
-    mkdir -p "${APP_DIR}/mods.disabled"
-
-    disable_if_match() {
-      local f="$1"
-      local base lower
-      base="$(basename "$f")"
-      lower="${base,,}"
-
-      # non-jars
-      if [[ "${lower}" != *.jar ]]; then
-        log "MODS: disabling non-jar: ${base}"
-        mv -f "$f" "${APP_DIR}/mods.disabled/${base}" 2>/dev/null || true
-        return 0
-      fi
-
-      # known client-only rendering / sodium stack / texture packs
-      if [[ "${lower}" == *entity_model_features* ]] \
-        || [[ "${lower}" == *entity_texture_features* ]] \
-        || [[ "${lower}" == *sodium* ]] \
-        || [[ "${lower}" == *iris* ]] \
-        || [[ "${lower}" == *oculus* ]] \
-        || [[ "${lower}" == *embeddium* ]] \
-        || [[ "${lower}" == *rubidium* ]] \
-        || [[ "${lower}" == *dynamicfps* ]] \
-        || [[ "${lower}" == *shader* ]] \
-        || [[ "${lower}" == *minimap* ]] \
-        || [[ "${lower}" == *journey*map* ]] \
-        || [[ "${lower}" == *texture* ]]; then
-        log "MODS: disabling client-only: ${base}"
-        mv -f "$f" "${APP_DIR}/mods.disabled/${base}" 2>/dev/null || true
-        return 0
-      fi
-    }
-
-    # iterate files in mods dir
-    while IFS= read -r f; do
-      disable_if_match "$f"
-    done < <(find "${APP_DIR}/mods" -maxdepth 1 -type f 2>/dev/null)
-
-    ensure_simplebackups() {
-      if ls "${APP_DIR}/mods"/simplebackups-*.jar >/dev/null 2>&1; then
-        log "BACKUPS: SimpleBackups already present"
-        return 0
-      fi
-
-      log "BACKUPS: installing SimpleBackups"
-      curl -fL -o "${APP_DIR}/mods/simplebackups.jar" \
-        "https://mediafilez.forgecdn.net/files/7451/460/simplebackups-forge-1.20.1-*.jar" 
-    }
-
-
-    # 3) Start server
+    # start
     cd "${APP_DIR}"
-
     JVM_ARGS_FILE="${JVM_ARGS_FILE:-${APP_DIR}/user_jvm_args.txt}"
     RESTART="${RESTART:-false}"
 
@@ -345,36 +327,10 @@ data:
       log "SERVER: starting Forge"
       java @"${JVM_ARGS_FILE}" @"${FORGE_UNIX_ARGS}" nogui &
       pid=$!
+
+      run_mcrcon_commands_bg
+
       wait "${pid}" || true
-
-    # ------------------------------------------------------------
-    # Run mcrcon commands (optional)
-    # ------------------------------------------------------------
-    run_mcrcon_commands() {
-      [[ "${RCON_ENABLED:-false}" == "true" ]] || return 0
-      [[ -f "/data/commands.txt" ]] || { log "MCRCON: no /data/commands.txt found"; return 0; }
-
-      log "MCRCON: waiting for RCON to become available..."
-      for i in {1..30}; do
-        if mcrcon -H "${RCON_HOST:-127.0.0.1}" \
-                  -P "${RCON_PORT:-25575}" \
-                  -p "${RCON_PASSWORD}" \
-                  "list" >/dev/null 2>&1; then
-          break
-        fi
-        sleep 2
-      done
-
-      log "MCRCON: executing commands from /data/commands.txt"
-      while IFS= read -r cmd; do
-        [[ -z "$cmd" || "$cmd" =~ ^# ]] && continue
-        log "MCRCON: > $cmd"
-        mcrcon -H "${RCON_HOST:-127.0.0.1}" \
-              -P "${RCON_PORT:-25575}" \
-              -p "${RCON_PASSWORD}" \
-              "$cmd" || true
-      done < /data/commands.txt
-    }
 
       if [[ "${RESTART}" != "true" ]]; then
         log "SERVER: stopped - restart disabled"
@@ -384,6 +340,3 @@ data:
       log "SERVER: stopped - restarting in 10s"
       sleep 10
     done
-
-    run_mcrcon_commands
-
