@@ -283,6 +283,58 @@ data:
       find "${APP_DIR}/mods" -type f -name "*.jar" 2>/dev/null | wc -l | tr -d " "
     }
 
+    # --- Disable client-only / non-jar artifacts on dedicated server ---
+    mkdir -p "${APP_DIR}/mods.disabled"
+
+    disable_if_match() {
+      local f="$1"
+      local base lower
+      base="$(basename "$f")"
+      lower="${base,,}"
+
+      # non-jars
+      if [[ "${lower}" != *.jar ]]; then
+        log "MODS: disabling non-jar: ${base}"
+        mv -f "$f" "${APP_DIR}/mods.disabled/${base}" 2>/dev/null || true
+        return 0
+      fi
+
+      # known client-only rendering / sodium stack / texture packs
+      if [[ "${lower}" == *entity_model_features* ]] \
+        || [[ "${lower}" == *entity_texture_features* ]] \
+        || [[ "${lower}" == *sodium* ]] \
+        || [[ "${lower}" == *iris* ]] \
+        || [[ "${lower}" == *oculus* ]] \
+        || [[ "${lower}" == *embeddium* ]] \
+        || [[ "${lower}" == *rubidium* ]] \
+        || [[ "${lower}" == *dynamicfps* ]] \
+        || [[ "${lower}" == *shader* ]] \
+        || [[ "${lower}" == *minimap* ]] \
+        || [[ "${lower}" == *journey*map* ]] \
+        || [[ "${lower}" == *texture* ]]; then
+        log "MODS: disabling client-only: ${base}"
+        mv -f "$f" "${APP_DIR}/mods.disabled/${base}" 2>/dev/null || true
+        return 0
+      fi
+    }
+
+    # iterate files in mods dir
+    while IFS= read -r f; do
+      disable_if_match "$f"
+    done < <(find "${APP_DIR}/mods" -maxdepth 1 -type f 2>/dev/null)
+
+    ensure_simplebackups() {
+      if ls "${APP_DIR}/mods"/simplebackups-*.jar >/dev/null 2>&1; then
+        log "BACKUPS: SimpleBackups already present"
+        return 0
+      fi
+
+      log "BACKUPS: installing SimpleBackups"
+      curl -fL -o "${APP_DIR}/mods/simplebackups.jar" \
+        "https://mediafilez.forgecdn.net/files/7451/460/simplebackups-forge-1.20.1-*.jar" 
+    }
+
+
     # 3) Start server
     cd "${APP_DIR}"
 
@@ -295,6 +347,35 @@ data:
       pid=$!
       wait "${pid}" || true
 
+    # ------------------------------------------------------------
+    # Run mcrcon commands (optional)
+    # ------------------------------------------------------------
+    run_mcrcon_commands() {
+      [[ "${RCON_ENABLED:-false}" == "true" ]] || return 0
+      [[ -f "/data/commands.txt" ]] || { log "MCRCON: no /data/commands.txt found"; return 0; }
+
+      log "MCRCON: waiting for RCON to become available..."
+      for i in {1..30}; do
+        if mcrcon -H "${RCON_HOST:-127.0.0.1}" \
+                  -P "${RCON_PORT:-25575}" \
+                  -p "${RCON_PASSWORD}" \
+                  "list" >/dev/null 2>&1; then
+          break
+        fi
+        sleep 2
+      done
+
+      log "MCRCON: executing commands from /data/commands.txt"
+      while IFS= read -r cmd; do
+        [[ -z "$cmd" || "$cmd" =~ ^# ]] && continue
+        log "MCRCON: > $cmd"
+        mcrcon -H "${RCON_HOST:-127.0.0.1}" \
+              -P "${RCON_PORT:-25575}" \
+              -p "${RCON_PASSWORD}" \
+              "$cmd" || true
+      done < /data/commands.txt
+    }
+
       if [[ "${RESTART}" != "true" ]]; then
         log "SERVER: stopped - restart disabled"
         exit 0
@@ -303,4 +384,6 @@ data:
       log "SERVER: stopped - restarting in 10s"
       sleep 10
     done
+
+    run_mcrcon_commands
 
