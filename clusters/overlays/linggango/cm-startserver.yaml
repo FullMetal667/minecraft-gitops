@@ -207,6 +207,13 @@ data:
         log "MODPACK: WARN no overrides/ directory found"
       fi
 
+      mkdir -p "${MODS_DIR}"
+      mkdir -p /srv/mc
+      rm -rf /srv/mc/mods
+      ln -s "${MODS_DIR}" /srv/mc/mods
+
+      export APP_DIR MODS_DIR CF_API_KEY
+
       # download mods
       if [[ -z "${CF_API_KEY}" ]]; then
         log "ERROR: CF_API_KEY not set - cannot download mods from manifest."
@@ -215,7 +222,14 @@ data:
       log "MODS: downloading from manifest (download_mods.py)"
       python3 /work/tools/download_mods.py
 
-      # remove old markers + set new
+      # verify download produced jars
+      cnt="$(find "${MODS_DIR}" -maxdepth 1 -type f -name "*.jar" | wc -l | tr -d " ")"
+      log "MODS: jars after download: ${cnt}"
+      if [[ "${cnt}" -lt 5 ]]; then
+        log "ERROR: mod download produced too few jars"
+        exit 1
+      fi
+
       rm -f "${DATA_DIR}/.modpack_initialized_"* 2>/dev/null || true
       touch "${marker}"
     }
@@ -251,6 +265,10 @@ data:
           || [[ "${lower}" == *oculus* ]] \
           || [[ "${lower}" == *mekalus* ]] \
           || [[ "${lower}" == *nolijium* ]] \
+          || [[ "${lower}" == *connector* ]] \
+          || [[ "${lower}" == *fabric-api* ]] \
+          || [[ "${lower}" == *quifabrge* ]] \
+          || [[ "${lower}" == *forgifiedfabricapi* ]] \
           || [[ "${lower}" == *embeddium* ]] \
           || [[ "${lower}" == *rubidium* ]] \
           || [[ "${lower}" == *dynamicfps* ]] \
