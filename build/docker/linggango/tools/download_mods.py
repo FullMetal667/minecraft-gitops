@@ -7,7 +7,7 @@ WEB_DL = "https://www.curseforge.com/api/v1/mods/1343057/files/7373442/download"
 KEY = os.environ["CF_API_KEY"]
 HEADERS = {"x-api-key": KEY, "accept": "application/json"}
 
-mods_dir = pathlib.Path("/srv/mc/mods")
+mods_dir = pathlib.Path(os.environ.get("APP_DIR", "/data/forge")) / "mods"
 mods_dir.mkdir(parents=True, exist_ok=True)
 
 def filename_from_response(resp: requests.Response) -> str:

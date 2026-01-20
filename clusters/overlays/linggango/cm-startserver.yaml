@@ -221,6 +221,11 @@ data:
         exit 1
       fi
 
+      mkdir -p "${APP_DIR}/mods"
+      cd "${APP_DIR}"
+      export APP_DIR MANIFEST_PATH CF_API_KEY
+      python3 /work/tools/download_mods.py
+
       # If your download_mods.py expects /work/modpack/manifest.json, copy it there
       mkdir -p /work/modpack
       cp -f "${MANIFEST_PATH}" /work/modpack/manifest.json
@@ -273,6 +278,10 @@ data:
     else
       log "MODS: already present ($(mods_count) jars)"
     fi
+
+    mods_count() {
+      find "${APP_DIR}/mods" -type f -name "*.jar" 2>/dev/null | wc -l | tr -d " "
+    }
 
     # 3) Start server
     cd "${APP_DIR}"
