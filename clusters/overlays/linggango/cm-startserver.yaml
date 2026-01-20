@@ -268,18 +268,40 @@ data:
           continue
         fi
 
-        # known client-only / rendering stacks
-        if [[ "${lower}" == *entity_model_features* ]] \
+        # known client-only / wrong-side artifacts on dedicated servers
+        # (rendering, UI, HUD, recipe viewers, discord presence, fabric-only libs, particle/visual mods)
+        if [[ "${lower}" == *entity_texture_features* ]] \
+          || [[ "${lower}" == *entity_model_features* ]] \
+          || [[ "${lower}" == *etf* ]] \
+          || [[ "${lower}" == *emf* ]] \
+          || [[ "${lower}" == *particle_core* ]] \
+          || [[ "${lower}" == *particlecore* ]] \
+          || [[ "${lower}" == *fzzy_config* ]] \
           || [[ "${lower}" == fabric-* ]] \
+          || [[ "${lower}" == *fabric-api* ]] \
+          || [[ "${lower}" == *dynamicfps* ]] \
+          || [[ "${lower}" == *sodium* ]] \
+          || [[ "${lower}" == *iris* ]] \
+          || [[ "${lower}" == *oculus* ]] \
+          || [[ "${lower}" == *embeddium* ]] \
+          || [[ "${lower}" == *rubidium* ]] \
+          || [[ "${lower}" == *shader* ]] \
           || [[ "${lower}" == *mousetweaks* ]] \
           || [[ "${lower}" == *controlling* ]] \
           || [[ "${lower}" == *configured* ]] \
           || [[ "${lower}" == *drippyloadingscreen* ]] \
           || [[ "${lower}" == *discordrichpresence* ]] \
+          || [[ "${lower}" == *simplediscordrichpresence* ]] \
           || [[ "${lower}" == *sdrp* ]] \
           || [[ "${lower}" == *xaeroworldmap* ]] \
+          || [[ "${lower}" == *xaeros*minimap* ]] \
+          || [[ "${lower}" == *minimap* ]] \
+          || [[ "${lower}" == *worldmap* ]] \
           || [[ "${lower}" == *particular* ]] \
-          || [[ "${lower}" == *toomanyrecipeviewers* ]]; then
+          || [[ "${lower}" == *toomanyrecipeviewers* ]] \
+          || [[ "${lower}" == *jei* ]] \
+          || [[ "${lower}" == *rei* ]] \
+          || [[ "${lower}" == *emi* ]]; then
           log "MODS: disabling client-only: ${base}"
           mv -f "$f" "${DISABLED_DIR}/${base}" 2>/dev/null || true
           continue
