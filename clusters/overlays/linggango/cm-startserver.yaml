@@ -245,7 +245,7 @@ data:
       mkdir -p "${DISABLED_DIR}"
 
       shopt -s nullglob
-      for f in "${MODS_DIR}/"*; do
+      while IFS= read -r f; do
         [[ -f "$f" ]] || continue
         base="$(basename "$f")"
         lower="${base,,}"
@@ -261,10 +261,25 @@ data:
         if [[ "${lower}" == *entity_model_features* ]] \
           || [[ "${lower}" == *entity_texture_features* ]] \
           || [[ "${lower}" == *asyncparticles* ]] \
+          || [[ "${lower}" == *async-particles* ]] \
+          || [[ "${lower}" == *async_particles* ]] \
+          || [[ "${lower}" == *fabric-screen-api* ]] \
+          || [[ "${lower}" == *sodiumoptions* ]] \
+          || [[ "${lower}" == *sodiumdynamiclights* ]] \
+          || [[ "${lower}" == *entity_texture_features* ]] \
+          || [[ "${lower}" == *etf* ]] \
+          || [[ "${lower}" == *emf* ]] \
           || [[ "${lower}" == *forge-asyncparticles* ]] \
           || [[ "${lower}" == *enigmaticaddons* ]] \
           || [[ "${lower}" == *enigmaticdelicacy* ]] \
           || [[ "${lower}" == *enigmaticdice* ]] \
+          || [[ "${lower}" == *create_connected* ]] \
+          || [[ "${lower}" == *createaddition* ]] \
+          || [[ "${lower}" == *create_addition* ]] \
+          || [[ "${lower}" == *copycats* ]] \
+          || [[ "${lower}" == *flywheel* ]] \
+          || [[ "${lower}" == *registrate* ]] \
+          || [[ "${lower}" == *create*compat* ]] \
           || [[ "${lower}" == *sodium* ]] \
           || [[ "${lower}" == *iris* ]] \
           || [[ "${lower}" == *oculus* ]] \
@@ -285,7 +300,7 @@ data:
           mv -f "$f" "${DISABLED_DIR}/${base}" 2>/dev/null || true
           continue
         fi
-      done
+      done < <(find "${MODS_DIR}" -maxdepth 2 -type f 2>/dev/null)
       shopt -u nullglob
     }
 
