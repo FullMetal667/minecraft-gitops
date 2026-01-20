@@ -249,6 +249,8 @@ data:
           || [[ "${lower}" == *sodium* ]] \
           || [[ "${lower}" == *iris* ]] \
           || [[ "${lower}" == *oculus* ]] \
+          || [[ "${lower}" == *mekalus* ]] \
+          || [[ "${lower}" == *nolijium* ]] \
           || [[ "${lower}" == *embeddium* ]] \
           || [[ "${lower}" == *rubidium* ]] \
           || [[ "${lower}" == *dynamicfps* ]] \
