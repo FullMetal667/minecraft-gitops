@@ -260,6 +260,11 @@ data:
         # known client-only / rendering stacks
         if [[ "${lower}" == *entity_model_features* ]] \
           || [[ "${lower}" == *entity_texture_features* ]] \
+          || [[ "${lower}" == *asyncparticles* ]] \
+          || [[ "${lower}" == *forge-asyncparticles* ]] \
+          || [[ "${lower}" == *enigmaticaddons* ]] \
+          || [[ "${lower}" == *enigmaticdelicacy* ]] \
+          || [[ "${lower}" == *enigmaticdice* ]] \
           || [[ "${lower}" == *sodium* ]] \
           || [[ "${lower}" == *iris* ]] \
           || [[ "${lower}" == *oculus* ]] \
