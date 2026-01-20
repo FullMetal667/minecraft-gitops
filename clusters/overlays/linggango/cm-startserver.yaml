@@ -279,7 +279,7 @@ data:
           || [[ "${lower}" == *sdrp* ]] \
           || [[ "${lower}" == *xaeroworldmap* ]] \
           || [[ "${lower}" == *particular* ]] \
-          || [[ "${lower}" == *toomanyrecipeviewers* ]] \
+          || [[ "${lower}" == *toomanyrecipeviewers* ]]; then
           log "MODS: disabling client-only: ${base}"
           mv -f "$f" "${DISABLED_DIR}/${base}" 2>/dev/null || true
           continue
