@@ -61,7 +61,7 @@ spec:
             - secretRef:
                 name: secret-curseforge
             - secretRef:
-                name: mc-env-989gt9tc4c
+                name: mc-env
           command: ["/bin/bash","-lc"]
           args: ["/data/startserver.sh"]
           volumeMounts:
