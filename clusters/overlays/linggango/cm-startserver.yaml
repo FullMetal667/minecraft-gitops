@@ -10,28 +10,117 @@ data:
     log() { echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] $*"; }
     need() { command -v "$1" >/dev/null 2>&1 || { log "ERROR: missing $1"; exit 1; }; }
 
+    # ------------------------------------------------------------
+    # Defaults / Env (must be defined before any use because of -u)
+    # ------------------------------------------------------------
+    DATA_DIR="${DATA_DIR:-/data}"
+    APP_DIR="${APP_DIR:-${DATA_DIR}/forge}"          # writeable forge/server home on PVC
+    IMAGE_MC_HOME="${IMAGE_MC_HOME:-/srv/mc}"        # immutable image content (eula seed, optional zip seed)
+
+    MODPACK_ZIP_URL="${MODPACK_ZIP_URL:-}"
+    MODPACK_ZIP_PATH="${MODPACK_ZIP_PATH:-}"         # optional, but will NOT hard-fail if missing
+    CF_API_KEY="${CF_API_KEY:-}"
+
     FILE_ID="${FILE_ID:-}"
-    ZIP_NAME="${ZIP_NAME:-}"
+    ZIP="${ZIP:-}"                                   # your env uses ZIP="linggango-v6.4.zip"
+    ZIP_NAME="${ZIP_NAME:-}"                         # optional fallback
     MOD_NAME="${MOD_NAME:-}"
     IMAGE_TAG="${IMAGE_TAG:-}"
-    ZIP_DIR="${ZIP_DIR:-/data/forge/}"
-    DATA_DIR="${DATA_DIR:-/data}"
-    APP_DIR="${APP_DIR:-${DATA_DIR}/forge}"
-    
-      mkdir -p "${ZIP_DIR}" "${DATA_DIR}"
 
+    MC_VERSION="${MC_VERSION:-1.20.1}"
+    FORGE_VERSION="${FORGE_VERSION:-47.4.0}"
+
+    mkdir -p "${DATA_DIR}" "${APP_DIR}"
+    log "Using APP_DIR=${APP_DIR} DATA_DIR=${DATA_DIR}"
+
+    ZIP_DIR="${APP_DIR}/mods"
+    ZIP_DST=""                                       # set by acquire_zip
+    MODPACK_DIR="${DATA_DIR}/.modpack"
+    MANIFEST_PATH="${MODPACK_DIR}/manifest.json"
+    OVERRIDES_DIR="${MODPACK_DIR}/overrides"
+
+    need java
+    need curl
+    need unzip
+    need python3
+
+    # ------------------------------------------------------------
+    # Ensure EULA exists in APP_DIR
+    # ------------------------------------------------------------
+    ensure_eula() {
+      if [[ -f "${APP_DIR}/eula.txt" ]] && grep -q 'eula=true' "${APP_DIR}/eula.txt"; then
+        return 0
+      fi
+      if [[ -f "${IMAGE_MC_HOME}/eula.txt" ]] && grep -q 'eula=true' "${IMAGE_MC_HOME}/eula.txt"; then
+        log "EULA: seeding accepted eula.txt from ${IMAGE_MC_HOME} -> ${APP_DIR}"
+        cp -f "${IMAGE_MC_HOME}/eula.txt" "${APP_DIR}/eula.txt"
+        return 0
+      fi
+      log "ERROR: eula.txt missing or not accepted in ${APP_DIR} (and no accepted seed found in ${IMAGE_MC_HOME})"
+      exit 3
+    }
+
+    # ------------------------------------------------------------
+    # Install Forge (idempotent) into APP_DIR
+    # ------------------------------------------------------------
+    FORGE_MARKER="${APP_DIR}/.forge_${MC_VERSION}_${FORGE_VERSION}_installed"
+
+    install_forge_if_needed() {
+      if [[ -f "${FORGE_MARKER}" ]]; then
+        log "FORGE: already installed (${MC_VERSION}-${FORGE_VERSION}) in ${APP_DIR}"
+        return 0
+      fi
+
+      log "FORGE: installing ${MC_VERSION}-${FORGE_VERSION} into ${APP_DIR}"
+      curl -fL --retry 3 --retry-delay 2 -o /tmp/forge-installer.jar \
+        "https://maven.minecraftforge.net/net/minecraftforge/forge/${MC_VERSION}-${FORGE_VERSION}/forge-${MC_VERSION}-${FORGE_VERSION}-installer.jar"
+
+      ( cd "${APP_DIR}" && java -jar /tmp/forge-installer.jar --installServer ) 2>&1 | sed -u 's/^/[FORGE-INSTALL] /'
+      rc=${PIPESTATUS[0]}
+      rm -f /tmp/forge-installer.jar || true
+      [[ "${rc}" -eq 0 ]] || { log "FORGE: installer failed rc=${rc}"; exit "${rc}"; }
+
+      touch "${FORGE_MARKER}"
+      log "FORGE: install finished"
+    }
+
+    find_forge_unix_args() {
+      local base="${APP_DIR}/libraries/net/minecraftforge/forge"
+      find "${base}" -maxdepth 4 -type f -name unix_args.txt 2>/dev/null | head -n 1 || true
+    }
+
+    # ------------------------------------------------------------
+    # Seed ZIP from image (optional)
+    # ------------------------------------------------------------
+    seed_zip_from_image() {
+      mkdir -p "${ZIP_DIR}"
+
+      if [[ -f "${ZIP_DIR}/Linggango.zip" ]]; then
+        return 0
+      fi
+
+      if [[ -f "${IMAGE_MC_HOME}/mods/Linggango.zip" ]]; then
+        log "MODPACK: seeding zip from image -> ${ZIP_DIR}/Linggango.zip"
+        cp -f "${IMAGE_MC_HOME}/mods/Linggango.zip" "${ZIP_DIR}/Linggango.zip"
+      fi
+    }
+
+    # ------------------------------------------------------------
+    # Acquire ZIP (URL / derived URL / PATH / fallback)
+    # Always normalize to ${ZIP_DIR}/Linggango.zip
+    # ------------------------------------------------------------
     acquire_zip() {
       mkdir -p "${ZIP_DIR}" "${DATA_DIR}"
 
-      # 1) If a fixed name already exists in volume, use it
+      # 0) If already present in volume, use it
       if [[ -f "${ZIP_DIR}/Linggango.zip" ]]; then
         ZIP_DST="${ZIP_DIR}/Linggango.zip"
         log "MODPACK: using existing ${ZIP_DST}"
         return 0
       fi
 
-      # 2) Prefer explicit URL if provided
-      if [[ -n "${MODPACK_ZIP_URL:-}" ]]; then
+      # 1) Explicit URL
+      if [[ -n "${MODPACK_ZIP_URL}" ]]; then
         log "MODPACK: downloading from MODPACK_ZIP_URL -> ${ZIP_DIR}/Linggango.zip"
         curl -fL --retry 3 --retry-delay 2 -o "${ZIP_DIR}/Linggango.zip.new" "${MODPACK_ZIP_URL}"
         mv -f "${ZIP_DIR}/Linggango.zip.new" "${ZIP_DIR}/Linggango.zip"
@@ -39,12 +128,21 @@ data:
         return 0
       fi
 
-      # 3) Derive URL from FILE_ID + ZIP (your env already has these)
-      if [[ -n "${FILE_ID:-}" && -n "${ZIP:-}" ]]; then
+      # 2) Derive URL from FILE_ID + ZIP (or ZIP_NAME, or MOD_NAME+IMAGE_TAG)
+      local name=""
+      if [[ -n "${ZIP}" ]]; then
+        name="${ZIP}"
+      elif [[ -n "${ZIP_NAME}" ]]; then
+        name="${ZIP_NAME}"
+      elif [[ -n "${MOD_NAME}" && -n "${IMAGE_TAG}" ]]; then
+        name="${MOD_NAME}-${IMAGE_TAG}.zip"
+      fi
+
+      if [[ -n "${FILE_ID}" && -n "${name}" ]]; then
         local dir1 dir2 url
         dir1=$(( FILE_ID / 1000 ))
         dir2=$(( FILE_ID % 1000 ))
-        url="https://mediafilez.forgecdn.net/files/${dir1}/${dir2}/${ZIP}"
+        url="https://mediafilez.forgecdn.net/files/${dir1}/${dir2}/${name}"
 
         log "MODPACK: downloading from derived URL -> ${ZIP_DIR}/Linggango.zip"
         log "MODPACK: url=${url}"
@@ -58,164 +156,33 @@ data:
         return 0
       fi
 
-      # 4) Optional PATH - but never hard-fail if missing
-      if [[ -n "${MODPACK_ZIP_PATH:-}" ]]; then
-        if [[ -f "${MODPACK_ZIP_PATH}" ]]; then
-          log "MODPACK: using zip from MODPACK_ZIP_PAT
-
-
-    # -----------------------------
-    # Paths / Defaults (MUST be set before any use because of -u)
-    # -----------------------------
-
-    mkdir -p "${DATA_DIR}" "${APP_DIR}"
-    log "Using APP_DIR=${APP_DIR} DATA_DIR=${DATA_DIR}"
-
-    # Optional: where immutable image content may live (for EULA seed etc.)
-    IMAGE_MC_HOME="${IMAGE_MC_HOME:-/srv/mc}"
-
-    # Runtime inputs
-    MODPACK_ZIP_URL="${MODPACK_ZIP_URL:-}"
-    MODPACK_ZIP_PATH="${MODPACK_ZIP_PATH:-}"   # z.B. /data/modpack/Linggago-v6.4.zip
-    CF_API_KEY="${CF_API_KEY:-}"
-
-    # ZIP should live in APP_DIR/mods
-    ZIP_DIR="${APP_DIR}/mods"
-    ZIP_DST=""  # set in acquire_zip
-
-    # Unpack modpack into DATA_DIR (writeable)
-    MODPACK_DIR="${DATA_DIR}/.modpack"
-    MANIFEST_PATH="${MODPACK_DIR}/manifest.json"
-    OVERRIDES_DIR="${MODPACK_DIR}/overrides"
-
-    need java
-    need curl
-    need unzip
-    need python3
-
-    seed_zip_from_image() {
-      mkdir -p "${ZIP_DIR}"
-
-      # Wenn schon im Volume vorhanden -> nix tun
-      if [[ -f "${ZIP_DIR}/Linggango.zip" ]]; then
-        log "MODPACK: zip already present in volume: ${ZIP_DIR}/Linggango.zip"
-        return 0
-      fi
-
-      # Wenn im Image vorhanden -> kopieren
-      if [[ -f "${IMAGE_MC_HOME}/mods/Linggango.zip" ]]; then
-        log "MODPACK: seeding zip from image -> ${ZIP_DIR}/Linggango.zip"
-        cp -f "${IMAGE_MC_HOME}/mods/Linggango.zip" "${ZIP_DIR}/Linggango.zip"
-        return 0
-      fi
-
-      log "MODPACK: no zip to seed from image (${IMAGE_MC_HOME}/mods/Linggango.zip missing)"
-    }
-
-    seed_zip_from_image
-
-    # -----------------------------
-    # Ensure EULA exists in APP_DIR
-    # -----------------------------
-    ensure_eula() {
-      # If already accepted in APP_DIR, ok
-      if [[ -f "${APP_DIR}/eula.txt" ]] && grep -q 'eula=true' "${APP_DIR}/eula.txt"; then
-        return 0
-      fi
-
-      # If image has eula, seed it into APP_DIR once
-      if [[ -f "${IMAGE_MC_HOME}/eula.txt" ]] && grep -q 'eula=true' "${IMAGE_MC_HOME}/eula.txt"; then
-        log "EULA: seeding accepted eula.txt from ${IMAGE_MC_HOME} -> ${APP_DIR}"
-        cp -f "${IMAGE_MC_HOME}/eula.txt" "${APP_DIR}/eula.txt"
-        return 0
-      fi
-
-      log "ERROR: eula.txt missing or not accepted in ${APP_DIR} (and no accepted seed found in ${IMAGE_MC_HOME})"
-      exit 3
-    }
-
-    # -----------------------------
-    # Install Forge (idempotent) into APP_DIR
-    # -----------------------------
-    MC_VERSION="${MC_VERSION:-1.20.1}"
-    FORGE_VERSION="${FORGE_VERSION:-47.4.0}"
-    FORGE_MARKER="${APP_DIR}/.forge_${MC_VERSION}_${FORGE_VERSION}_installed"
-
-    install_forge_if_needed() {
-      if [[ -f "${FORGE_MARKER}" ]]; then
-        log "FORGE: already installed (${MC_VERSION}-${FORGE_VERSION}) in ${APP_DIR}"
-        return 0
-      fi
-
-      log "FORGE: installing ${MC_VERSION}-${FORGE_VERSION} into ${APP_DIR}"
-
-      curl -fL --retry 3 --retry-delay 2 -o /tmp/forge-installer.jar \
-        "https://maven.minecraftforge.net/net/minecraftforge/forge/${MC_VERSION}-${FORGE_VERSION}/forge-${MC_VERSION}-${FORGE_VERSION}-installer.jar"
-
-      # Stream installer output into pod logs so you can see progress/errors
-      ( cd "${APP_DIR}" && java -jar /tmp/forge-installer.jar --installServer ) 2>&1 | sed -u 's/^/[FORGE-INSTALL] /'
-      rc=${PIPESTATUS[0]}
-
-      rm -f /tmp/forge-installer.jar || true
-      [[ "${rc}" -eq 0 ]] || { log "FORGE: installer failed rc=${rc}"; exit "${rc}"; }
-
-      touch "${FORGE_MARKER}"
-      log "FORGE: install finished"
-    }
-
-    # -----------------------------
-    # Find Forge unix_args.txt dynamically
-    # -----------------------------
-    find_forge_unix_args() {
-      local base="${APP_DIR}/libraries/net/minecraftforge/forge"
-      find "${base}" -maxdepth 4 -type f -name unix_args.txt 2>/dev/null | head -n 1 || true
-    }
-
-    # -----------------------------
-    # Acquire ZIP (URL / PATH / fallback)
-    # -----------------------------
-    acquire_zip() {
-      mkdir -p "${ZIP_DIR}" "${DATA_DIR}"
-
-      if [[ -n "${MODPACK_ZIP_URL}" ]]; then
-        local name
-        name="$(basename "${MODPACK_ZIP_URL%%\?*}")"
-        [[ -n "${name}" && "${name}" == *.zip ]] || name="modpack.zip"
-        ZIP_DST="${ZIP_DIR}/${name}"
-
-        log "MODPACK: downloading zip from MODPACK_ZIP_URL -> ${ZIP_DST}"
-        curl -fL --retry 3 --retry-delay 2 -o "${ZIP_DST}.new" "${MODPACK_ZIP_URL}"
-        mv -f "${ZIP_DST}.new" "${ZIP_DST}"
-        return 0
-      fi
-
+      # 3) Optional PATH (do not hard-fail if missing)
       if [[ -n "${MODPACK_ZIP_PATH}" ]]; then
-        if [[ ! -f "${MODPACK_ZIP_PATH}" ]]; then
-          log "ERROR: MODPACK_ZIP_PATH not found: ${MODPACK_ZIP_PATH}"
-          exit 1
+        if [[ -f "${MODPACK_ZIP_PATH}" ]]; then
+          log "MODPACK: using zip from MODPACK_ZIP_PATH -> ${ZIP_DIR}/Linggango.zip"
+          cp -f "${MODPACK_ZIP_PATH}" "${ZIP_DIR}/Linggango.zip"
+          ZIP_DST="${ZIP_DIR}/Linggango.zip"
+          return 0
         fi
-
-        ZIP_DST="${ZIP_DIR}/$(basename "${MODPACK_ZIP_PATH}")"
-        log "MODPACK: using zip from MODPACK_ZIP_PATH -> ${ZIP_DST}"
-        cp -f "${MODPACK_ZIP_PATH}" "${ZIP_DST}"
-        return 0
+        log "MODPACK: WARN MODPACK_ZIP_PATH not found: ${MODPACK_ZIP_PATH} -> ignoring"
       fi
 
-      # Fallback: newest zip in APP_DIR/mods
+      # 4) Fallback: any .zip in ZIP_DIR
       local fallback
       fallback="$(ls -1t "${ZIP_DIR}"/*.zip 2>/dev/null | head -n 1 || true)"
-      if [[ -z "${fallback}" ]]; then
-        log "ERROR: No modpack zip found. Set MODPACK_ZIP_URL or MODPACK_ZIP_PATH or place a .zip into ${ZIP_DIR}."
-        exit 1
+      if [[ -n "${fallback}" ]]; then
+        ZIP_DST="${fallback}"
+        log "MODPACK: fallback to newest zip in ${ZIP_DIR}: ${ZIP_DST}"
+        return 0
       fi
 
-      ZIP_DST="${fallback}"
-      log "MODPACK: fallback to newest zip in ${ZIP_DIR}: ${ZIP_DST}"
+      log "ERROR: No modpack zip found. Provide MODPACK_ZIP_URL or FILE_ID+ZIP (or MOD_NAME+IMAGE_TAG)."
+      exit 1
     }
 
-    # -----------------------------
+    # ------------------------------------------------------------
     # Main flow
-    # -----------------------------
+    # ------------------------------------------------------------
     ensure_eula
     install_forge_if_needed
 
@@ -227,6 +194,7 @@ data:
     fi
     log "Forge unix_args: ${FORGE_UNIX_ARGS}"
 
+    seed_zip_from_image
     acquire_zip
 
     if [[ ! -f "${ZIP_DST}" ]]; then
@@ -239,140 +207,4 @@ data:
 
     # 1) (Re-)Init when zip changed (hash marker)
     if [[ ! -f "${INIT_MARKER}" ]]; then
-      log "MODPACK: new zip detected (hash=${ZIP_HASH}) -> re-initializing"
-
-      rm -rf "${MODPACK_DIR}"
-      mkdir -p "${MODPACK_DIR}"
-      unzip -q "${ZIP_DST}" -d "${MODPACK_DIR}"
-
-      if [[ ! -f "${MANIFEST_PATH}" ]]; then
-        log "ERROR: manifest.json not found after unzip: ${MANIFEST_PATH}"
-        find "${MODPACK_DIR}" -maxdepth 3 -type f | head -n 50 || true
-        exit 1
-      fi
-
-      # Apply overrides into APP_DIR (no overwrite)
-      if [[ -d "${OVERRIDES_DIR}" ]]; then
-        log "MODPACK: applying overrides/ -> ${APP_DIR} (no overwrite)"
-        cp -an "${OVERRIDES_DIR}/." "${APP_DIR}/" 2>/dev/null || true
-      else
-        log "MODPACK: WARN no overrides/ directory found"
-      fi
-
-      # IMPORTANT: clear old jars to prevent mixed modsets
-      log "MODS: clearing existing .jar in ${APP_DIR}/mods to avoid mixed versions"
-      mkdir -p "${APP_DIR}/mods"
-      find "${APP_DIR}/mods" -maxdepth 1 -type f -name "*.jar" -delete || true
-
-      # Remove old markers
-      rm -f "${DATA_DIR}/.modpack_initialized_"* 2>/dev/null || true
-
-      touch "${INIT_MARKER}"
-    else
-      log "MODPACK: already initialized for hash=${ZIP_HASH}"
-    fi
-
-    # 2) Ensure mods from manifest.json
-    mods_count() {
-      find "${APP_DIR}/mods" -maxdepth 1 -type f -name "*.jar" 2>/dev/null | wc -l | tr -d " "
-    }
-
-    if [[ "$(mods_count)" -lt 5 ]]; then
-      if [[ -z "${CF_API_KEY}" ]]; then
-        log "ERROR: CF_API_KEY not set - cannot download mods from manifest."
-        exit 1
-      fi
-
-      log "MODS: downloading from manifest ${MANIFEST_PATH}"
-      export APP_DIR MANIFEST_PATH CF_API_KEY
-
-      python3 <<'PY'
-    import os, json, pathlib, re
-    from urllib.parse import urlparse
-    import requests
-
-    APP_DIR = os.environ["APP_DIR"]
-    MANIFEST = os.environ["MANIFEST_PATH"]
-    KEY = os.environ["CF_API_KEY"]
-
-    API = "https://api.curseforge.com"
-    WEB_DL = "https://www.curseforge.com/api/v1/mods/{pid}/files/{fid}/download"
-    HEADERS = {"x-api-key": KEY, "accept": "application/json", "user-agent": "mc-gitops/1.0"}
-
-    mods_dir = pathlib.Path(APP_DIR) / "mods"
-    mods_dir.mkdir(parents=True, exist_ok=True)
-
-    def filename(resp: requests.Response) -> str:
-        cd = resp.headers.get("content-disposition", "")
-        m = re.search(r'filename="?([^"]+)"?', cd)
-        if m:
-            return m.group(1)
-        return pathlib.Path(urlparse(resp.url).path).name
-
-    def stream(url: str):
-        with requests.get(url, allow_redirects=True, stream=True, timeout=300,
-                          headers={"user-agent": "mc-gitops/1.0"}) as r:
-            r.raise_for_status()
-            name = filename(r)
-            out = mods_dir / name
-            if out.exists():
-                print("OK (exists):", name)
-                return
-            print("Downloading:", name)
-            with open(out, "wb") as w:
-                for ch in r.iter_content(chunk_size=1024 * 1024):
-                    if ch:
-                        w.write(ch)
-
-    with open(MANIFEST, "r", encoding="utf-8") as f:
-        manifest = json.load(f)
-
-    for e in manifest.get("files", []):
-        pid = e["projectID"]
-        fid = e["fileID"]
-
-        r = requests.get(f"{API}/v1/mods/{pid}/files/{fid}", headers=HEADERS, timeout=60)
-        if r.status_code == 200:
-            data = r.json()["data"]
-            url = data.get("downloadUrl") or WEB_DL.format(pid=pid, fid=fid)
-            stream(url)
-            continue
-        if r.status_code == 403:
-            stream(WEB_DL.format(pid=pid, fid=fid))
-            continue
-        r.raise_for_status()
-
-    print("Done.")
-    PY
-
-      n="$(mods_count)"
-      log "MODS: jars present: ${n}"
-      if [[ "${n}" -lt 5 ]]; then
-        log "ERROR: mod download did not produce enough jars."
-        exit 1
-      fi
-    else
-      log "MODS: already present ($(mods_count) jars)"
-    fi
-
-    # 3) Start server
-    cd "${APP_DIR}"
-
-    JVM_ARGS_FILE="${JVM_ARGS_FILE:-${APP_DIR}/user_jvm_args.txt}"
-    RESTART="${RESTART:-false}"
-
-    while true; do
-      log "SERVER: starting Forge"
-      java @"${JVM_ARGS_FILE}" @"${FORGE_UNIX_ARGS}" nogui &
-      pid=$!
-      wait "${pid}" || true
-
-      if [[ "${RESTART}" != "true" ]]; then
-        log "SERVER: stopped - restart disabled"
-        exit 0
-      fi
-
-      log "SERVER: stopped - restarting in 10s"
-      sleep 10
-    done
-
+      log "MODPACK: new zip detected (hash=${ZIP_HASH}) -> re-initializing"_
