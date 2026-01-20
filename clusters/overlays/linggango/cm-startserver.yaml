@@ -207,4 +207,91 @@ data:
 
     # 1) (Re-)Init when zip changed (hash marker)
     if [[ ! -f "${INIT_MARKER}" ]]; then
-      log "MODPACK: new zip detected (hash=${ZIP_HASH}) -> re-initializing"_
+      log "MODPACK: new zip detected (hash=${ZIP_HASH}) -> re-initializing"
+
+      rm -rf "${MODPACK_DIR}"
+      mkdir -p "${MODPACK_DIR}"
+
+      log "MODPACK: unzipping ${ZIP_DST} -> ${MODPACK_DIR}"
+      unzip -q "${ZIP_DST}" -d "${MODPACK_DIR}"
+
+      if [[ ! -f "${MANIFEST_PATH}" ]]; then
+        log "ERROR: manifest.json not found after unzip: ${MANIFEST_PATH}"
+        find "${MODPACK_DIR}" -maxdepth 3 -type f | head -n 50 || true
+        exit 1
+      fi
+
+      # If your download_mods.py expects /work/modpack/manifest.json, copy it there
+      mkdir -p /work/modpack
+      cp -f "${MANIFEST_PATH}" /work/modpack/manifest.json
+
+      # Apply overrides into APP_DIR (no overwrite)
+      if [[ -d "${OVERRIDES_DIR}" ]]; then
+        log "MODPACK: applying overrides/ -> ${APP_DIR} (no overwrite)"
+        cp -an "${OVERRIDES_DIR}/." "${APP_DIR}/" 2>/dev/null || true
+      else
+        log "MODPACK: WARN no overrides/ directory found"
+      fi
+
+      # IMPORTANT: clear old jars to prevent mixed modsets
+      log "MODS: clearing existing .jar in ${APP_DIR}/mods to avoid mixed versions"
+      mkdir -p "${APP_DIR}/mods"
+      find "${APP_DIR}/mods" -maxdepth 1 -type f -name "*.jar" -delete || true
+
+      # Remove old markers
+      rm -f "${DATA_DIR}/.modpack_initialized_"* 2>/dev/null || true
+
+      touch "${INIT_MARKER}"
+    else
+      log "MODPACK: already initialized for hash=${ZIP_HASH}"
+    fi
+
+    # 2) Ensure mods from manifest.json (via download_mods.py)
+    mods_count() {
+      find "${APP_DIR}/mods" -maxdepth 1 -type f -name "*.jar" 2>/dev/null | wc -l | tr -d " "
+    }
+
+    if [[ "$(mods_count)" -lt 5 ]]; then
+      if [[ -z "${CF_API_KEY}" ]]; then
+        log "ERROR: CF_API_KEY not set - cannot download mods from manifest."
+        exit 1
+      fi
+
+      log "MODS: downloading from manifest ${MANIFEST_PATH}"
+      export APP_DIR MANIFEST_PATH CF_API_KEY
+
+      # Prefer MANIFEST_PATH-driven download if your script supports it,
+      # otherwise it will use /work/modpack/manifest.json (we copied it above)
+      python3 /work/tools/download_mods.py
+
+      n="$(mods_count)"
+      log "MODS: jars present: ${n}"
+      if [[ "${n}" -lt 5 ]]; then
+        log "ERROR: mod download did not produce enough jars."
+        exit 1
+      fi
+    else
+      log "MODS: already present ($(mods_count) jars)"
+    fi
+
+    # 3) Start server
+    cd "${APP_DIR}"
+
+    JVM_ARGS_FILE="${JVM_ARGS_FILE:-${APP_DIR}/user_jvm_args.txt}"
+    RESTART="${RESTART:-false}"
+
+    while true; do
+      log "SERVER: starting Forge"
+      java @"${JVM_ARGS_FILE}" @"${FORGE_UNIX_ARGS}" nogui &
+      pid=$!
+      wait "${pid}" || true
+
+      if [[ "${RESTART}" != "true" ]]; then
+        log "SERVER: stopped - restart disabled"
+        exit 0
+      fi
+
+      log "SERVER: stopped - restarting in 10s"
+      sleep 10
+    done
+

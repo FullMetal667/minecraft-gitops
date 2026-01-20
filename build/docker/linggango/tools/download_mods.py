@@ -34,7 +34,9 @@ def download_stream(url: str, out_dir: pathlib.Path) -> pathlib.Path:
                     w.write(chunk)
         return out
 
-with open("/work/modpack/manifest.json", "r", encoding="utf-8") as f:
+manifest_path = os.environ.get("MANIFEST_PATH", "/work/modpack/manifest.json")
+
+with open(manifest_path, "r", encoding="utf-8") as f:
     manifest = json.load(f)
 
 for entry in manifest.get("files", []):
