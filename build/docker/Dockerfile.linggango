@@ -18,9 +18,7 @@ FROM registry.access.redhat.com/ubi9/openjdk-17:latest
 SHELL ["/bin/bash","-o","pipefail","-c"]
 USER 0
 
-# ------------------------------------------------------------
-# Runtime tools (keep minimal)
-# ------------------------------------------------------------
+# Runtime tools
 RUN microdnf -y install \
       python3 python3-pip \
       curl-minimal unzip \
@@ -33,66 +31,53 @@ RUN pip3 install --no-cache-dir requests
 # mcrcon binary
 COPY --from=mcrcon-builder --chmod=0755 --chown=0:0 /src/mcrcon/mcrcon /usr/local/bin/mcrcon
 
-# Optional: copy helper tools/scripts from repo
+# helper tools/scripts
 WORKDIR /work
 COPY linggango/tools/ /work/tools/
 
-# ------------------------------------------------------------
-# Immutable base path in image (no Forge install here!)
-# ------------------------------------------------------------
+# Base path in image
 ENV MC_HOME=/srv/mc
 RUN mkdir -p "${MC_HOME}/mods" "${MC_HOME}/config" "${MC_HOME}/defaultconfigs"
 
-# ------------------------------------------------------------
-# Optional: Modpack ZIP ins Image legen (aus FILE_ID + ZIP)
-# - Recommended to do at runtime to avoid ForgeCDN/Cloudflare 403
-# - If you keep it, make it "best effort" so builds don't fail.
-# ------------------------------------------------------------
+# (Optional) create runtime volume layout (won't persist if /data is a mounted volume)
+RUN mkdir -p /data/forge/mods
+
+# ----------------------------
+# Modpack ZIP ins Image legen (aus FILE_ID + ZIP) und standardisieren
+# Ergebnis: /srv/mc/mods/Linggango.zip
+# ----------------------------
 ARG FILE_ID
 ARG ZIP=""
-ARG MOD_NAME=""
-ARG IMAGE_TAG=""
 
 RUN set -euo pipefail; \
-    if [[ -z "${FILE_ID:-}" ]]; then \
-      echo "[BUILD] FILE_ID not set -> skipping modpack zip download"; \
+    if [[ -z "${FILE_ID:-}" || -z "${ZIP:-}" ]]; then \
+      echo "[BUILD] FILE_ID/ZIP not set -> skipping modpack zip download"; \
       exit 0; \
     fi; \
     DIR1=$(( FILE_ID / 1000 )); \
     DIR2=$(( FILE_ID % 1000 )); \
-    if [[ -z "${ZIP}" ]]; then \
-      if [[ -n "${MOD_NAME}" && -n "${IMAGE_TAG}" ]]; then \
-        ZIP="${MOD_NAME}-${IMAGE_TAG}.zip"; \
-      else \
-        echo "[BUILD] ZIP not set and MOD_NAME/IMAGE_TAG missing -> skipping"; \
-        exit 0; \
-      fi; \
-    fi; \
-    echo "[BUILD] Want modpack zip: ${ZIP} (FILE_ID=${FILE_ID} -> ${DIR1}/${DIR2})"; \
-    mkdir -p "${MC_HOME}/mods"; \
+    echo "[BUILD] Downloading modpack zip: ${ZIP} (FILE_ID=${FILE_ID} -> ${DIR1}/${DIR2})"; \
     ok="false"; \
     for HOST in mediafilez.forgecdn.net media.forgecdn.net edge.forgecdn.net; do \
       URL="https://${HOST}/files/${DIR1}/${DIR2}/${ZIP}"; \
-      echo "[BUILD] Trying download: ${URL}"; \
+      echo "[BUILD] Trying: ${URL}"; \
       if curl -fL --retry 2 --retry-delay 2 \
         -A "Mozilla/5.0" \
         -H "Referer: https://www.curseforge.com/" \
         -H "Accept: */*" \
-        -o "${MC_HOME}/mods/${ZIP}.new" "${URL}"; then \
-          mv -f "${MC_HOME}/mods/${ZIP}.new" "${MC_HOME}/mods/${ZIP}"; \
-          ls -lh "${MC_HOME}/mods/${ZIP}"; \
+        -o "${MC_HOME}/mods/Linggango.zip.new" "${URL}"; then \
+          mv -f "${MC_HOME}/mods/Linggango.zip.new" "${MC_HOME}/mods/Linggango.zip"; \
+          ls -lh "${MC_HOME}/mods/Linggango.zip"; \
           ok="true"; \
           break; \
       fi; \
     done; \
     if [[ "${ok}" != "true" ]]; then \
-      echo "[BUILD] WARN: could not download modpack zip during build (likely 403)."; \
-      echo "[BUILD]       -> will need MODPACK_ZIP_URL or MODPACK_ZIP_PATH at runtime."; \
-      rm -f "${MC_HOME}/mods/${ZIP}.new" 2>/dev/null || true; \
-      exit 0; \
+      echo "[BUILD] ERROR: could not download modpack zip during build (403/other)."; \
+      exit 22; \
     fi
 
-# EULA in image (startscript checks it)
+# EULA in image
 RUN echo "eula=true" > "${MC_HOME}/eula.txt"
 
 # OpenShift arbitrary UID compatible perms

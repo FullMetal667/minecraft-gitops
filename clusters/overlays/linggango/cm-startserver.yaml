@@ -41,6 +41,27 @@ data:
     need unzip
     need python3
 
+    seed_zip_from_image() {
+      mkdir -p "${ZIP_DIR}"
+
+      # Wenn schon im Volume vorhanden -> nix tun
+      if [[ -f "${ZIP_DIR}/Linggango.zip" ]]; then
+        log "MODPACK: zip already present in volume: ${ZIP_DIR}/Linggango.zip"
+        return 0
+      fi
+
+      # Wenn im Image vorhanden -> kopieren
+      if [[ -f "${IMAGE_MC_HOME}/mods/Linggango.zip" ]]; then
+        log "MODPACK: seeding zip from image -> ${ZIP_DIR}/Linggango.zip"
+        cp -f "${IMAGE_MC_HOME}/mods/Linggango.zip" "${ZIP_DIR}/Linggango.zip"
+        return 0
+      fi
+
+      log "MODPACK: no zip to seed from image (${IMAGE_MC_HOME}/mods/Linggango.zip missing)"
+    }
+
+    seed_zip_from_image
+
     # -----------------------------
     # Ensure EULA exists in APP_DIR
     # -----------------------------
