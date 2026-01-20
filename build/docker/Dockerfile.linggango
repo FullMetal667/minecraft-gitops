@@ -72,10 +72,12 @@ RUN set -euo pipefail; \
           break; \
       fi; \
     done; \
-    if [[ "${ok}" != "true" ]]; then \
-      echo "[BUILD] ERROR: could not download modpack zip during build (403/other)."; \
-      exit 22; \
-    fi
+      if [[ "${ok}" != "true" ]]; then \
+        echo "[BUILD] WARN: could not download modpack zip during build (likely 403)."; \
+        echo "[BUILD]       -> will download at runtime."; \
+        rm -f "${MC_HOME}/mods/Linggango.zip.new" 2>/dev/null || true; \
+        exit 0; \
+      fi
 
 # EULA in image
 RUN echo "eula=true" > "${MC_HOME}/eula.txt"

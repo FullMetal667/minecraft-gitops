@@ -10,6 +10,76 @@ data:
     log() { echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] $*"; }
     need() { command -v "$1" >/dev/null 2>&1 || { log "ERROR: missing $1"; exit 1; }; }
 
+    FILE_ID="${FILE_ID:-}"
+    ZIP_NAME="${ZIP_NAME:-}"
+    MOD_NAME="${MOD_NAME:-}"
+    IMAGE_TAG="${IMAGE_TAG:-}"
+
+    acquire_zip() {
+      mkdir -p "${ZIP_DIR}" "${DATA_DIR}"
+
+      # 1) Explicit URL wins
+      if [[ -n "${MODPACK_ZIP_URL}" ]]; then
+        log "MODPACK: downloading zip from MODPACK_ZIP_URL -> ${ZIP_DIR}/Linggango.zip"
+        curl -fL --retry 3 --retry-delay 2 -o "${ZIP_DIR}/Linggango.zip.new" "${MODPACK_ZIP_URL}"
+        mv -f "${ZIP_DIR}/Linggango.zip.new" "${ZIP_DIR}/Linggango.zip"
+        ZIP_DST="${ZIP_DIR}/Linggango.zip"
+        return 0
+      fi
+
+      # 2) Derive URL from FILE_ID + ZIP_NAME (or MOD_NAME+IMAGE_TAG)
+      if [[ -z "${ZIP_NAME}" && -n "${MOD_NAME}" && -n "${IMAGE_TAG}" ]]; then
+        ZIP_NAME="${MOD_NAME}-${IMAGE_TAG}.zip"
+      fi
+
+      if [[ -n "${FILE_ID}" && -n "${ZIP_NAME}" ]]; then
+        local dir1 dir2 url
+        dir1=$(( FILE_ID / 1000 ))
+        dir2=$(( FILE_ID % 1000 ))
+        url="https://mediafilez.forgecdn.net/files/${dir1}/${dir2}/${ZIP_NAME}"
+
+        log "MODPACK: downloading zip from derived URL -> ${ZIP_DIR}/Linggango.zip"
+        log "MODPACK: url=${url}"
+        curl -fL --retry 3 --retry-delay 2 \
+          -A "Mozilla/5.0" \
+          -H "Referer: https://www.curseforge.com/" \
+          -H "Accept: */*" \
+          -o "${ZIP_DIR}/Linggango.zip.new" "${url}"
+        mv -f "${ZIP_DIR}/Linggango.zip.new" "${ZIP_DIR}/Linggango.zip"
+        ZIP_DST="${ZIP_DIR}/Linggango.zip"
+        return 0
+      fi
+
+      # 3) Explicit PATH (optional). If not found, do NOT hard-fail.
+      if [[ -n "${MODPACK_ZIP_PATH}" ]]; then
+        if [[ -f "${MODPACK_ZIP_PATH}" ]]; then
+          log "MODPACK: using zip from MODPACK_ZIP_PATH -> ${ZIP_DIR}/Linggango.zip"
+          cp -f "${MODPACK_ZIP_PATH}" "${ZIP_DIR}/Linggango.zip"
+          ZIP_DST="${ZIP_DIR}/Linggango.zip"
+          return 0
+        fi
+        log "MODPACK: WARN MODPACK_ZIP_PATH not found: ${MODPACK_ZIP_PATH} -> ignoring"
+      fi
+
+      # 4) Fallback: existing in ZIP_DIR
+      if [[ -f "${ZIP_DIR}/Linggango.zip" ]]; then
+        ZIP_DST="${ZIP_DIR}/Linggango.zip"
+        log "MODPACK: using existing ${ZIP_DST}"
+        return 0
+      fi
+
+      local fallback
+      fallback="$(ls -1t "${ZIP_DIR}"/*.zip 2>/dev/null | head -n 1 || true)"
+      if [[ -n "${fallback}" ]]; then
+        ZIP_DST="${fallback}"
+        log "MODPACK: fallback to newest zip in ${ZIP_DIR}: ${ZIP_DST}"
+        return 0
+      fi
+
+      log "ERROR: No modpack zip found. Provide MODPACK_ZIP_URL or FILE_ID+ZIP_NAME (or MOD_NAME+IMAGE_TAG)."
+      exit 1
+    }
+
     # -----------------------------
     # Paths / Defaults (MUST be set before any use because of -u)
     # -----------------------------

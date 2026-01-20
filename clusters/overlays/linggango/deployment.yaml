@@ -55,13 +55,13 @@ spec:
           env:
             - name: EULA
               value: "true"
-            - name: MODPACK_VERSION
-              value: "6.4"
           envFrom:
             - secretRef:
                 name: mc-env
             - secretRef:
                 name: secret-curseforge
+            - secretRef:
+                name: mc-env-t9g8mfc977
           command: ["/bin/bash","-lc"]
           args: ["/data/startserver.sh"]
           volumeMounts:
