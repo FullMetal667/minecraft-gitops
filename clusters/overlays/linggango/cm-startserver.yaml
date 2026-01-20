@@ -270,43 +270,16 @@ data:
 
         # known client-only / rendering stacks
         if [[ "${lower}" == *entity_model_features* ]] \
-          || [[ "${lower}" == *entity_texture_features* ]] \
-          || [[ "${lower}" == *asyncparticles* ]] \
-          || [[ "${lower}" == *async-particles* ]] \
-          || [[ "${lower}" == *async_particles* ]] \
-          || [[ "${lower}" == *fabric-screen-api* ]] \
-          || [[ "${lower}" == *sodiumoptions* ]] \
-          || [[ "${lower}" == *sodiumdynamiclights* ]] \
-          || [[ "${lower}" == *entity_texture_features* ]] \
-          || [[ "${lower}" == *etf* ]] \
-          || [[ "${lower}" == *emf* ]] \
-          || [[ "${lower}" == *forge-asyncparticles* ]] \
-          || [[ "${lower}" == *enigmaticaddons* ]] \
-          || [[ "${lower}" == *enigmaticdelicacy* ]] \
-          || [[ "${lower}" == *enigmaticdice* ]] \
-          || [[ "${lower}" == *create_connected* ]] \
-          || [[ "${lower}" == *createaddition* ]] \
-          || [[ "${lower}" == *create_addition* ]] \
-          || [[ "${lower}" == *copycats* ]] \
-          || [[ "${lower}" == *flywheel* ]] \
-          || [[ "${lower}" == *registrate* ]] \
-          || [[ "${lower}" == *create*compat* ]] \
-          || [[ "${lower}" == *sodium* ]] \
-          || [[ "${lower}" == *iris* ]] \
-          || [[ "${lower}" == *oculus* ]] \
-          || [[ "${lower}" == *mekalus* ]] \
-          || [[ "${lower}" == *nolijium* ]] \
-          || [[ "${lower}" == *connector* ]] \
-          || [[ "${lower}" == *fabric-api* ]] \
-          || [[ "${lower}" == *quifabrge* ]] \
-          || [[ "${lower}" == *forgifiedfabricapi* ]] \
-          || [[ "${lower}" == *embeddium* ]] \
-          || [[ "${lower}" == *rubidium* ]] \
-          || [[ "${lower}" == *dynamicfps* ]] \
-          || [[ "${lower}" == *shader* ]] \
-          || [[ "${lower}" == xaeros_minimap_* ]] \
-          || [[ "${lower}" == *xaeros*minimap* ]] \
-          || [[ "${lower}" == xaeros_waystones_compability* ]]; then
+          || [[ "${lower}" == fabric-* ]] \
+          || [[ "${lower}" == *mousetweaks* ]] \
+          || [[ "${lower}" == *controlling* ]] \
+          || [[ "${lower}" == *configured* ]] \
+          || [[ "${lower}" == *drippyloadingscreen* ]] \
+          || [[ "${lower}" == *discordrichpresence* ]] \
+          || [[ "${lower}" == *sdrp* ]] \
+          || [[ "${lower}" == *xaeroworldmap* ]] \
+          || [[ "${lower}" == *particular* ]] \
+          || [[ "${lower}" == *toomanyrecipeviewers* ]] \
           log "MODS: disabling client-only: ${base}"
           mv -f "$f" "${DISABLED_DIR}/${base}" 2>/dev/null || true
           continue
