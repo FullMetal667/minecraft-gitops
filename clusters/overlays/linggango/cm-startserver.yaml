@@ -41,6 +41,8 @@ data:
     MANIFEST_PATH="${UNPACK_DIR}/manifest.json"
     OVERRIDES_DIR="${UNPACK_DIR}/overrides"
 
+    DISABLE_CREATE_ADDONS="${DISABLE_CREATE_ADDONS:-true}"
+
     mkdir -p "${DATA_DIR}" "${APP_DIR}" "${MODS_DIR}" "${DISABLED_DIR}" "${MODPACK_DIR}"
     log "Using APP_DIR=${APP_DIR} DATA_DIR=${DATA_DIR}"
 
@@ -249,6 +251,15 @@ data:
         [[ -f "$f" ]] || continue
         base="$(basename "$f")"
         lower="${base,,}"
+
+        # --- Create isolation: keep only core Create on servers ---
+        if [[ "${DISABLE_CREATE_ADDONS}" == "true" ]]; then
+          if [[ "${lower}" == *create* ]] && [[ "${lower}" != create-*.jar ]]; then
+            log "MODS: disabling Create addon (isolation mode): ${base}"
+            mv -f "$f" "${DISABLED_DIR}/${base}" 2>/dev/null || true
+            continue
+          fi
+        fi
 
         # move zips from mods dir (shouldn't happen, but safe)
         if [[ "${lower}" != *.jar ]]; then
