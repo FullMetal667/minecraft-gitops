@@ -252,12 +252,16 @@ data:
         base="$(basename "$f")"
         lower="${base,,}"
 
-        # --- Create isolation: keep only core Create on servers ---
         if [[ "${DISABLE_CREATE_ADDONS}" == "true" ]]; then
-          if [[ "${lower}" == *create* ]] && [[ "${lower}" != create-*.jar ]]; then
-            log "MODS: disabling Create addon (isolation mode): ${base}"
-            mv -f "$f" "${DISABLED_DIR}/${base}" 2>/dev/null || true
-            continue
+          if [[ "${lower}" == create_* ]] || [[ "${lower}" == create-* ]]; then
+            # core create behalten:
+            if [[ "${lower}" == create-*.jar ]]; then
+              : # keep
+            else
+              log "MODS: disabling Create addon (isolation mode): ${base}"
+              mv -f "$f" "${DISABLED_DIR}/${base}" 2>/dev/null || true
+              continue
+            fi
           fi
         fi
 
@@ -269,8 +273,13 @@ data:
         fi
 
         # known client-only / wrong-side artifacts on dedicated servers
-        # (rendering, UI, HUD, recipe viewers, discord presence, fabric-only libs, particle/visual mods)
-        if [[ "${lower}" == *entity_texture_features* ]] \
+        # (rendering, UI, HUD, camera, minimap/worldmap, particles, shaders)
+        if [[ "${lower}" == *asyncparticles* ]] \
+          || [[ "${lower}" == *shouldersurfing* ]] \
+          || [[ "${lower}" == *oculus* ]] \
+          || [[ "${lower}" == *mekalus* ]] \
+          || [[ "${lower}" == *nolijium* ]] \
+          || [[ "${lower}" == *entity_texture_features* ]] \
           || [[ "${lower}" == *entity_model_features* ]] \
           || [[ "${lower}" == *etf* ]] \
           || [[ "${lower}" == *emf* ]] \
@@ -282,12 +291,9 @@ data:
           || [[ "${lower}" == *dynamicfps* ]] \
           || [[ "${lower}" == *sodium* ]] \
           || [[ "${lower}" == *iris* ]] \
-          || [[ "${lower}" == *oculus* ]] \
           || [[ "${lower}" == *embeddium* ]] \
           || [[ "${lower}" == *rubidium* ]] \
           || [[ "${lower}" == *shader* ]] \
-          || [[ "${lower}" == *mekalus* ]] \
-          || [[ "${lower}" == *nolijium* ]] \
           || [[ "${lower}" == *mousetweaks* ]] \
           || [[ "${lower}" == *controlling* ]] \
           || [[ "${lower}" == *configured* ]] \
@@ -296,23 +302,23 @@ data:
           || [[ "${lower}" == *simplediscordrichpresence* ]] \
           || [[ "${lower}" == *sdrp* ]] \
           || [[ "${lower}" == *xaeroworldmap* ]] \
+          || [[ "${lower}" == *xaerominimap* ]] \
           || [[ "${lower}" == *xaeros*minimap* ]] \
           || [[ "${lower}" == *minimap* ]] \
           || [[ "${lower}" == *worldmap* ]] \
+          || [[ "${lower}" == *w2w2* ]] \
           || [[ "${lower}" == *xaeros_waystones_compability* ]] \
           || [[ "${lower}" == *waystones_compability* ]] \
           || [[ "${lower}" == *particular* ]] \
           || [[ "${lower}" == *toomanyrecipeviewers* ]] \
           || [[ "${lower}" == *jei* ]] \
           || [[ "${lower}" == *rei* ]] \
-          || [[ "${lower}" == *w2w2* ]] \
-          || [[ "${lower}" == *xaerominimap* ]] \
-          || [[ "${lower}" == *xaeroworldmap* ]] \
           || [[ "${lower}" == *emi* ]]; then
           log "MODS: disabling client-only: ${base}"
           mv -f "$f" "${DISABLED_DIR}/${base}" 2>/dev/null || true
           continue
         fi
+
       done < <(find "${MODS_DIR}" -maxdepth 2 -type f 2>/dev/null)
       shopt -u nullglob
     }
@@ -329,9 +335,10 @@ data:
     }
 
     # Call these:
+    disable_by_modid "asyncparticles"
+    disable_by_modid "shouldersurfing"
     disable_by_modid "oculus"
     disable_by_modid "nolijium"
-    disable_by_modid "mekalus"
 
     # ------------------------------------------------------------
     # Optional: run mcrcon commands
