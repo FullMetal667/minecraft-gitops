@@ -297,6 +297,8 @@ data:
           || [[ "${lower}" == *xaeros*minimap* ]] \
           || [[ "${lower}" == *minimap* ]] \
           || [[ "${lower}" == *worldmap* ]] \
+          || [[ "${lower}" == *xaeros_waystones_compability* ]] \
+          || [[ "${lower}" == *waystones_compability* ]] \
           || [[ "${lower}" == *particular* ]] \
           || [[ "${lower}" == *toomanyrecipeviewers* ]] \
           || [[ "${lower}" == *jei* ]] \
