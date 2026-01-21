@@ -315,6 +315,22 @@ data:
       shopt -u nullglob
     }
 
+    disable_by_modid() {
+      local id="$1"
+      find "${MODS_DIR}" -maxdepth 2 -type f -name "*.jar" -print0 \
+      | while IFS= read -r -d '' j; do
+          if unzip -p "$j" META-INF/mods.toml 2>/dev/null | grep -qE "modId\s*=\s*\"${id}\""; then
+            log "MODS: disabling by modId=${id}: $(basename "$j")"
+            mv -f "$j" "${DISABLED_DIR}/" 2>/dev/null || true
+          fi
+        done
+    }
+
+    # Call these:
+    disable_by_modid "oculus"
+    disable_by_modid "nolijium"
+    disable_by_modid "mekalus"
+
     # ------------------------------------------------------------
     # Optional: run mcrcon commands
     # (runs in background after server start)
