@@ -286,6 +286,8 @@ data:
           || [[ "${lower}" == *embeddium* ]] \
           || [[ "${lower}" == *rubidium* ]] \
           || [[ "${lower}" == *shader* ]] \
+          || [[ "${lower}" == *mekalus* ]] \
+          || [[ "${lower}" == *nolijium* ]] \
           || [[ "${lower}" == *mousetweaks* ]] \
           || [[ "${lower}" == *controlling* ]] \
           || [[ "${lower}" == *configured* ]] \
