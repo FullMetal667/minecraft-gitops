@@ -34,4 +34,4 @@ patches:
 images:
   - name: docker.io/chrisroth667/minecraft
     newName: docker.io/chrisroth667/linggango
-    newTag: "v6.41"
+    newTag: "v6.4"
