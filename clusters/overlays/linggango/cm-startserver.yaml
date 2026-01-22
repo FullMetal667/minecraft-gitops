@@ -31,6 +31,20 @@ data:
     MOD_NAME="${MOD_NAME:-}"
     IMAGE_TAG="${IMAGE_TAG:-}"
 
+    # RCON / mcrcon
+    RCON_ENABLED="${RCON_ENABLED:-true}"             # server.properties already enabled -> default true
+    RCON_HOST="${RCON_HOST:-127.0.0.1}"
+    RCON_PORT="${RCON_PORT:-25575}"
+    RCON_PASSWORD="${RCON_PASSWORD:-${RCON_PW:-}}"
+
+    # SimpleBackups (optional)
+    # If the mod is installed, it will create backups itself. This adds a belt+braces "manual" backup, too.
+    SIMPLEBACKUP_ENABLED="${SIMPLEBACKUP_ENABLED:-true}"
+    BACKUP_INTERVAL_MINUTES="${BACKUP_INTERVAL_MINUTES:-60}"     # 60min
+    BACKUP_RETENTION_DAYS="${BACKUP_RETENTION_DAYS:-7}"          # keep 7 days
+    BACKUP_DIR="${BACKUP_DIR:-${DATA_DIR}/backups}"
+    WORLD_DIR="${WORLD_DIR:-${APP_DIR}/world}"                   # typical Forge world dir
+
     # Layout
     MODS_DIR="${APP_DIR}/mods"
     DISABLED_DIR="${APP_DIR}/mods.disabled"
@@ -43,7 +57,7 @@ data:
 
     DISABLE_CREATE_ADDONS="${DISABLE_CREATE_ADDONS:-true}"
 
-    mkdir -p "${DATA_DIR}" "${APP_DIR}" "${MODS_DIR}" "${DISABLED_DIR}" "${MODPACK_DIR}"
+    mkdir -p "${DATA_DIR}" "${APP_DIR}" "${MODS_DIR}" "${DISABLED_DIR}" "${MODPACK_DIR}" "${BACKUP_DIR}"
     log "Using APP_DIR=${APP_DIR} DATA_DIR=${DATA_DIR}"
 
     need java
@@ -341,19 +355,41 @@ data:
     disable_by_modid "nolijium"
 
     # ------------------------------------------------------------
-    # Optional: run mcrcon commands
-    # (runs in background after server start)
+    # mcrcon bootstrap: run /data/commands.txt after server start
     # ------------------------------------------------------------
+    ensure_mcrcon() {
+      if command -v mcrcon >/dev/null 2>&1; then return 0; fi
+      log "TOOLS: mcrcon missing -> installing/building"
+      if command -v microdnf >/dev/null 2>&1; then
+        # Try repo first (may fail, depends on UBI repos)
+        microdnf -y install mcrcon >/dev/null 2>&1 && microdnf clean all && return 0 || true
+        # Fallback: build from source
+        microdnf -y install git make gcc >/dev/null 2>&1
+        rm -rf /tmp/mcrcon-src
+        git clone --depth 1 https://github.com/Tiiffi/mcrcon.git /tmp/mcrcon-src
+        make -C /tmp/mcrcon-src
+        install -m 0755 /tmp/mcrcon-src/mcrcon /usr/local/bin/mcrcon
+        rm -rf /tmp/mcrcon-src
+        microdnf -y remove git make gcc >/dev/null 2>&1 || true
+        microdnf clean all >/dev/null 2>&1 || true
+      else
+        log "WARN: microdnf not available, cannot install mcrcon automatically"
+        return 1
+      fi
+    }
+
     run_mcrcon_commands_bg() {
-      [[ "${RCON_ENABLED:-false}" == "true" ]] || return 0
-      [[ -n "${RCON_PASSWORD:-}" ]] || { log "MCRCON: RCON_PASSWORD missing"; return 0; }
+      [[ "${RCON_ENABLED}" == "true" ]] || { log "MCRCON: disabled"; return 0; }
+      [[ -n "${RCON_PASSWORD}" ]] || { log "MCRCON: RCON_PASSWORD missing"; return 0; }
       [[ -f "/data/commands.txt" ]] || { log "MCRCON: no /data/commands.txt found"; return 0; }
-      command -v mcrcon >/dev/null 2>&1 || { log "MCRCON: binary not present"; return 0; }
+
+      ensure_mcrcon || { log "MCRCON: mcrcon not available"; return 0; }
 
       (
-        log "MCRCON: waiting for RCON..."
-        for i in {1..60}; do
-          if mcrcon -H "${RCON_HOST:-127.0.0.1}" -P "${RCON_PORT:-25575}" -p "${RCON_PASSWORD}" "list" >/dev/null 2>&1; then
+        log "MCRCON: waiting for RCON at ${RCON_HOST}:${RCON_PORT} ..."
+        for i in {1..90}; do
+          if mcrcon -H "${RCON_HOST}" -P "${RCON_PORT}" -p "${RCON_PASSWORD}" "list" >/dev/null 2>&1; then
+            log "MCRCON: RCON is up"
             break
           fi
           sleep 2
@@ -363,8 +399,56 @@ data:
         while IFS= read -r cmd; do
           [[ -z "${cmd}" || "${cmd}" =~ ^# ]] && continue
           log "MCRCON: > ${cmd}"
-          mcrcon -H "${RCON_HOST:-127.0.0.1}" -P "${RCON_PORT:-25575}" -p "${RCON_PASSWORD}" "${cmd}" || true
+          mcrcon -H "${RCON_HOST}" -P "${RCON_PORT}" -p "${RCON_PASSWORD}" "${cmd}" || true
         done < /data/commands.txt
+      ) &
+    }
+
+    # ------------------------------------------------------------
+    # Simple backup loop (tar.gz) + optional RCON save-all
+    # ------------------------------------------------------------
+    do_backup_once() {
+      [[ "${SIMPLEBACKUP_ENABLED}" == "true" ]] || return 0
+      [[ -d "${WORLD_DIR}" ]] || { log "BACKUP: world dir not found: ${WORLD_DIR}"; return 0; }
+
+      local ts out
+      ts="$(date -u +%Y%m%dT%H%M%SZ)"
+      out="${BACKUP_DIR}/world-${ts}.tar.gz"
+
+      # Ask server to flush to disk (best-effort)
+      if [[ "${RCON_ENABLED}" == "true" ]] && command -v mcrcon >/dev/null 2>&1 && [[ -n "${RCON_PASSWORD}" ]]; then
+        log "BACKUP: rcon save-all (flush)"
+        mcrcon -H "${RCON_HOST}" -P "${RCON_PORT}" -p "${RCON_PASSWORD}" "save-all flush" >/dev/null 2>&1 || true
+      fi
+
+      log "BACKUP: creating ${out}"
+      tar -C "${WORLD_DIR}" -czf "${out}" . 2>/dev/null || { log "BACKUP: tar failed"; return 0; }
+
+      # Retention
+      if [[ "${BACKUP_RETENTION_DAYS}" =~ ^[0-9]+$ ]]; then
+        find "${BACKUP_DIR}" -type f -name "world-*.tar.gz" -mtime +"${BACKUP_RETENTION_DAYS}" -delete 2>/dev/null || true
+      fi
+      log "BACKUP: done"
+    }
+
+    run_backup_loop_bg() {
+      [[ "${SIMPLEBACKUP_ENABLED}" == "true" ]] || { log "BACKUP: disabled"; return 0; }
+      if ! [[ "${BACKUP_INTERVAL_MINUTES}" =~ ^[0-9]+$ ]] || [[ "${BACKUP_INTERVAL_MINUTES}" -lt 1 ]]; then
+        log "BACKUP: invalid BACKUP_INTERVAL_MINUTES=${BACKUP_INTERVAL_MINUTES} (must be >= 1) -> disabling"
+        return 0
+      fi
+
+      # ensure mcrcon available if we want save-all flush
+      if [[ "${RCON_ENABLED}" == "true" ]]; then
+        ensure_mcrcon >/dev/null 2>&1 || true
+      fi
+
+      (
+        log "BACKUP: loop enabled (every ${BACKUP_INTERVAL_MINUTES} min), retention ${BACKUP_RETENTION_DAYS} days, dir=${BACKUP_DIR}"
+        while true; do
+          do_backup_once || true
+          sleep "$(( BACKUP_INTERVAL_MINUTES * 60 ))"
+        done
       ) &
     }
 
@@ -404,7 +488,9 @@ data:
       java @"${JVM_ARGS_FILE}" @"${FORGE_UNIX_ARGS}" nogui &
       pid=$!
 
+      # fire-and-forget helpers
       run_mcrcon_commands_bg
+      run_backup_loop_bg
 
       wait "${pid}" || true
 
