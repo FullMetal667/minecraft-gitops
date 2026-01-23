@@ -62,8 +62,6 @@ spec:
                 name: secret-curseforge
             - secretRef:
                 name: mc-env
-          command: ["/bin/bash","-lc"]
-          args: ["/data/startserver.sh"]
           volumeMounts:
             - name: mcrcon-commands
               mountPath: /data/commands.txt
