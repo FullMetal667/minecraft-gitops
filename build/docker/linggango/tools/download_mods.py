@@ -2,7 +2,7 @@ import os, json, pathlib, requests, re
 from urllib.parse import urlparse
 
 API = "https://api.curseforge.com"
-WEB_DL = "https://www.curseforge.com/api/v1/mods/1343057/files/7373442/download"
+WEB_DL = "https://www.curseforge.com/api/v1/mods/1343057/files/7506380/download"
 
 KEY = os.environ["CF_API_KEY"]
 HEADERS = {"x-api-key": KEY, "accept": "application/json"}
