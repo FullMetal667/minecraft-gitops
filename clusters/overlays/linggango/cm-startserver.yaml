@@ -254,105 +254,105 @@ data:
       find "${MODS_DIR}" -maxdepth 1 -type f -name "*.jar" 2>/dev/null | wc -l | tr -d " "
     }
 
-    # ------------------------------------------------------------
-    # Disable client-only or wrong artifacts on dedicated server
-    # ------------------------------------------------------------
-    disable_client_only_mods() {
-      mkdir -p "${DISABLED_DIR}"
+    # # ------------------------------------------------------------
+    # # Disable client-only or wrong artifacts on dedicated server
+    # # ------------------------------------------------------------
+    # disable_client_only_mods() {
+    #   mkdir -p "${DISABLED_DIR}"
 
-      shopt -s nullglob
-      while IFS= read -r f; do
-        [[ -f "$f" ]] || continue
-        base="$(basename "$f")"
-        lower="${base,,}"
+    #   shopt -s nullglob
+    #   while IFS= read -r f; do
+    #     [[ -f "$f" ]] || continue
+    #     base="$(basename "$f")"
+    #     lower="${base,,}"
 
-        if [[ "${DISABLE_CREATE_ADDONS}" == "true" ]]; then
-          if [[ "${lower}" == create_* ]] || [[ "${lower}" == create-* ]]; then
-            # core create behalten:
-            if [[ "${lower}" == create-*.jar ]]; then
-              : # keep
-            else
-              log "MODS: disabling Create addon (isolation mode): ${base}"
-              mv -f "$f" "${DISABLED_DIR}/${base}" 2>/dev/null || true
-              continue
-            fi
-          fi
-        fi
+    #     if [[ "${DISABLE_CREATE_ADDONS}" == "true" ]]; then
+    #       if [[ "${lower}" == create_* ]] || [[ "${lower}" == create-* ]]; then
+    #         # core create behalten:
+    #         if [[ "${lower}" == create-*.jar ]]; then
+    #           : # keep
+    #         else
+    #           log "MODS: disabling Create addon (isolation mode): ${base}"
+    #           mv -f "$f" "${DISABLED_DIR}/${base}" 2>/dev/null || true
+    #           continue
+    #         fi
+    #       fi
+    #     fi
 
-        # move zips from mods dir (shouldn't happen, but safe)
-        if [[ "${lower}" != *.jar ]]; then
-          log "MODS: disabling non-jar in mods/: ${base}"
-          mv -f "$f" "${DISABLED_DIR}/${base}" 2>/dev/null || true
-          continue
-        fi
+    #     # move zips from mods dir (shouldn't happen, but safe)
+    #     if [[ "${lower}" != *.jar ]]; then
+    #       log "MODS: disabling non-jar in mods/: ${base}"
+    #       mv -f "$f" "${DISABLED_DIR}/${base}" 2>/dev/null || true
+    #       continue
+    #     fi
 
-        # known client-only / wrong-side artifacts on dedicated servers
-        # (rendering, UI, HUD, camera, minimap/worldmap, particles, shaders)
-        if [[ "${lower}" == *asyncparticles* ]] \
-          || [[ "${lower}" == *shouldersurfing* ]] \
-          || [[ "${lower}" == *oculus* ]] \
-          || [[ "${lower}" == *mekalus* ]] \
-          || [[ "${lower}" == *nolijium* ]] \
-          || [[ "${lower}" == *entity_texture_features* ]] \
-          || [[ "${lower}" == *entity_model_features* ]] \
-          || [[ "${lower}" == *etf* ]] \
-          || [[ "${lower}" == *emf* ]] \
-          || [[ "${lower}" == *particle_core* ]] \
-          || [[ "${lower}" == *particlecore* ]] \
-          || [[ "${lower}" == *fzzy_config* ]] \
-          || [[ "${lower}" == fabric-* ]] \
-          || [[ "${lower}" == *fabric-api* ]] \
-          || [[ "${lower}" == *dynamicfps* ]] \
-          || [[ "${lower}" == *sodium* ]] \
-          || [[ "${lower}" == *iris* ]] \
-          || [[ "${lower}" == *embeddium* ]] \
-          || [[ "${lower}" == *rubidium* ]] \
-          || [[ "${lower}" == *shader* ]] \
-          || [[ "${lower}" == *mousetweaks* ]] \
-          || [[ "${lower}" == *controlling* ]] \
-          || [[ "${lower}" == *configured* ]] \
-          || [[ "${lower}" == *drippyloadingscreen* ]] \
-          || [[ "${lower}" == *discordrichpresence* ]] \
-          || [[ "${lower}" == *simplediscordrichpresence* ]] \
-          || [[ "${lower}" == *sdrp* ]] \
-          || [[ "${lower}" == *xaeroworldmap* ]] \
-          || [[ "${lower}" == *xaerominimap* ]] \
-          || [[ "${lower}" == *xaeros*minimap* ]] \
-          || [[ "${lower}" == *minimap* ]] \
-          || [[ "${lower}" == *worldmap* ]] \
-          || [[ "${lower}" == *w2w2* ]] \
-          || [[ "${lower}" == *xaeros_waystones_compability* ]] \
-          || [[ "${lower}" == *waystones_compability* ]] \
-          || [[ "${lower}" == *particular* ]] \
-          || [[ "${lower}" == *toomanyrecipeviewers* ]] \
-          || [[ "${lower}" == *jei* ]] \
-          || [[ "${lower}" == *rei* ]] \
-          || [[ "${lower}" == *emi* ]]; then
-          log "MODS: disabling client-only: ${base}"
-          mv -f "$f" "${DISABLED_DIR}/${base}" 2>/dev/null || true
-          continue
-        fi
+    #     # known client-only / wrong-side artifacts on dedicated servers
+    #     # (rendering, UI, HUD, camera, minimap/worldmap, particles, shaders)
+    #     if [[ "${lower}" == *asyncparticles* ]] \
+    #       || [[ "${lower}" == *shouldersurfing* ]] \
+    #       || [[ "${lower}" == *oculus* ]] \
+    #       || [[ "${lower}" == *mekalus* ]] \
+    #       || [[ "${lower}" == *nolijium* ]] \
+    #       || [[ "${lower}" == *entity_texture_features* ]] \
+    #       || [[ "${lower}" == *entity_model_features* ]] \
+    #       || [[ "${lower}" == *etf* ]] \
+    #       || [[ "${lower}" == *emf* ]] \
+    #       || [[ "${lower}" == *particle_core* ]] \
+    #       || [[ "${lower}" == *particlecore* ]] \
+    #       || [[ "${lower}" == *fzzy_config* ]] \
+    #       || [[ "${lower}" == fabric-* ]] \
+    #       || [[ "${lower}" == *fabric-api* ]] \
+    #       || [[ "${lower}" == *dynamicfps* ]] \
+    #       || [[ "${lower}" == *sodium* ]] \
+    #       || [[ "${lower}" == *iris* ]] \
+    #       || [[ "${lower}" == *embeddium* ]] \
+    #       || [[ "${lower}" == *rubidium* ]] \
+    #       || [[ "${lower}" == *shader* ]] \
+    #       || [[ "${lower}" == *mousetweaks* ]] \
+    #       || [[ "${lower}" == *controlling* ]] \
+    #       || [[ "${lower}" == *configured* ]] \
+    #       || [[ "${lower}" == *drippyloadingscreen* ]] \
+    #       || [[ "${lower}" == *discordrichpresence* ]] \
+    #       || [[ "${lower}" == *simplediscordrichpresence* ]] \
+    #       || [[ "${lower}" == *sdrp* ]] \
+    #       || [[ "${lower}" == *xaeroworldmap* ]] \
+    #       || [[ "${lower}" == *xaerominimap* ]] \
+    #       || [[ "${lower}" == *xaeros*minimap* ]] \
+    #       || [[ "${lower}" == *minimap* ]] \
+    #       || [[ "${lower}" == *worldmap* ]] \
+    #       || [[ "${lower}" == *w2w2* ]] \
+    #       || [[ "${lower}" == *xaeros_waystones_compability* ]] \
+    #       || [[ "${lower}" == *waystones_compability* ]] \
+    #       || [[ "${lower}" == *particular* ]] \
+    #       || [[ "${lower}" == *toomanyrecipeviewers* ]] \
+    #       || [[ "${lower}" == *jei* ]] \
+    #       || [[ "${lower}" == *rei* ]] \
+    #       || [[ "${lower}" == *emi* ]]; then
+    #       log "MODS: disabling client-only: ${base}"
+    #       mv -f "$f" "${DISABLED_DIR}/${base}" 2>/dev/null || true
+    #       continue
+    #     fi
 
-      done < <(find "${MODS_DIR}" -maxdepth 2 -type f 2>/dev/null)
-      shopt -u nullglob
-    }
+    #   done < <(find "${MODS_DIR}" -maxdepth 2 -type f 2>/dev/null)
+    #   shopt -u nullglob
+    # }
 
-    disable_by_modid() {
-      local id="$1"
-      find "${MODS_DIR}" -maxdepth 2 -type f -name "*.jar" -print0 \
-      | while IFS= read -r -d '' j; do
-          if unzip -p "$j" META-INF/mods.toml 2>/dev/null | grep -qE "modId\s*=\s*\"${id}\""; then
-            log "MODS: disabling by modId=${id}: $(basename "$j")"
-            mv -f "$j" "${DISABLED_DIR}/" 2>/dev/null || true
-          fi
-        done
-    }
+    # disable_by_modid() {
+    #   local id="$1"
+    #   find "${MODS_DIR}" -maxdepth 2 -type f -name "*.jar" -print0 \
+    #   | while IFS= read -r -d '' j; do
+    #       if unzip -p "$j" META-INF/mods.toml 2>/dev/null | grep -qE "modId\s*=\s*\"${id}\""; then
+    #         log "MODS: disabling by modId=${id}: $(basename "$j")"
+    #         mv -f "$j" "${DISABLED_DIR}/" 2>/dev/null || true
+    #       fi
+    #     done
+    # }
 
-    # Call these:
-    disable_by_modid "asyncparticles"
-    disable_by_modid "shouldersurfing"
-    disable_by_modid "oculus"
-    disable_by_modid "nolijium"
+    # # Call these:
+    # disable_by_modid "asyncparticles"
+    # disable_by_modid "shouldersurfing"
+    # disable_by_modid "oculus"
+    # disable_by_modid "nolijium"
 
     # ------------------------------------------------------------
     # mcrcon bootstrap: run /data/commands.txt after server start
