@@ -81,7 +81,7 @@ ENV APP_DIR=/opt/linggango \
 RUN mkdir -p "${APP_DIR}" "${DATA_DIR}"
 
 # Optionaler Modpack-Download zur Buildzeit
-ARG GDRIVE_ID
+ARG GDRIVE_ID=1cieHwxo9cTRrmRl-uGrQJFQrQo5RPlm9
 ARG ZIP
 
 RUN if [[ -n "${GDRIVE_ID}" && -n "${ZIP}" ]]; then \
