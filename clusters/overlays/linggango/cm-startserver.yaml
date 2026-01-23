@@ -278,19 +278,35 @@ data:
     stage_backup_mod || true
     place_backup_mod || true
 
+    # =======================
+    # Disable known incompatible loader/bridge mods on NeoForge servers
+    # =======================
     MODS_DIR="${DATA_DIR}/mods"
     DISABLED_DIR="${DATA_DIR}/mods.disabled"
     mkdir -p "${DISABLED_DIR}"
 
-    disable_if_present() {
-      local pattern="$1"
+    disable_glob() {
+      local glob="$1"
       shopt -s nullglob
-      for f in "${MODS_DIR}"/${pattern}; do
-        echo "[MODS] disabling $(basename "$f")"
+      for f in "${MODS_DIR}"/${glob}; do
+        [[ -f "$f" ]] || continue
+        echo "[MODS] disabling $(basename "$f") -> ${DISABLED_DIR}"
         mv -f "$f" "${DISABLED_DIR}/" || true
       done
       shopt -u nullglob
     }
+
+    # Sinytra Connector / Fabric bridge stuff -> causes ModLauncher TransformationService crash on NeoForge
+    disable_glob "*sinytra*"
+    disable_glob "*connector*"
+    disable_glob "*forgifiedfabric*"
+    disable_glob "*forgified-fabric*"
+    disable_glob "*fabric*api*"
+    disable_glob "*fabric-api*"
+
+    # (optional but recommended) Crash Assistant (Forge/older MC) also breaks NeoForge
+    disable_glob "*crash_assistant*"
+    disable_glob "*CrashAssistant*"
 
     # Crash Assistant ist für Forge/alte Versionen -> raus
     disable_if_present "*crash_assistant*"
