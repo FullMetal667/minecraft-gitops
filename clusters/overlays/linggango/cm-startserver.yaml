@@ -16,10 +16,18 @@ data:
     # Marker für einmalige Initialisierung (an ZIP gekoppelt => wenn ZIP-Name ändert, wird neu initialisiert)
     LINGGANGO_INIT_MARKER="${DATA_DIR}/.linggango_initialized_${ZIP:-local}"
 
-    # ---- LINGGANGO / NeoForge Version ----
-    NEOFORGE_VERSION="${NEOFORGE_VERSION:-21.1.214}"
-    INSTALLER="neoforge-${NEOFORGE_VERSION}-installer.jar"
-    NEOFORGE_URL="https://maven.neoforged.net/releases/net/neoforged/neoforge/${NEOFORGE_VERSION}/neoforge-${NEOFORGE_VERSION}-installer.jar"
+    # ---- Forge 1.20.1 ----
+    MC_VERSION="${MC_VERSION:-1.20.1}"
+    FORGE_VERSION="${FORGE_VERSION:-47.4.0}"
+    FORGE_INSTALLER="forge-${MC_VERSION}-${FORGE_VERSION}-installer.jar"
+    FORGE_URL="https://maven.minecraftforge.net/net/minecraftforge/forge/${MC_VERSION}-${FORGE_VERSION}/${FORGE_INSTALLER}"
+    FORGE_UNIX_ARGS="libraries/net/minecraftforge/forge/${MC_VERSION}-${FORGE_VERSION}/unix_args.txt"
+
+    # Java-Minimum (Forge 1.20.1: i.d.R. Java 17)
+    MIN_JAVA_MAJOR="${MIN_JAVA_MAJOR:-17}"
+
+    # Optional: Connector deaktivieren (wenn du Bridge-Kram nicht willst)
+    DISABLE_CONNECTOR="${DISABLE_CONNECTOR:-false}"
 
     # ---- SimpleBackups (über overlays) ----
     BACKUP_MOD="${BACKUP_MOD:-advanced}"
@@ -52,9 +60,7 @@ data:
 
       mkdir -p "${DATA_DIR}/overlays/mods"
 
-      if [[ -f "${DATA_DIR}/overlays/mods/${fname}" ]]; then
-        return 0
-      fi
+      [[ -f "${DATA_DIR}/overlays/mods/${fname}" ]] && return 0
 
       if [[ -f "${DATA_DIR}/${fname}" ]]; then
         cp -n "${DATA_DIR}/${fname}" "${DATA_DIR}/overlays/mods/${fname}" 2>/dev/null || true
@@ -76,17 +82,10 @@ data:
       [[ -n "${fname}" ]] || return 0
 
       mkdir -p "${DATA_DIR}/mods"
+      [[ -f "${DATA_DIR}/mods/${fname}" ]] && { echo "[BK] ${fname} bereits in mods/ vorhanden – nichts überschrieben."; return 0; }
 
-      if [[ -f "${DATA_DIR}/overlays/mods/${fname}" ]]; then
-        src="${DATA_DIR}/overlays/mods/${fname}"
-      else
-        return 0
-      fi
-
-      if [[ -f "${DATA_DIR}/mods/${fname}" ]]; then
-        echo "[BK] ${fname} bereits in mods/ vorhanden – nichts überschrieben."
-        return 0
-      fi
+      [[ -f "${DATA_DIR}/overlays/mods/${fname}" ]] || return 0
+      src="${DATA_DIR}/overlays/mods/${fname}"
 
       cp -n "${src}" "${DATA_DIR}/mods/${fname}" 2>/dev/null || true
     }
@@ -102,9 +101,7 @@ data:
     # ---- nc / ncat detection ----
     NC_BIN="${NC_BIN:-nc}"
     if ! command -v "${NC_BIN}" >/dev/null 2>&1; then
-      if command -v ncat >/dev/null 2>&1; then
-        NC_BIN="ncat"
-      fi
+      command -v ncat >/dev/null 2>&1 && NC_BIN="ncat" || true
     fi
 
     mkdir -p "${DATA_DIR}"
@@ -113,7 +110,7 @@ data:
     need() { command -v "$1" >/dev/null 2>&1 || { echo "[ERR] missing $1"; exit 1; }; }
 
     ensure_unzip() {
-      if command -v unzip >/dev/null 2>&1; then return 0; fi
+      command -v unzip >/dev/null 2>&1 && return 0
       echo "[TOOLS] unzip missing"
       if command -v microdnf >/dev/null 2>&1; then
         echo "[TOOLS] installing unzip via microdnf"
@@ -125,10 +122,7 @@ data:
     }
 
     # ============================================================
-    # 0) Initialisierung nach /data:
-    #    - kein Download mehr!
-    #    - ZIP liegt im Image unter ${IMAGE_APP_DIR}/${ZIP}
-    #    - wird nach /data verschoben/kopiert und entpackt
+    # 0) Initialisierung nach /data (ZIP aus Image -> /data -> entpacken)
     # ============================================================
     if [[ "${LINGGANGO_FORCE_REINIT}" == "true" ]]; then
       echo "[LINGGANGO] FORCE_REINIT enabled -> removing init marker"
@@ -139,40 +133,25 @@ data:
       echo "[LINGGANGO] First init: preparing /data ..."
 
       ensure_unzip
-      need curl
-
-      if [[ -z "${ZIP}" ]]; then
-        echo "[ERR] ZIP not set (e.g. ZIP=serverpackv6.42.zip)"
-        exit 1
+      need curlnd "${TMP_UNPACK}" -mindepth 1 -maxdepth 1 -type d | head -n1)"
       fi
+
+      echo "[LING
+
+      [[ -n "${ZIP}" ]] || { echo "[ERR] ZIP not set (e.g. ZIP=serverpackv6.42.zip)"; exit 1; }
 
       IMAGE_ZIP_PATH="${IMAGE_APP_DIR}/${ZIP}"
       ZIP_PATH="${DATA_DIR}/${ZIP}"
 
       if [[ ! -f "${ZIP_PATH}" ]]; then
-        if [[ ! -f "${IMAGE_ZIP_PATH}" ]]; then
-          echo "[ERR] serverpack zip not found in image: ${IMAGE_ZIP_PATH}"
-          echo "[DBG] Listing ${IMAGE_APP_DIR}:"
-          ls -la "${IMAGE_APP_DIR}" 2>/dev/null || true
-          exit 1
-        fi
-
-        echo "[LINGGANGO] Moving serverpack zip ${IMAGE_ZIP_PATH} -> ${ZIP_PATH}"
-        # mv kann bei read-only layer fehlschlagen -> dann copy
-        if ! mv -f "${IMAGE_ZIP_PATH}" "${ZIP_PATH}" 2>/dev/null; then
-          echo "[LINGGANGO] mv failed (likely read-only image layer) -> copying instead"
-          cp -f "${IMAGE_ZIP_PATH}" "${ZIP_PATH}"
-        fi
+        [[ -f "${IMAGE_ZIP_PATH}" ]] || { echo "[ERR] serverpack zip not found in image: ${IMAGE_ZIP_PATH}"; ls -la "${IMAGE_APP_DIR}" || true; exit 1; }
+        echo "[LINGGANGO] Copying serverpack zip ${IMAGE_ZIP_PATH} -> ${ZIP_PATH}"
+        cp -f "${IMAGE_ZIP_PATH}" "${ZIP_PATH}"
       else
         echo "[LINGGANGO] Zip already present in data: ${ZIP_PATH}"
       fi
 
-      # ZIP validieren
-      if ! unzip -tq "${ZIP_PATH}" >/dev/null 2>&1; then
-        echo "[ERR] serverpack zip invalid/corrupt: ${ZIP_PATH}"
-        echo "[DBG] Size: $(wc -c < "${ZIP_PATH}" | tr -d ' ') bytes"
-        exit 1
-      fi
+      unzip -tq "${ZIP_PATH}" >/dev/null 2>&1 || { echo "[ERR] serverpack zip invalid/corrupt: ${ZIP_PATH}"; echo "[DBG] Size: $(wc -c < "${ZIP_PATH}" | tr -d ' ') bytes"; exit 1; }
 
       TMP_UNPACK="${DATA_DIR}/.serverpack_unpack"
       rm -rf "${TMP_UNPACK}" 2>/dev/null || true
@@ -201,8 +180,8 @@ data:
     # =======================
     # EULA
     # =======================
-    if [ ! -f eula.txt ] || ! grep -q 'eula=true' eula.txt; then
-      if [ "${EULA:-}" = "TRUE" ] || [ "${EULA:-}" = "true" ]; then
+    if [[ ! -f eula.txt ]] || ! grep -q 'eula=true' eula.txt; then
+      if [[ "${EULA:-}" == "TRUE" || "${EULA:-}" == "true" ]]; then
         {
           echo "# By changing the setting below to TRUE you are indicating your agreement to the EULA (https://aka.ms/MinecraftEULA)."
           echo "# $(date -u)"
@@ -210,66 +189,44 @@ data:
         } > eula.txt
         echo "[init] EULA accepted via ENV"
       else
-        echo "[init] EULA not accepted. Setze ENV EULA=true oder lege /data/eula.txt mit 'eula=true' an."
+        echo "[init] EULA not accepted. Set ENV EULA=true or create /data/eula.txt with 'eula=true'."
         exit 3
       fi
     fi
 
     # =======================
-    # LINGGANGO / NeoForge – Installation
+    # Java check
     # =======================
-    if ! command -v "${LINGGANGO_JAVA:-java}" >/dev/null 2>&1; then
-      echo "[LINGGANGO] Minecraft 1.21 requires Java 21 - Java not found (LINGGANGO_JAVA oder java)"
+    need "${LINGGANGO_JAVA:-java}"
+    JAVA_VERSION="$("${LINGGANGO_JAVA:-java}" -fullversion 2>&1 | awk -F '"' '/version/ {print $2}' | cut -d'.' -f1 || echo 0)"
+    if ! [[ "${JAVA_VERSION}" =~ ^[0-9]+$ ]] || [[ "${JAVA_VERSION}" -lt "${MIN_JAVA_MAJOR}" ]]; then
+      echo "[JAVA] Need Java >= ${MIN_JAVA_MAJOR}, found Java ${JAVA_VERSION}"
       exit 1
     fi
 
-    UNIX_ARGS="libraries/net/neoforged/neoforge/${NEOFORGE_VERSION}/unix_args.txt"
-
-    if [[ ! -f "${UNIX_ARGS}" ]]; then
-      echo "[LINGGANGO] Neoforge not installed (missing ${UNIX_ARGS}), installing now."
-
-      if [[ ! -f "${INSTALLER}" ]]; then
-        echo "[LINGGANGO] No Neoforge installer found, downloading now: ${NEOFORGE_URL}"
-        if command -v wget >/dev/null 2>&1; then
-          wget -O "${INSTALLER}" "${NEOFORGE_URL}"
-        elif command -v curl >/dev/null 2>&1; then
-          curl -fL -o "${INSTALLER}" "${NEOFORGE_URL}"
-        else
-          echo "[LINGGANGO] Neither wget nor curl were found in the container. Please add one and try again."
-          exit 1
-        fi
+    # =======================
+    # Forge install (idempotent)
+    # =======================
+    if [[ ! -f "${FORGE_UNIX_ARGS}" ]]; then
+      echo "[FORGE] missing ${FORGE_UNIX_ARGS} -> installing Forge ${MC_VERSION}-${FORGE_VERSION}"
+      if [[ ! -f "${FORGE_INSTALLER}" ]]; then
+        curl -fL -o "${FORGE_INSTALLER}" "${FORGE_URL}"
       fi
-
-      echo "[LINGGANGO] Running Neoforge installer."
-      "${LINGGANGO_JAVA:-java}" -jar "${INSTALLER}" -installServer
-
-      if [[ ! -f "${UNIX_ARGS}" ]]; then
-        echo "[LINGGANGO] ERROR: Neoforge install finished but unix_args still missing: ${UNIX_ARGS}"
-        echo "[LINGGANGO] DEBUG: listing expected dir:"
-        ls -la "libraries/net/neoforged/neoforge/${NEOFORGE_VERSION}" 2>/dev/null || true
-        exit 1
-      fi
+      "${LINGGANGO_JAVA:-java}" -jar "${FORGE_INSTALLER}" --installServer
+      [[ -f "${FORGE_UNIX_ARGS}" ]] || { echo "[FORGE] ERROR: install finished but unix_args missing: ${FORGE_UNIX_ARGS}"; ls -la "libraries/net/minecraftforge/forge/${MC_VERSION}-${FORGE_VERSION}" || true; exit 1; }
     else
-      echo "[LINGGANGO] Neoforge already installed: ${UNIX_ARGS}"
+      echo "[FORGE] already installed: ${FORGE_UNIX_ARGS}"
     fi
 
+    # =======================
+    # server.properties default
+    # =======================
     if [[ ! -e server.properties ]]; then
       cat > server.properties <<EOF
     allow-flight=true
     motd=Linggango
     max-tick-time=180000
     EOF
-    fi
-
-    if [[ "${LINGGANGO_INSTALL_ONLY:-false}" == "true" ]]; then
-      echo "[LINGGANGO] INSTALL_ONLY: complete"
-      exit 0
-    fi
-
-    JAVA_VERSION="$("${LINGGANGO_JAVA:-java}" -fullversion 2>&1 | awk -F '\"' '/version/ {print $2}' | cut -d'.' -f1 || echo 0)"
-    if ! [[ "${JAVA_VERSION}" =~ ^[0-9]+$ ]] || [[ "${JAVA_VERSION}" -lt 21 ]]; then
-      echo "[LINGGANGO] Minecraft 1.21 requires Java 21 - found Java ${JAVA_VERSION}"
-      exit 1
     fi
 
     # =======================
@@ -279,40 +236,36 @@ data:
     place_backup_mod || true
 
     # =======================
-    # Disable known incompatible loader/bridge mods on NeoForge servers
+    # Optional: disable Connector (wenn du's nicht willst)
     # =======================
-    MODS_DIR="${DATA_DIR}/mods"
-    DISABLED_DIR="${DATA_DIR}/mods.disabled"
-    mkdir -p "${DISABLED_DIR}"
+    if [[ "${DISABLE_CONNECTOR}" == "true" ]]; then
+      MODS_DIR="${DATA_DIR}/mods"
+      DISABLED_DIR="${DATA_DIR}/mods.disabled"
+      mkdir -p "${DISABLED_DIR}"
 
-    disable_path() {
-      local p="$1"
-      if [[ -e "${p}" ]]; then
-        echo "[MODS] disabling $(basename "${p}") -> ${DISABLED_DIR}"
-        mv -f "${p}" "${DISABLED_DIR}/" || true
-      fi
-    }
+      disable_path() {
+        local p="$1"
+        if [[ -e "${p}" ]]; then
+          echo "[MODS] disabling $(basename "${p}") -> ${DISABLED_DIR}"
+          mv -f "${p}" "${DISABLED_DIR}/" || true
+        fi
+      }
 
-    # 1) Die offensichtlichen JARs
-    disable_path "${MODS_DIR}/Connector-1.0.0-beta.47+1.20.1.jar"
-    disable_path "${MODS_DIR}/ConnectorExtras-1.11.2+1.20.1.jar"
+      shopt -s nullglob
+      for f in "${MODS_DIR}"/Connector*.jar "${MODS_DIR}"/connector*.jar; do
+        disable_path "$f"
+      done
+      shopt -u nullglob
 
-    # 2) Allgemein: alle Connector* JARs
-    shopt -s nullglob
-    for f in "${MODS_DIR}"/Connector*.jar "${MODS_DIR}"/connector*.jar; do
-      disable_path "$f"
-    done
-    shopt -u nullglob
-
-    # 3) Der versteckte Cache-Ordner (da liegen Connector-merged JARs drin)
-    disable_path "${MODS_DIR}/.connector"
+      disable_path "${MODS_DIR}/.connector"
+    fi
 
     # =======================
     # Hauptloop: Server starten + RCON-Commands
     # =======================
     while true; do
       echo "[LINGGANGO] starting server ..."
-      "${LINGGANGO_JAVA:-java}" @user_jvm_args.txt @"${UNIX_ARGS}" nogui &
+      "${LINGGANGO_JAVA:-java}" @user_jvm_args.txt @"${FORGE_UNIX_ARGS}" nogui &
       SERVER_PID=$!
 
       if [[ "${RCON_ENABLE}" == "true" && -s "${DATA_DIR}/commands.txt" ]]; then
