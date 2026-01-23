@@ -129,65 +129,6 @@ data:
       exit 1
     }
 
-    # Robust: Google Drive Download (handles "can't scan for viruses" confirm token)
-    download_gdrive_file() {
-      local file_id="$1"
-      local out="$2"
-      local cookie="${DATA_DIR}/.gdrive_cookie.txt"
-      local page="${DATA_DIR}/.gdrive_page.html"
-
-      rm -f "${cookie}" "${page}" "${out}.new" 2>/dev/null || true
-
-      # Try multiple endpoints (Google changes behavior sometimes)
-      local base_urls=(
-        "https://drive.google.com/uc?export=download&id=${file_id}"
-        "https://docs.google.com/uc?export=download&id=${file_id}"
-      )
-
-      for base in "${base_urls[@]}"; do
-        echo "[GDRIVE] preflight: ${base}"
-        # First request: capture cookies + HTML (or direct file)
-        if ! curl -fsSL -c "${cookie}" -o "${page}" "${base}"; then
-          echo "[GDRIVE] WARN: preflight failed for ${base}"
-          continue
-        fi
-
-        # If the response already IS a zip (starts with PK), we are done
-        if [[ "$(od -An -t x1 -N 2 "${page}" 2>/dev/null | tr -d ' \n')" == "504b" ]]; then
-          mv -f "${page}" "${out}"
-          echo "[GDRIVE] downloaded (direct) -> ${out}"
-          return 0
-        fi
-
-        # Extract confirm token from HTML (confirm=XYZ)
-        local confirm=""
-        confirm="$(sed -n 's/.*confirm=\([0-9A-Za-z_-]\+\).*/\1/p' "${page}" | head -n1 || true)"
-
-        # Or from cookie (download_warning)
-        if [[ -z "${confirm}" && -f "${cookie}" ]]; then
-          confirm="$(awk '$6 ~ /^download_warning/ {print $7}' "${cookie}" | tail -n1 || true)"
-        fi
-
-        # If still empty, try static confirm=t (works in many cases)
-        if [[ -z "${confirm}" ]]; then
-          confirm="t"
-        fi
-
-        local dl="${base}&confirm=${confirm}"
-        echo "[GDRIVE] download: ${dl}"
-        if curl -fsSL -Lb "${cookie}" -o "${out}.new" "${dl}"; then
-          mv -f "${out}.new" "${out}"
-          echo "[GDRIVE] downloaded -> ${out}"
-          return 0
-        fi
-
-        echo "[GDRIVE] WARN: download failed for ${dl}"
-      done
-
-      echo "[ERR] Google Drive download failed for id=${file_id}"
-      return 1
-    }
-
     # ============================================================
     # 0) Initialisierung nach /data:
     #    - bevorzugt: Serverpack ZIP von Google Drive laden + entpacken
@@ -203,14 +144,6 @@ data:
 
       ensure_unzip
       need curl
-
-      if [[ -n "${GDRIVE_ID}" ]]; then
-        echo "[LINGGANGO] Using Google Drive serverpack: id=${GDRIVE_ID}"
-        if [[ ! -f "${ZIP_PATH}" ]]; then
-          download_gdrive_file "${GDRIVE_ID}" "${ZIP_PATH}"
-        else
-          echo "[LINGGANGO] serverpack zip already present: ${ZIP_PATH}"
-        fi
 
         # Validate zip quickly
         if ! unzip -tq "${ZIP_PATH}" >/dev/null 2>&1; then

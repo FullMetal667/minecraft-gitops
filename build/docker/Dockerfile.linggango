@@ -89,8 +89,6 @@ ARG ZIP
 
 RUN if [[ -n "${GDRIVE_ID}" && -n "${ZIP}" ]]; then \
       /usr/local/bin/gdrive_download.sh "${GDRIVE_ID}" "${APP_DIR}/${ZIP}"; \
-      unzip -tq "${APP_DIR}/${ZIP}"; \
-      unzip -uo "${APP_DIR}/${ZIP}" -d "${DATA_DIR}"; \
     else \
       echo "GDRIVE_ID oder ZIP nicht gesetzt – skip download"; \
     fi
