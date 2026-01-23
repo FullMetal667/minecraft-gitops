@@ -83,13 +83,14 @@ RUN mkdir -p "${APP_DIR}" "${DATA_DIR}"
 # Optionaler Modpack-Download zur Buildzeit
 ARG GDRIVE_ID
 ARG ZIP
-RUN if [[ -n "${GDRIVE_ID}" ]]; then \
+
+RUN if [[ -n "${GDRIVE_ID}" && -n "${ZIP}" ]]; then \
       FINAL_URL="https://drive.google.com/uc?export=download&id=${GDRIVE_ID}&confirm=t"; \
-      echo "Downloading: ${FINAL_URL}"; \
-      curl -fL -o "${APP_DIR}/${GDRIVE_ZIP_NAME}" "${FINAL_URL}"; \
-      unzip -uo "${APP_DIR}/${GDRIVE_ZIP_NAME}" -d "${DATA_DIR}"; \
+      echo "Downloading: ${FINAL_URL} -> ${APP_DIR}/${ZIP}"; \
+      curl -fL -o "${APP_DIR}/${ZIP}" "${FINAL_URL}"; \
+      unzip -uo "${APP_DIR}/${ZIP}" -d "${DATA_DIR}"; \
     else \
-      echo "GDRIVE_ID nicht gesetzt – skip download"; \
+      echo "GDRIVE_ID oder ZIP nicht gesetzt – skip download"; \
     fi
 
 # OpenShift-kompatible Rechte (arbitrary UID)
