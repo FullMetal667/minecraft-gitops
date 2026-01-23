@@ -285,48 +285,27 @@ data:
     DISABLED_DIR="${DATA_DIR}/mods.disabled"
     mkdir -p "${DISABLED_DIR}"
 
-    disable_glob_recursive() {
-      local glob="$1"
-      shopt -s globstar nullglob
-      for f in "${MODS_DIR}"/**/${glob}; do
-        [[ -f "$f" ]] || continue
-        echo "[MODS] disabling $(basename "$f") -> ${DISABLED_DIR}"
-        mv -f "$f" "${DISABLED_DIR}/" || true
-      done
-      shopt -u globstar nullglob
+    disable_path() {
+      local p="$1"
+      if [[ -e "${p}" ]]; then
+        echo "[MODS] disabling $(basename "${p}") -> ${DISABLED_DIR}"
+        mv -f "${p}" "${DISABLED_DIR}/" || true
+      fi
     }
 
-    disable_if_contains() {
-      local needle="$1"
-      shopt -s globstar nullglob
-      for f in "${MODS_DIR}"/**/*.jar; do
-        [[ -f "$f" ]] || continue
-        # ServiceLoader Einträge / Klassen-Strings finden (kein unzip nötig)
-        if strings "$f" 2>/dev/null | grep -q "${needle}"; then
-          echo "[MODS] disabling by content '${needle}': $(basename "$f") -> ${DISABLED_DIR}"
-          mv -f "$f" "${DISABLED_DIR}/" || true
-        fi
-      done
-      shopt -u globstar nullglob
-    }
+    # 1) Die offensichtlichen JARs
+    disable_path "${MODS_DIR}/Connector-1.0.0-beta.47+1.20.1.jar"
+    disable_path "${MODS_DIR}/ConnectorExtras-1.11.2+1.20.1.jar"
 
-    # 1) Name-basierte Deaktivierung (rekursiv)
-    disable_glob_recursive "*sinytra*"
-    disable_glob_recursive "*connector*"
-    disable_glob_recursive "*forgifiedfabric*"
-    disable_glob_recursive "*forgified-fabric*"
-    disable_glob_recursive "*fabric-api*"
-    disable_glob_recursive "*fabric*api*"
-    disable_glob_recursive "*crashassistant*"
-    disable_glob_recursive "*CrashAssistant*"
+    # 2) Allgemein: alle Connector* JARs
+    shopt -s nullglob
+    for f in "${MODS_DIR}"/Connector*.jar "${MODS_DIR}"/connector*.jar; do
+      disable_path "$f"
+    done
+    shopt -u nullglob
 
-    # 2) Inhalt-basierte Deaktivierung (findet auch umbenannte JARs)
-    disable_if_contains "org/sinytra/connector/service/ConnectorLoaderService"
-    disable_if_contains "CrashAssistantTransformationService"
-    disable_if_contains "net/minecraftforge/fml/loading/ImmediateWindowProvider"
-
-    echo "[MODS] remaining jars:"
-    find "${MODS_DIR}" -type f -name "*.jar" -maxdepth 2 -print | sed 's#^#[MODS] #'
+    # 3) Der versteckte Cache-Ordner (da liegen Connector-merged JARs drin)
+    disable_path "${MODS_DIR}/.connector"
 
     # =======================
     # Hauptloop: Server starten + RCON-Commands
