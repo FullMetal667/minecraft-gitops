@@ -308,10 +308,6 @@ data:
     disable_glob "*crash_assistant*"
     disable_glob "*CrashAssistant*"
 
-    # Crash Assistant ist für Forge/alte Versionen -> raus
-    disable_if_present "*crash_assistant*"
-    disable_if_present "*CrashAssistant*"
-
     # =======================
     # Hauptloop: Server starten + RCON-Commands
     # =======================
