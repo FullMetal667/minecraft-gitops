@@ -11,13 +11,13 @@ data:
     DATA_DIR="${DATA_DIR:-/data}"
 
     # --- Google Drive Serverpack ---
-    SERVERPACK_GDRIVE_ID="${SERVERPACK_GDRIVE_ID:-}"          # <- in params-linggango.env setzen
+    GDRIVE_ID="${GDRIVE_ID:-}"          # <- in params-linggango.env setzen
     ZIP="${ZIP:-}"
     ZIP_PATH="${DATA_DIR}/${ZIP}"
     LINGGANGO_FORCE_REINIT="${LINGGANGO_FORCE_REINIT:-false}"
 
     # Marker für einmalige Initialisierung (an ID gekoppelt => wenn ID ändert, wird neu initialisiert)
-    LINGGANGO_INIT_MARKER="${DATA_DIR}/.linggango_initialized_${SERVERPACK_GDRIVE_ID:-local}"
+    LINGGANGO_INIT_MARKER="${DATA_DIR}/.linggango_initialized_${GDRIVE_ID:-local}"
 
     # ---- LINGGANGO / NeoForge Version ----
     NEOFORGE_VERSION="${NEOFORGE_VERSION:-21.1.214}"
@@ -204,10 +204,10 @@ data:
       ensure_unzip
       need curl
 
-      if [[ -n "${SERVERPACK_GDRIVE_ID}" ]]; then
-        echo "[LINGGANGO] Using Google Drive serverpack: id=${SERVERPACK_GDRIVE_ID}"
+      if [[ -n "${GDRIVE_ID}" ]]; then
+        echo "[LINGGANGO] Using Google Drive serverpack: id=${GDRIVE_ID}"
         if [[ ! -f "${ZIP_PATH}" ]]; then
-          download_gdrive_file "${SERVERPACK_GDRIVE_ID}" "${ZIP_PATH}"
+          download_gdrive_file "${GDRIVE_ID}" "${ZIP_PATH}"
         else
           echo "[LINGGANGO] serverpack zip already present: ${ZIP_PATH}"
         fi
@@ -244,7 +244,7 @@ data:
       else
         # Fallback: old behavior from image APP_DIR
         if [[ -d "${APP_DIR}" ]]; then
-          echo "[LINGGANGO] WARN: SERVERPACK_GDRIVE_ID not set -> fallback copy from ${APP_DIR}"
+          echo "[LINGGANGO] WARN: GDRIVE_ID not set -> fallback copy from ${APP_DIR}"
           shopt -s dotglob
           cp -an "${APP_DIR}/"* "${DATA_DIR}/" 2>/dev/null || true
           shopt -u dotglob

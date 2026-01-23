@@ -81,17 +81,15 @@ ENV APP_DIR=/opt/linggango \
 RUN mkdir -p "${APP_DIR}" "${DATA_DIR}"
 
 # Optionaler Modpack-Download zur Buildzeit
-ARG FILE_ID
+ARG GDRIVE_ID
 ARG ZIP
-RUN if [[ -n "${FILE_ID}" && -n "${ZIP}" ]]; then \
-      DIR1=$(( FILE_ID / 1000 )); \
-      DIR2=$(( FILE_ID % 1000 )); \
-      FINAL_URL="https://mediafilez.forgecdn.net/files/${DIR1}/${DIR2}/${ZIP}"; \
+RUN if [[ -n "${GDRIVE_ID}" ]]; then \
+      FINAL_URL="https://drive.google.com/uc?export=download&id=${GDRIVE_ID}&confirm=t"; \
       echo "Downloading: ${FINAL_URL}"; \
-      curl -fL -o "${APP_DIR}/${ZIP}" "${FINAL_URL}"; \
-      unzip -uo "${APP_DIR}/${ZIP}" -d "${DATA_DIR}"; \
+      curl -fL -o "${APP_DIR}/${GDRIVE_ZIP_NAME}" "${FINAL_URL}"; \
+      unzip -uo "${APP_DIR}/${GDRIVE_ZIP_NAME}" -d "${DATA_DIR}"; \
     else \
-      echo "FILE_ID oder ZIP nicht gesetzt – skip download"; \
+      echo "GDRIVE_ID nicht gesetzt – skip download"; \
     fi
 
 # OpenShift-kompatible Rechte (arbitrary UID)
