@@ -30,13 +30,13 @@ data:
     DISABLE_CONNECTOR="${DISABLE_CONNECTOR:-false}"
 
     # ---- SimpleBackups (über overlays) ----
-    BACKUP_MOD="${BACKUP_MOD:-simplebackups}"
+    BACKUP_MOD="${BACKUP_MOD:-advanced}"
 
     AB_FILE_ID="${AB_FILE_ID:-7451460}"
     AB_FILE_NAME="${AB_FILE_NAME:-SimpleBackups-1.20.1-3.1.24.jar}"
     AB_DIR1=$(( AB_FILE_ID / 1000 ))
     AB_DIR2=$(( AB_FILE_ID % 1000 ))
-    ADVANCED_BACKUPS_URL="${ADVANCED_BACKUPS_URL:-https://mediafilez.forgecdn.net/files/7451/460/SimpleBackups-1.20.1-3.1.24.jar"
+    ADVANCED_BACKUPS_URL="${ADVANCED_BACKUPS_URL:-https://mediafilez.forgecdn.net/files/7451/460/SimpleBackups-1.20.1-3.1.24.jar}"
 
     selected_backup_filename() {
       case "${BACKUP_MOD}" in
