@@ -476,7 +476,7 @@ data:
       exit 1
     fi
 
-    disable_client_only_mods
+    # disable_client_only_mods
 
     # start
     cd "${APP_DIR}"
