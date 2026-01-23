@@ -73,24 +73,26 @@ RUN chmod +x /usr/local/bin/tini && ln -s /usr/local/bin/tini /usr/bin/tini
 # mcrcon rein
 COPY --from=mcrcon-builder --chmod=0755 --chown=0:0 /src/mcrcon/mcrcon /usr/local/bin/mcrcon
 
+COPY linggango/startserver.sh /data/startserver.sh
+
 ENV APP_DIR=/opt/linggango \
     DATA_DIR=/data
 
 RUN mkdir -p "${APP_DIR}" "${DATA_DIR}"
 
-# # Optionaler Modpack-Download zur Buildzeit
-# ARG FILE_ID
-# ARG ZIP
-# RUN if [[ -n "${FILE_ID}" && -n "${ZIP}" ]]; then \
-#       DIR1=$(( FILE_ID / 1000 )); \
-#       DIR2=$(( FILE_ID % 1000 )); \
-#       FINAL_URL="https://mediafilez.forgecdn.net/files/${DIR1}/${DIR2}/${ZIP}"; \
-#       echo "Downloading: ${FINAL_URL}"; \
-#       curl -fL -o "${APP_DIR}/${ZIP}" "${FINAL_URL}"; \
-#       unzip -uo "${APP_DIR}/${ZIP}" -d "${DATA_DIR}"; \
-#     else \
-#       echo "FILE_ID oder ZIP nicht gesetzt – skip download"; \
-#     fi
+# Optionaler Modpack-Download zur Buildzeit
+ARG FILE_ID
+ARG ZIP
+RUN if [[ -n "${FILE_ID}" && -n "${ZIP}" ]]; then \
+      DIR1=$(( FILE_ID / 1000 )); \
+      DIR2=$(( FILE_ID % 1000 )); \
+      FINAL_URL="https://mediafilez.forgecdn.net/files/${DIR1}/${DIR2}/${ZIP}"; \
+      echo "Downloading: ${FINAL_URL}"; \
+      curl -fL -o "${APP_DIR}/${ZIP}" "${FINAL_URL}"; \
+      unzip -uo "${APP_DIR}/${ZIP}" -d "${DATA_DIR}"; \
+    else \
+      echo "FILE_ID oder ZIP nicht gesetzt – skip download"; \
+    fi
 
 # OpenShift-kompatible Rechte (arbitrary UID)
 RUN chgrp -R 0 "${APP_DIR}" "${DATA_DIR}" /data/startserver.sh /usr/local/bin/mcrcon \
