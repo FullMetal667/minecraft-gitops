@@ -33,7 +33,7 @@ data:
     BACKUP_MOD="${BACKUP_MOD:-advanced}"
 
     AB_FILE_ID="${AB_FILE_ID:-7173771}"
-    AB_FILE_NAME="${AB_FILE_NAME:-SimpleBackups-1.21-4.0.23.jar}"
+    AB_FILE_NAME="${AB_FILE_NAME:-SimpleBackups-${MC_VERSION}-4.0.23.jar}"
     AB_DIR1=$(( AB_FILE_ID / 1000 ))
     AB_DIR2=$(( AB_FILE_ID % 1000 ))
     ADVANCED_BACKUPS_URL="${ADVANCED_BACKUPS_URL:-https://mediafilez.forgecdn.net/files/${AB_DIR1}/${AB_DIR2}/${AB_FILE_NAME}}"
@@ -263,22 +263,17 @@ data:
     while true; do
       echo "[LINGGANGO] starting server ..."
 
-      # --- SimpleBackups "install" (aktivieren) ---
-      SB_JAR="SimpleBackups-1.21-4.0.23.jar"
-
-      # falls aus Versehen deaktiviert
-      if [[ -f "${DATA_DIR}/mods.disabled/${SB_JAR}" && ! -f "${DATA_DIR}/mods/${SB_JAR}" ]]; then
-        echo "[BK] enabling ${SB_JAR} (mods.disabled -> mods)"
-        mv -f "${DATA_DIR}/mods.disabled/${SB_JAR}" "${DATA_DIR}/mods/${SB_JAR}" || true
+      # --- Ensure SimpleBackups is installed into mods/ ---
+      SB_NAME="${AB_FILE_NAME}"
+      if [[ -f "${DATA_DIR}/overlays/mods/${SB_NAME}" && ! -f "${DATA_DIR}/mods/${SB_NAME}" ]]; then
+        echo "[BK] installing ${SB_NAME} from overlays -> mods/"
+        cp -f "${DATA_DIR}/overlays/mods/${SB_NAME}" "${DATA_DIR}/mods/${SB_NAME}"
       fi
+      echo "[BK] SimpleBackups present: ${DATA_DIR}/mods/${SB_NAME}"
 
-      # Rechte fixen (OpenShift / arbitrary UID)
-      if [[ -f "${DATA_DIR}/mods/${SB_JAR}" ]]; then
-        chgrp 0 "${DATA_DIR}/mods/${SB_JAR}" 2>/dev/null || true
-        chmod g=u "${DATA_DIR}/mods/${SB_JAR}" 2>/dev/null || true
-        echo "[BK] SimpleBackups present: ${DATA_DIR}/mods/${SB_JAR}"
-      else
-        echo "[BK] WARN: ${SB_JAR} not found in ${DATA_DIR}/mods/"
+      # optional: metadata hint
+      if [[ -f "${DATA_DIR}/mods/${SB_NAME}" ]]; then
+        unzip -p "${DATA_DIR}/mods/${SB_NAME}" META-INF/mods.toml 2>/dev/null | head -n 20 || true
       fi
 
       "${LINGGANGO_JAVA:-java}" @user_jvm_args.txt @"${FORGE_UNIX_ARGS}" nogui &
