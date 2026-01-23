@@ -278,6 +278,24 @@ data:
     stage_backup_mod || true
     place_backup_mod || true
 
+    MODS_DIR="${DATA_DIR}/mods"
+    DISABLED_DIR="${DATA_DIR}/mods.disabled"
+    mkdir -p "${DISABLED_DIR}"
+
+    disable_if_present() {
+      local pattern="$1"
+      shopt -s nullglob
+      for f in "${MODS_DIR}"/${pattern}; do
+        echo "[MODS] disabling $(basename "$f")"
+        mv -f "$f" "${DISABLED_DIR}/" || true
+      done
+      shopt -u nullglob
+    }
+
+    # Crash Assistant ist für Forge/alte Versionen -> raus
+    disable_if_present "*crash_assistant*"
+    disable_if_present "*CrashAssistant*"
+
     # =======================
     # Hauptloop: Server starten + RCON-Commands
     # =======================
