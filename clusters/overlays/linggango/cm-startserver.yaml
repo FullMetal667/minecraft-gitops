@@ -223,19 +223,34 @@ data:
       exit 1
     fi
 
-    if [[ ! -d "libraries" ]]; then
-      echo "[LINGGANGO] Neoforge not installed, installing now."
+    UNIX_ARGS="libraries/net/neoforged/neoforge/${NEOFORGE_VERSION}/unix_args.txt"
+
+    if [[ ! -f "${UNIX_ARGS}" ]]; then
+      echo "[LINGGANGO] Neoforge not installed (missing ${UNIX_ARGS}), installing now."
+
       if [[ ! -f "${INSTALLER}" ]]; then
         echo "[LINGGANGO] No Neoforge installer found, downloading now: ${NEOFORGE_URL}"
         if command -v wget >/dev/null 2>&1; then
           wget -O "${INSTALLER}" "${NEOFORGE_URL}"
+        elif command -v curl >/dev/null 2>&1; then
+          curl -fL -o "${INSTALLER}" "${NEOFORGE_URL}"
         else
-          curl -o "${INSTALLER}" -L "${NEOFORGE_URL}"
+          echo "[LINGGANGO] Neither wget nor curl were found in the container. Please add one and try again."
+          exit 1
         fi
       fi
 
       echo "[LINGGANGO] Running Neoforge installer."
       "${LINGGANGO_JAVA:-java}" -jar "${INSTALLER}" -installServer
+
+      if [[ ! -f "${UNIX_ARGS}" ]]; then
+        echo "[LINGGANGO] ERROR: Neoforge install finished but unix_args still missing: ${UNIX_ARGS}"
+        echo "[LINGGANGO] DEBUG: listing expected dir:"
+        ls -la "libraries/net/neoforged/neoforge/${NEOFORGE_VERSION}" 2>/dev/null || true
+        exit 1
+      fi
+    else
+      echo "[LINGGANGO] Neoforge already installed: ${UNIX_ARGS}"
     fi
 
     if [[ ! -e server.properties ]]; then
@@ -268,7 +283,7 @@ data:
     # =======================
     while true; do
       echo "[LINGGANGO] starting server ..."
-      "${LINGGANGO_JAVA:-java}" @user_jvm_args.txt @libraries/net/neoforged/neoforge/${NEOFORGE_VERSION}/unix_args.txt nogui &
+      "${LINGGANGO_JAVA:-java}" @user_jvm_args.txt @"${UNIX_ARGS}" nogui &
       SERVER_PID=$!
 
       if [[ "${RCON_ENABLE}" == "true" && -s "${DATA_DIR}/commands.txt" ]]; then
