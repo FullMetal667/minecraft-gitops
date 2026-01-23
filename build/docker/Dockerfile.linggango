@@ -80,39 +80,17 @@ ENV APP_DIR=/opt/linggango \
 
 RUN mkdir -p "${APP_DIR}" "${DATA_DIR}"
 
+COPY tools/gdrive_download.sh /usr/local/bin/gdrive_download.sh
+RUN chmod +x /usr/local/bin/gdrive_download.sh
+
 # Optionaler Modpack-Download zur Buildzeit
 ARG GDRIVE_ID=1cieHwxo9cTRrmRl-uGrQJFQrQo5RPlm9
 ARG ZIP
 
 RUN if [[ -n "${GDRIVE_ID}" && -n "${ZIP}" ]]; then \
-      set -euxo pipefail; \
-      OUT="${APP_DIR}/${ZIP}"; \
-      COOKIE="/tmp/gdrive_cookie.txt"; \
-      PAGE="/tmp/gdrive_page.html"; \
-      BASE="https://drive.google.com/uc?export=download&id=${GDRIVE_ID}"; \
-      \
-      echo "Preflight: ${BASE}"; \
-      curl -fsSL -c "${COOKIE}" -o "${PAGE}" "${BASE}"; \
-      \
-      # Falls direkt ZIP geliefert wird (PK magic), übernehmen
-      if [[ "$(od -An -t x1 -N 2 "${PAGE}" | tr -d ' \n')" == "504b" ]]; then \
-        mv -f "${PAGE}" "${OUT}"; \
-      else \
-        # confirm token aus HTML ziehen, sonst aus Cookie, sonst fallback t
-        CONFIRM="$(sed -n 's/.*confirm=\\([0-9A-Za-z_-]\\+\\).*/\\1/p' "${PAGE}" | head -n1 || true)"; \
-        if [[ -z "${CONFIRM}" ]]; then \
-          CONFIRM="$(awk '$6 ~ /^download_warning/ {print $7}' "${COOKIE}" | tail -n1 || true)"; \
-        fi; \
-        if [[ -z "${CONFIRM}" ]]; then CONFIRM="t"; fi; \
-        \
-        FINAL="${BASE}&confirm=${CONFIRM}"; \
-        echo "Downloading: ${FINAL} -> ${OUT}"; \
-        curl -fsSL -Lb "${COOKIE}" -o "${OUT}" "${FINAL}"; \
-      fi; \
-      \
-      # ZIP validieren bevor unzip
-      unzip -tq "${OUT}"; \
-      unzip -uo "${OUT}" -d "${DATA_DIR}"; \
+      /usr/local/bin/gdrive_download.sh "${GDRIVE_ID}" "${APP_DIR}/${ZIP}"; \
+      unzip -tq "${APP_DIR}/${ZIP}"; \
+      unzip -uo "${APP_DIR}/${ZIP}" -d "${DATA_DIR}"; \
     else \
       echo "GDRIVE_ID oder ZIP nicht gesetzt – skip download"; \
     fi
