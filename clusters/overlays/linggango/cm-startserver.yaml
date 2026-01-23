@@ -12,7 +12,7 @@ data:
 
     # --- Google Drive Serverpack ---
     SERVERPACK_GDRIVE_ID="${SERVERPACK_GDRIVE_ID:-}"          # <- in params-linggango.env setzen
-    ZIP"${ZIP:-}"
+    ZIP="${ZIP:-}"
     ZIP_PATH="${DATA_DIR}/${ZIP}"
     LINGGANGO_FORCE_REINIT="${LINGGANGO_FORCE_REINIT:-false}"
 

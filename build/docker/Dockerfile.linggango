@@ -49,36 +49,6 @@ RUN mkdir -p /data/forge/mods
 ARG FILE_ID
 ARG ZIP=""
 
-RUN set -euo pipefail; \
-    if [[ -z "${FILE_ID:-}" || -z "${ZIP:-}" ]]; then \
-      echo "[BUILD] FILE_ID/ZIP not set -> skipping modpack zip download"; \
-      exit 0; \
-    fi; \
-    DIR1=$(( FILE_ID / 1000 )); \
-    DIR2=$(( FILE_ID % 1000 )); \
-    echo "[BUILD] Downloading modpack zip: ${ZIP} (FILE_ID=${FILE_ID} -> ${DIR1}/${DIR2})"; \
-    ok="false"; \
-    for HOST in mediafilez.forgecdn.net media.forgecdn.net edge.forgecdn.net; do \
-      URL="https://${HOST}/files/${DIR1}/${DIR2}/${ZIP}"; \
-      echo "[BUILD] Trying: ${URL}"; \
-      if curl -fL --retry 2 --retry-delay 2 \
-        -A "Mozilla/5.0" \
-        -H "Referer: https://www.curseforge.com/" \
-        -H "Accept: */*" \
-        -o "${MC_HOME}/mods/Linggango.zip.new" "${URL}"; then \
-          mv -f "${MC_HOME}/mods/Linggango.zip.new" "${MC_HOME}/mods/Linggango.zip"; \
-          ls -lh "${MC_HOME}/mods/Linggango.zip"; \
-          ok="true"; \
-          break; \
-      fi; \
-    done; \
-      if [[ "${ok}" != "true" ]]; then \
-        echo "[BUILD] WARN: could not download modpack zip during build (likely 403)."; \
-        echo "[BUILD]       -> will download at runtime."; \
-        rm -f "${MC_HOME}/mods/Linggango.zip.new" 2>/dev/null || true; \
-        exit 0; \
-      fi
-
 # EULA in image
 RUN echo "eula=true" > "${MC_HOME}/eula.txt"
 
@@ -89,3 +59,4 @@ RUN chgrp -R 0 "${MC_HOME}" /usr/local/bin/mcrcon \
  && find "${MC_HOME}" -type d -exec chmod g+s {} \;
 
 WORKDIR "${MC_HOME}"
+CMD ["/data/startserver.sh"]
