@@ -18,7 +18,7 @@ data:
 
     # ---- Forge 1.20.1 ----
     MC_VERSION="${MC_VERSION:-1.20.1}"
-    FORGE_VERSION="${FORGE_VERSION:-47.4.0}"
+    FORGE_VERSION="${FORGE_VERSION:-47.4.15}"
     FORGE_INSTALLER="forge-${MC_VERSION}-${FORGE_VERSION}-installer.jar"
     FORGE_URL="https://maven.minecraftforge.net/net/minecraftforge/forge/${MC_VERSION}-${FORGE_VERSION}/${FORGE_INSTALLER}"
     FORGE_UNIX_ARGS="libraries/net/minecraftforge/forge/${MC_VERSION}-${FORGE_VERSION}/unix_args.txt"
