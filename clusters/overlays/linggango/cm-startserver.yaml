@@ -11,6 +11,7 @@ data:
     DATA_DIR="${DATA_DIR:-/data}"
 
     ZIP="${ZIP:-}"                               # z.B. serverpackv6.42.zip
+  
     LINGGANGO_FORCE_REINIT="${LINGGANGO_FORCE_REINIT:-false}"
 
     # Marker für einmalige Initialisierung (an ZIP gekoppelt => wenn ZIP-Name ändert, wird neu initialisiert)
