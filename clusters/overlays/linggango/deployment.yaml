@@ -60,8 +60,6 @@ spec:
                 name: mc-env
             - secretRef:
                 name: secret-curseforge
-            - secretRef:
-                name: mc-env
           volumeMounts:
             - name: mcrcon-commands
               mountPath: /data/commands.txt
