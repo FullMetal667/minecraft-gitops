@@ -84,7 +84,7 @@ COPY tools/gdrive_download.sh /usr/local/bin/gdrive_download.sh
 RUN chmod +x /usr/local/bin/gdrive_download.sh
 
 # Optionaler Modpack-Download zur Buildzeit
-ARG GDRIVE_ID=1f1chnMarfKx6xPdRBkgczyPF8oHCAhTi
+ARG GDRIVE_ID=166cSUmFRSymjsS-xRRgRPZhxBhRJiGwb
 ARG ZIP
 
 RUN if [[ -n "${GDRIVE_ID}" && -n "${ZIP}" ]]; then \
