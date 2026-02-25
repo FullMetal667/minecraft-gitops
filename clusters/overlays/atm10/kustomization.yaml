@@ -27,5 +27,5 @@ patches:
 images: 
   - name: docker.io/chrisroth667/minecraft
     newName: docker.io/chrisroth667/atm10
-    newTag: "5.5"
+    newTag: "6.0"
 
