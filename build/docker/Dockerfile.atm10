@@ -21,59 +21,45 @@ LABEL org.opencontainers.image.source="https://github.com/FullMetal667/minecraft
       org.opencontainers.image.vendor="chrisroth667" \
       org.opencontainers.image.licenses="MIT"
 
-# Tools installieren, aber danach Java 21 erzwingen
 RUN microdnf install -y --setopt=install_weak_deps=0 \
       curl-minimal wget vim unzip nmap-ncat which ca-certificates \
  && microdnf clean all \
  && update-ca-trust
 
 # --- Java 21 erzwingen ---
-# 1) Falls Java 17 (oder andere) versehentlich installiert wurde: entfernen (best-effort)
-# 2) JAVA_HOME/PATH auf Java 21 setzen
-# 3) alternatives /usr/bin/java auf Java 21 pinnen
 RUN set -euxo pipefail; \
     echo "[JAVA] Before fix:"; \
     java -version || true; \
     echo "JAVA_HOME=${JAVA_HOME:-}"; \
-    \
-    # Best-effort remove java-17 if present (nicht fatal wenn nicht installiert)
     microdnf -y remove java-17-openjdk java-17-openjdk-headless java-17-openjdk-devel || true; \
     microdnf clean all || true; \
-    \
-    # UBI OpenJDK 21 Pfad (typisch)
     JAVA21_HOME="/usr/lib/jvm/java-21"; \
     if [[ ! -d "${JAVA21_HOME}" ]]; then \
       echo "[JAVA] ERROR: expected ${JAVA21_HOME} not found. Available JVMs:"; \
       ls -la /usr/lib/jvm || true; \
       exit 1; \
     fi; \
-    \
-    # Alternatives hart setzen
     alternatives --set java "${JAVA21_HOME}/bin/java" || true; \
     alternatives --set javac "${JAVA21_HOME}/bin/javac" || true; \
-    \
-    # Symlink zur Sicherheit (falls alternatives nicht greift)
     ln -sf "${JAVA21_HOME}/bin/java" /usr/bin/java; \
     ln -sf "${JAVA21_HOME}/bin/javac" /usr/bin/javac || true; \
-    \
     echo "[JAVA] After fix:"; \
     /usr/bin/java -version; \
     echo "Resolved java: $(readlink -f /usr/bin/java)"; \
     echo "OK"
 
-# Wichtig: Env nach Fix setzen, damit auch Runtime stimmt
 ENV JAVA_HOME=/usr/lib/jvm/java-21
 ENV PATH="${JAVA_HOME}/bin:${PATH}"
 
-# tini rein (per ADD, braucht kein curl)
+# tini
 ENV TINI_VERSION=v0.19.0
 ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini-amd64 /usr/local/bin/tini
 RUN chmod +x /usr/local/bin/tini && ln -s /usr/local/bin/tini /usr/bin/tini
 
-# mcrcon rein
+# mcrcon
 COPY --from=mcrcon-builder --chmod=0755 --chown=0:0 /src/mcrcon/mcrcon /usr/local/bin/mcrcon
 
-# startscript rein
+# startscript + eula
 COPY atm10/startserver.sh /data/startserver.sh
 COPY atm10/eula.txt      /data/eula.txt
 
@@ -82,19 +68,7 @@ ENV APP_DIR=/opt/atm10 \
 
 RUN mkdir -p "${APP_DIR}" "${DATA_DIR}"
 
-# Optionaler Modpack-Download zur Buildzeit
-ARG FILE_ID
-ARG ZIP
-RUN if [[ -n "${FILE_ID}" && -n "${ZIP}" ]]; then \
-      DIR1=$(( FILE_ID / 1000 )); \
-      DIR2=$(( FILE_ID % 1000 )); \
-      FINAL_URL="https://mediafilez.forgecdn.net/files/${DIR1}/${DIR2}/${ZIP}"; \
-      echo "Downloading: ${FINAL_URL}"; \
-      curl -fL -o "${APP_DIR}/${ZIP}" "${FINAL_URL}"; \
-      unzip -uo "${APP_DIR}/${ZIP}" -d "${DATA_DIR}"; \
-    else \
-      echo "FILE_ID oder ZIP nicht gesetzt – skip download"; \
-    fi
+# ---- WICHTIG: kein Modpack Download/Unzip im Build mehr ----
 
 # OpenShift-kompatible Rechte (arbitrary UID)
 RUN chgrp -R 0 "${APP_DIR}" "${DATA_DIR}" /data/startserver.sh /usr/local/bin/mcrcon \
@@ -103,7 +77,7 @@ RUN chgrp -R 0 "${APP_DIR}" "${DATA_DIR}" /data/startserver.sh /usr/local/bin/mc
  && find "${APP_DIR}" -type d -exec chmod g+s {} \; \
  && find "${DATA_DIR}" -type d -exec chmod g+s {} \;
 
-WORKDIR ${DATA_DIR}
+WORKDIR /data
 VOLUME ["/data"]
 EXPOSE 25565/tcp
 

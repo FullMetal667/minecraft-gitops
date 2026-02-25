@@ -13,13 +13,79 @@ data:
     # Marker für einmalige Initialisierung
     ATM10_INIT_MARKER="${DATA_DIR}/.atm10_initialized"
 
+    # ==========================
+    # Modpack/Serverpack Download (NUR runtime)
+    # ==========================
+    # Unterstützt:
+    #   1) FILE_ID + ZIP (ForgeCDN-Pattern)
+    #   2) MODPACK_URL (direkter Link zur ZIP) – optional
+    FILE_ID="${FILE_ID:-}"
+    ZIP="${ZIP:-}"
+    MODPACK_URL="${MODPACK_URL:-}"
+
+    download_and_extract_serverpack() {
+      mkdir -p "${DATA_DIR}"
+
+      # Wenn es schon nach einer Installation aussieht, nix machen
+      if [[ -d "${DATA_DIR}/mods" || -f "${DATA_DIR}/user_jvm_args.txt" || -d "${DATA_DIR}/libraries" ]]; then
+        echo "[PACK] Looks initialized already (mods/ or user_jvm_args.txt or libraries/ exist) – skip pack download."
+        return 0
+      fi
+
+      local url=""
+      if [[ -n "${MODPACK_URL}" ]]; then
+        url="${MODPACK_URL}"
+      elif [[ -n "${FILE_ID}" && -n "${ZIP}" ]]; then
+        local dir1=$(( FILE_ID / 1000 ))
+        local dir2=$(( FILE_ID % 1000 ))
+        url="https://mediafilez.forgecdn.net/files/${dir1}/${dir2}/${ZIP}"
+      else
+        echo "[PACK] No FILE_ID/ZIP or MODPACK_URL set – skip pack download."
+        return 0
+      fi
+
+      echo "[PACK] Downloading serverpack: ${url}"
+      local tmpzip="/tmp/serverpack.zip"
+      rm -f "${tmpzip}" || true
+
+      # robust download
+      if command -v curl >/dev/null 2>&1; then
+        curl -fL --retry 5 --retry-delay 2 --connect-timeout 20 -o "${tmpzip}" "${url}"
+      elif command -v wget >/dev/null 2>&1; then
+        wget -O "${tmpzip}" "${url}"
+      else
+        echo "[PACK] ERROR: neither curl nor wget available."
+        exit 1
+      fi
+
+      echo "[PACK] Extracting to ${DATA_DIR} ..."
+      unzip -oq "${tmpzip}" -d "${DATA_DIR}"
+      rm -f "${tmpzip}" || true
+
+      # Manche Serverpacks liegen in einem Unterordner (z.B. /ServerFiles/*).
+      # Falls wir sowas erkennen: Inhalte nach /data ziehen.
+      shopt -s nullglob dotglob
+      local candidates=("${DATA_DIR}"/*/)
+      for d in "${candidates[@]}"; do
+        # nur wenn es genau 1 top-level ordner ist und der typische Inhalte hat
+        if [[ -f "${d}/startserver.sh" || -f "${d}/run.sh" || -f "${d}/user_jvm_args.txt" || -d "${d}/mods" ]]; then
+          # Wenn /data sonst "leer" ist (außer ordner), ziehen wir um
+          echo "[PACK] Detected nested pack dir: ${d} -> flatten into ${DATA_DIR}"
+          cp -an "${d}/"* "${DATA_DIR}/" 2>/dev/null || true
+          break
+        fi
+      done
+      shopt -u nullglob dotglob
+
+      echo "[PACK] Done."
+    }
+
     # ---- ATM10 / NeoForge Version ----
     NEOFORGE_VERSION="${NEOFORGE_VERSION:-21.1.218}"
     INSTALLER="neoforge-${NEOFORGE_VERSION}-installer.jar"
     NEOFORGE_URL="https://maven.neoforged.net/releases/net/neoforged/neoforge/${NEOFORGE_VERSION}/neoforge-${NEOFORGE_VERSION}-installer.jar"
 
     # ---- SimpleBackups (über overlays) ----
-    # BACKUP_MOD=advanced | none
     BACKUP_MOD="${BACKUP_MOD:-advanced}"
 
     AB_FILE_ID="${AB_FILE_ID:-7173771}"
@@ -42,7 +108,6 @@ data:
       esac
     }
 
-    # nur in overlays/mods sicherstellen (Download oder Kopie), noch NICHT in mods kopieren
     stage_backup_mod() {
       local fname url
       fname="$(selected_backup_filename)"
@@ -51,18 +116,15 @@ data:
 
       mkdir -p "${DATA_DIR}/overlays/mods"
 
-      # Wenn schon in overlays vorhanden: fertig
       if [[ -f "${DATA_DIR}/overlays/mods/${fname}" ]]; then
         return 0
       fi
 
-      # Wenn das Jar irgendwo anders existiert (z.B. manuell ins DATA_DIR gelegt)
       if [[ -f "${DATA_DIR}/${fname}" ]]; then
         cp -n "${DATA_DIR}/${fname}" "${DATA_DIR}/overlays/mods/${fname}" 2>/dev/null || true
         return 0
       fi
 
-      # Download aus dem Netz
       if [[ -n "${url}" ]]; then
         echo "[BK] downloading ${fname} from ${url}"
         if ! curl -fsSL "${url}" -o "${DATA_DIR}/overlays/mods/${fname}"; then
@@ -72,7 +134,6 @@ data:
       fi
     }
 
-    # aus overlays HART nach mods/ kopieren – aber NICHTS überschreiben
     place_backup_mod() {
       local fname src
       fname="$(selected_backup_filename)"
@@ -80,14 +141,12 @@ data:
 
       mkdir -p "${DATA_DIR}/mods"
 
-      # Quelle: overlays/mods
       if [[ -f "${DATA_DIR}/overlays/mods/${fname}" ]]; then
         src="${DATA_DIR}/overlays/mods/${fname}"
       else
         return 0
       fi
 
-      # wenn im mods/-Verzeichnis schon vorhanden: nicht anfassen
       if [[ -f "${DATA_DIR}/mods/${fname}" ]]; then
         echo "[BK] ${fname} bereits in mods/ vorhanden – nichts überschrieben."
         return 0
@@ -116,18 +175,21 @@ data:
     cd "${DATA_DIR}"
 
     # ============================================================
-    # 0) ATM10-Serverpack EINMALIG aus /opt/atm10 nach /data kopieren
-    #    (hier liegen Mods, Config, etc.)
+    # 0) Initialisierung EINMALIG: Modpack laden/entpacken (runtime)
+    #    plus optionaler Fallback copy aus APP_DIR
     # ============================================================
     if [[ ! -f "${ATM10_INIT_MARKER}" ]]; then
+      echo "[ATM10] First init: serverpack + base files"
+
+      download_and_extract_serverpack
+
+      # Fallback: falls du später doch mal ein Pack ins Image legen willst
       if [[ -d "${APP_DIR}" ]]; then
-        echo "[ATM10] Erste Initialisierung von /data aus ${APP_DIR} ..."
         shopt -s dotglob
         cp -an "${APP_DIR}/"* "${DATA_DIR}/" 2>/dev/null || true
         shopt -u dotglob
-      else
-        echo "[ATM10] WARN: APP_DIR=${APP_DIR} existiert nicht – kein Serverpack zum Kopieren."
       fi
+
       touch "${ATM10_INIT_MARKER}"
     fi
 
@@ -151,23 +213,18 @@ data:
     # =======================
     # ATM10 / NeoForge – Installation
     # =======================
-
-    # Java-Verfügbarkeit prüfen
     if ! command -v "${ATM10_JAVA:-java}" >/dev/null 2>&1; then
       echo "[ATM10] Minecraft 1.21 requires Java 21 - Java not found (ATM10_JAVA oder java)"
       exit 1
     fi
 
-    # NeoForge installieren, falls libraries/ noch nicht existiert
     if [[ ! -d "libraries" ]]; then
       echo "[ATM10] Neoforge not installed, installing now."
       if [[ ! -f "${INSTALLER}" ]]; then
         echo "[ATM10] No Neoforge installer found, downloading now: ${NEOFORGE_URL}"
         if command -v wget >/dev/null 2>&1; then
-          echo "[ATM10] DEBUG: (wget) Downloading ${NEOFORGE_URL}"
           wget -O "${INSTALLER}" "${NEOFORGE_URL}"
         elif command -v curl >/dev/null 2>&1; then
-          echo "[ATM10] DEBUG: (curl) Downloading ${NEOFORGE_URL}"
           curl -o "${INSTALLER}" -L "${NEOFORGE_URL}"
         else
           echo "[ATM10] Neither wget nor curl were found in the container. Please add one and try again."
@@ -179,7 +236,6 @@ data:
       "${ATM10_JAVA:-java}" -jar "${INSTALLER}" -installServer
     fi
 
-    # Standard server.properties, falls nicht vorhanden
     if [[ ! -e server.properties ]]; then
       cat > server.properties <<EOF
     allow-flight=true
@@ -188,13 +244,11 @@ data:
     EOF
     fi
 
-    # Nur installieren, nicht starten?
     if [[ "${ATM10_INSTALL_ONLY:-false}" == "true" ]]; then
       echo "[ATM10] INSTALL_ONLY: complete"
       exit 0
     fi
 
-    # Java-Version prüfen (>= 21)
     JAVA_VERSION="$("${ATM10_JAVA:-java}" -fullversion 2>&1 | awk -F '"' '/version/ {print $2}' | cut -d'.' -f1 || echo 0)"
     if ! [[ "${JAVA_VERSION}" =~ ^[0-9]+$ ]] || [[ "${JAVA_VERSION}" -lt 21 ]]; then
       echo "[ATM10] Minecraft 1.21 requires Java 21 - found Java ${JAVA_VERSION}"
@@ -208,14 +262,13 @@ data:
     place_backup_mod || true
 
     # =======================
-    # Hauptloop: Server starten + RCON-Commands
+    # Hauptloop
     # =======================
     while true; do
       echo "[ATM10] starting server ..."
       "${ATM10_JAVA:-java}" @user_jvm_args.txt @libraries/net/neoforged/neoforge/${NEOFORGE_VERSION}/unix_args.txt nogui &
       SERVER_PID=$!
 
-      # Nach RCON-Start commands.txt schießen
       if [[ "${RCON_ENABLE}" == "true" && -s "${DATA_DIR}/commands.txt" ]]; then
         echo "[RCON] waiting for ${RCON_HOST}:${RCON_PORT} (timeout ${RCON_WAIT_SECS}s) ..."
         waited=0
@@ -236,10 +289,8 @@ data:
         fi
       fi
 
-      # Auf Serverprozess warten
       wait "${SERVER_PID}" || true
 
-      # Automatischen Restart steuern
       if [[ "${ATM10_RESTART:-true}" == "false" ]]; then
         echo "[ATM10] server stopped, automatic restart disabled (ATM10_RESTART=false)"
         exit 0
