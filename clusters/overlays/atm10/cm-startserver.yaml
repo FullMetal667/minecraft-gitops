@@ -105,15 +105,10 @@ data:
     download_and_extract_serverpack() {
       mkdir -p "${DATA_DIR}"
 
-      # Wenn es schon nach einer Installation aussieht, nix machen
+      # Nur skippen, wenn wirklich Pack da ist
       if pack_seems_present; then
         echo "[PACK] Pack present – skip pack download."
         return 0
-      fi
-
-      if ! [[ "${FILE_ID}" =~ ^[0-9]+$ ]]; then
-        echo "[PACK] ERROR: FILE_ID must be numeric, got: '${FILE_ID}'"
-        exit 1
       fi
 
       local url=""
@@ -136,7 +131,6 @@ data:
       local tmpzip="/tmp/serverpack.zip"
       rm -f "${tmpzip}" || true
 
-      # robust download
       if command -v curl >/dev/null 2>&1; then
         curl -fL --retry 5 --retry-delay 2 --connect-timeout 20 -o "${tmpzip}" "${url}"
       elif command -v wget >/dev/null 2>&1; then
@@ -146,11 +140,44 @@ data:
         exit 1
       fi
 
+      echo "[PACK] Extracting to ${DATA_DIR} (protecting mounted files) ..."
+
+      # Mounted files nicht anfassen: server.properties + start scripts
+      unzip -oq "${tmpzip}" -d "${DATA_DIR}" \
+        -x "server.properties" "*/server.properties" \
+          "startserver.sh" "*/startserver.sh" \
+          "run.sh" "*/run.sh"
+
+      rm -f "${tmpzip}" || true
+
+      # Flatten (nested pack dir) – idealerweise mit rsync (exclude)
+      shopt -s nullglob dotglob
+      local candidates=("${DATA_DIR}"/*/)
+      for d in "${candidates[@]}"; do
+        if [[ -f "${d}/startserver.sh" || -f "${d}/run.sh" || -f "${d}/user_jvm_args.txt" || -d "${d}/mods" ]]; then
+          echo "[PACK] Detected nested pack dir: ${d} -> flatten into ${DATA_DIR} (excluding mounted files)"
+          rsync -a --ignore-existing \
+            --exclude='server.properties' \
+            --exclude='startserver.sh' \
+            --exclude='run.sh' \
+            "${d}/" "${DATA_DIR}/" 2>/dev/null \
+            || true
+          break
+        fi
+      done
+      shopt -u nullglob dotglob
+
+      echo "[PACK] Done."
+    }
+
       echo "[PACK] Extracting to ${DATA_DIR} (protecting server.properties) ..."
 
       # 1) Entpacken, aber server.properties (falls im ZIP) auslassen
       # unzip -x: exclude patterns
-      unzip -oq "${tmpzip}" -d "${DATA_DIR}" -x "server.properties" "*/server.properties"
+      unzip -oq "${tmpzip}" -d "${DATA_DIR}" \
+        -x "server.properties" "*/server.properties" \
+          "startserver.sh" "*/startserver.sh" \
+          "run.sh" "*/run.sh"
 
       rm -f "${tmpzip}" || true
 
