@@ -16,7 +16,7 @@ spec:
       serviceAccountName: minecraft-sa
       volumes:
         - name: world-data
-          persistentVolumeClaim:
+          persistentVolumeClaim:0
             claimName: world-data
         - name: backup
           persistentVolumeClaim:
@@ -31,7 +31,7 @@ spec:
         - name: server-properties
           configMap:
             name: mc-server-properties
-            defaultMode: 0755
+            defaultMode: 0777
         - name: user-jvm-args
           configMap:
             name: user-jvm-args
