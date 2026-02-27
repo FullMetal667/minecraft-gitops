@@ -16,7 +16,7 @@ spec:
       serviceAccountName: minecraft-sa
       volumes:
         - name: world-data
-          persistentVolumeClaim:0
+          persistentVolumeClaim:
             claimName: world-data
         - name: backup
           persistentVolumeClaim:
