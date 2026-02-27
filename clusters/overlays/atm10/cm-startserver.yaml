@@ -233,32 +233,67 @@ data:
     if [[ ! -f "${ATM10_INIT_MARKER}" ]]; then
       echo "[ATM10] First init: serverpack + base files"
 
-      download_and_extract_serverpack
+    download_and_extract_serverpack() {
+      mkdir -p "${DATA_DIR}"
 
-      # Fallback: falls du später doch mal ein Pack ins Image legen willst
-      if [[ -d "${APP_DIR}" ]]; then
-        shopt -s dotglob
-        cp -an "${APP_DIR}/"* "${DATA_DIR}/" 2>/dev/null || true
-        shopt -u dotglob
+      # Wenn es schon nach einer Installation aussieht, nix machen
+      if [[ -d "${DATA_DIR}/mods" || -f "${DATA_DIR}/user_jvm_args.txt" || -d "${DATA_DIR}/libraries" ]]; then
+        echo "[PACK] Looks initialized already (mods/ or user_jvm_args.txt or libraries/ exist) – skip pack download."
+        return 0
       fi
 
-      # Marker nur setzen, wenn das Pack wirklich da ist
-      if pack_seems_present; then
-        touch "${ATM10_INIT_MARKER}"
-        echo "[ATM10] Init marker written."
+      local url=""
+      if [[ -n "${MODPACK_URL}" ]]; then
+        url="${MODPACK_URL}"
+      elif [[ -n "${FILE_ID}" && -n "${ZIP}" ]]; then
+        local dir1=$(( FILE_ID / 1000 ))
+        local dir2=$(( FILE_ID % 1000 ))
+        url="https://mediafilez.forgecdn.net/files/${dir1}/${dir2}/${ZIP}"
       else
-        echo "[ATM10] ERROR: Pack not present after init (mods jars: $(count_mod_jars)). Not writing marker."
-        echo "[ATM10] Hint: check FILE_ID/ZIP or MODPACK_URL and write permissions on ${DATA_DIR}"
+        echo "[PACK] No FILE_ID/ZIP or MODPACK_URL set – skip pack download."
+        return 0
+      fi
+
+      echo "[PACK] Downloading serverpack: ${url}"
+      local tmpzip="/tmp/serverpack.zip"
+      rm -f "${tmpzip}" || true
+
+      # robust download
+      if command -v curl >/dev/null 2>&1; then
+        curl -fL --retry 5 --retry-delay 2 --connect-timeout 20 -o "${tmpzip}" "${url}"
+      elif command -v wget >/dev/null 2>&1; then
+        wget -O "${tmpzip}" "${url}"
+      else
+        echo "[PACK] ERROR: neither curl nor wget available."
         exit 1
       fi
-    else
-      # Optional: wenn Marker existiert aber Pack fehlt (z.B. durch kaputtes Volume), fail fast
-      if ! pack_seems_present; then
-        echo "[ATM10] ERROR: Init marker exists but pack is missing (mods jars: $(count_mod_jars))."
-        echo "[ATM10] Remove ${ATM10_INIT_MARKER} and re-init, or fix your volume contents."
-        exit 1
-      fi
-    fi
+
+      echo "[PACK] Extracting to ${DATA_DIR} (protecting server.properties) ..."
+
+      # 1) Entpacken, aber server.properties (falls im ZIP) auslassen
+      # unzip -x: exclude patterns
+      unzip -oq "${tmpzip}" -d "${DATA_DIR}" -x "server.properties" "*/server.properties"
+
+      rm -f "${tmpzip}" || true
+
+      # 2) Manche Serverpacks liegen in einem Unterordner (z.B. /ServerFiles/*).
+      #    Falls wir sowas erkennen: Inhalte nach /data ziehen, aber server.properties NICHT anfassen.
+      shopt -s nullglob dotglob
+      local candidates=("${DATA_DIR}"/*/)
+      for d in "${candidates[@]}"; do
+        if [[ -f "${d}/startserver.sh" || -f "${d}/run.sh" || -f "${d}/user_jvm_args.txt" || -d "${d}/mods" ]]; then
+          echo "[PACK] Detected nested pack dir: ${d} -> flatten into ${DATA_DIR} (excluding server.properties)"
+          # cp -an kopiert ohne überschreiben, aber wir schließen server.properties zusätzlich explizit aus
+          # (falls es in /data noch nicht existiert, würde cp es sonst anlegen -> would break your mount expectation)
+          rsync -a --ignore-existing --exclude='server.properties' "${d}/" "${DATA_DIR}/" 2>/dev/null \
+            || cp -an "${d}/"* "${DATA_DIR}/" 2>/dev/null || true
+          break
+        fi
+      done
+      shopt -u nullglob dotglob
+
+      echo "[PACK] Done."
+    }
 
     # =======================
     # EULA
