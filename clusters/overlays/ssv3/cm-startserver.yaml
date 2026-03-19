@@ -451,9 +451,8 @@ data:
       } >>user_jvm_args.txt
 
       if [[ ${SEMANTICS[1]} -eq 20 ]] && [[ ${#SEMANTICS[@]} -eq 2 || ${SEMANTICS[2]} -eq 1 ]]; then
-        SERVER_RUN_COMMAND="@user_jvm_args.txt -jar server.jar --installer-force --installer https://maven.neoforged.net/releases/net/neoforged/forge/${MINECRAFT_VERSION}-${MODLOADER_VERSION}/forge-${MINECRAFT_VERSION}-${MODLOADER_VERSION}-installer.jar nogui"
-      else
-        SERVER_RUN_COMMAND="@user_jvm_args.txt -jar server.jar --installer-force --installer ${MODLOADER_VERSION} nogui"
+        SERVER_RUN_COMMAND="@user_jvm_args.txt -jar ${SERVERSTARTERJAR_PATH} --installer-force --installer https://maven.neoforged.net/releases/net/neoforged/forge/${MINECRAFT_VERSION}-${MODLOADER_VERSION}/forge-${MINECRAFT_VERSION}-${MODLOADER_VERSION}-installer.jar nogui"
+        SERVER_RUN_COMMAND="@user_jvm_args.txt -jar ${SERVERSTARTERJAR_PATH} --installer-force --installer ${MODLOADER_VERSION} nogui"
       fi
 
       refreshServerJar
@@ -640,6 +639,21 @@ data:
 
     source "variables.txt"
 
+    RUNTIME_DIR="${RUNTIME_DIR:-/data}"
+
+    mkdir -p "${RUNTIME_DIR}" || true
+    if [[ ! -w "${RUNTIME_DIR}" ]]; then
+      RUNTIME_DIR="/tmp/minecraft"
+      mkdir -p "${RUNTIME_DIR}" || true
+    fi
+
+    if [[ ! -w "${RUNTIME_DIR}" ]]; then
+      crashServer "ERROR! Kein beschreibbares Runtime-Verzeichnis gefunden."
+    fi
+
+    cd "${RUNTIME_DIR}" || crashServer "ERROR! Konnte nicht nach ${RUNTIME_DIR} wechseln."
+    SERVERSTARTERJAR_PATH="${RUNTIME_DIR}/server.jar"
+
     LAUNCHER_JAR_LOCATION="do_not_manually_edit"
     SERVER_RUN_COMMAND="do_not_manually_edit"
     JAVA_VERSION="do_not_manually_edit"
@@ -753,8 +767,8 @@ data:
     # Depending on $RESTART the server runs in a loop, to make sure it comes right back up after crashing. Force exit can be
     # achieved by hitting CTRL+C multiple times. Variables are not reloaded between server runs. Quit the script and re-run
     # it if you wish to reload the variables.
-    if [[ "${SERVER_RUN_COMMAND}" == *"server.jar"* ]] && [[ ! -s "server.jar" ]]; then
-      crashServer "ERROR! Start abgebrochen: server.jar fehlt, obwohl sie im SERVER_RUN_COMMAND verwendet wird."
+    if [[ "${SERVER_RUN_COMMAND}" == *"server.jar"* ]] && [[ ! -s "${SERVERSTARTERJAR_PATH}" ]]; then
+      crashServer "ERROR! Start abgebrochen: ${SERVERSTARTERJAR_PATH} fehlt, obwohl sie im SERVER_RUN_COMMAND verwendet wird."
     fi
     while true
     do
