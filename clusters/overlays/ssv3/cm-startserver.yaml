@@ -351,7 +351,11 @@ data:
         SERVERSTARTERJAR_DOWNLOAD_URL="https://github.com/neoforged/ServerStarterJar/releases/download/${SERVERSTARTERJAR_VERSION}/server.jar"
       fi
 
-      downloadIfNotExist "server.jar" "server.jar" "${SERVERSTARTERJAR_DOWNLOAD_URL}"
+      downloadIfNotExist "server.jar" "server.jar" "${SERVERSTARTERJAR_DOWNLOAD_URL}" >/dev/null
+
+      if [[ ! -s "server.jar" ]]; then
+        crashServer "ERROR! server.jar konnte nicht heruntergeladen oder gefunden werden. URL: ${SERVERSTARTERJAR_DOWNLOAD_URL}"
+      fi
     }
 
     # setupForge
@@ -730,6 +734,9 @@ data:
     # Depending on $RESTART the server runs in a loop, to make sure it comes right back up after crashing. Force exit can be
     # achieved by hitting CTRL+C multiple times. Variables are not reloaded between server runs. Quit the script and re-run
     # it if you wish to reload the variables.
+    if [[ "${SERVER_RUN_COMMAND}" == *"server.jar"* ]] && [[ ! -s "server.jar" ]]; then
+      crashServer "ERROR! Start abgebrochen: server.jar fehlt, obwohl sie im SERVER_RUN_COMMAND verwendet wird."
+    fi
     while true
     do
       runJavaCommand "${ADDITIONAL_ARGS} ${SERVER_RUN_COMMAND}"
