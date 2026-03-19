@@ -351,7 +351,25 @@ data:
         SERVERSTARTERJAR_DOWNLOAD_URL="https://github.com/neoforged/ServerStarterJar/releases/download/${SERVERSTARTERJAR_VERSION}/server.jar"
       fi
 
-      downloadIfNotExist "server.jar" "server.jar" "${SERVERSTARTERJAR_DOWNLOAD_URL}" >/dev/null
+    if [[ ! -s "${SERVERSTARTERJAR_PATH}" ]]; then
+      echo "${SERVERSTARTERJAR_PATH} could not be found." >&2
+      echo "Downloading server.jar" >&2
+      echo "from ${SERVERSTARTERJAR_DOWNLOAD_URL}" >&2
+
+      if commandAvailable curl ; then
+        curl -fL --retry 3 -o "${SERVERSTARTERJAR_PATH}" "${SERVERSTARTERJAR_DOWNLOAD_URL}" || \
+          crashServer "ERROR! Download von server.jar fehlgeschlagen."
+      elif commandAvailable wget ; then
+        wget -O "${SERVERSTARTERJAR_PATH}" "${SERVERSTARTERJAR_DOWNLOAD_URL}" || \
+          crashServer "ERROR! Download von server.jar fehlgeschlagen."
+      else
+        crashServer "[ERROR] wget oder curl wird benötigt."
+      fi
+    fi
+
+    if [[ ! -s "${SERVERSTARTERJAR_PATH}" ]]; then
+      crashServer "ERROR! server.jar konnte nicht heruntergeladen oder gefunden werden. URL: ${SERVERSTARTERJAR_DOWNLOAD_URL}"
+    fi
 
       if [[ ! -s "server.jar" ]]; then
         crashServer "ERROR! server.jar konnte nicht heruntergeladen oder gefunden werden. URL: ${SERVERSTARTERJAR_DOWNLOAD_URL}"
@@ -399,7 +417,7 @@ data:
             runJavaCommand "-jar forge-installer.jar --installServer"
           fi
         else
-          SERVER_RUN_COMMAND="@user_jvm_args.txt -Djava.security.manager=allow -jar server.jar --installer-force --installer ${FORGE_INSTALLER_URL} nogui"
+          SERVER_RUN_COMMAND="@user_jvm_args.txt -Djava.security.manager=allow -jar ${SERVERSTARTERJAR_PATH} --installer-force --installer ${FORGE_INSTALLER_URL} nogui"
           # Download ServerStarterJar to server.jar
           refreshServerJar
         fi
@@ -589,6 +607,19 @@ data:
     done
     DIR=$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )
     cd "${DIR}" >/dev/null 2>&1 || exit
+
+    WRITABLE_DIR="/data"
+    mkdir -p "${WRITABLE_DIR}" || true
+
+    if [[ ! -w "${WRITABLE_DIR}" ]]; then
+      WRITABLE_DIR="/tmp"
+    fi
+
+    if [[ ! -w "${WRITABLE_DIR}" ]]; then
+      crashServer "ERROR! Weder /data noch /tmp sind beschreibbar."
+    fi
+
+    SERVERSTARTERJAR_PATH="${WRITABLE_DIR}/server.jar"
 
     # Check whether the path to this directory contains spaces. Spaces in the path are prone to cause trouble.
     if [[ "${DIR}" == *" "*  ]]; then
