@@ -347,7 +347,7 @@ data:
     # this value in the variables.txt
     refreshServerJar() {
       if [[ "${SERVERSTARTERJAR_FORCE_FETCH}" == "true" ]]; then
-        rm -f server.jar
+        rm -f "${SERVERSTARTERJAR_PATH}"
       fi
 
       if [[ "${SERVERSTARTERJAR_VERSION}" == "latest" ]]; then
@@ -356,27 +356,10 @@ data:
         SERVERSTARTERJAR_DOWNLOAD_URL="https://github.com/neoforged/ServerStarterJar/releases/download/${SERVERSTARTERJAR_VERSION}/server.jar"
       fi
 
-    if [[ ! -s "${SERVERSTARTERJAR_PATH}" ]]; then
-      echo "${SERVERSTARTERJAR_PATH} could not be found." >&2
-      echo "Downloading server.jar" >&2
-      echo "from ${SERVERSTARTERJAR_DOWNLOAD_URL}" >&2
+      downloadIfNotExist "${SERVERSTARTERJAR_PATH}" "${SERVERSTARTERJAR_PATH}" "${SERVERSTARTERJAR_DOWNLOAD_URL}" >/dev/null || \
+        crashServer "ERROR! Download von server.jar fehlgeschlagen."
 
-      if commandAvailable curl ; then
-        curl -fL --retry 3 -o "${SERVERSTARTERJAR_PATH}" "${SERVERSTARTERJAR_DOWNLOAD_URL}" || \
-          crashServer "ERROR! Download von server.jar fehlgeschlagen."
-      elif commandAvailable wget ; then
-        wget -O "${SERVERSTARTERJAR_PATH}" "${SERVERSTARTERJAR_DOWNLOAD_URL}" || \
-          crashServer "ERROR! Download von server.jar fehlgeschlagen."
-      else
-        crashServer "[ERROR] wget oder curl wird benötigt."
-      fi
-    fi
-
-    if [[ ! -s "${SERVERSTARTERJAR_PATH}" ]]; then
-      crashServer "ERROR! server.jar konnte nicht heruntergeladen oder gefunden werden. URL: ${SERVERSTARTERJAR_DOWNLOAD_URL}"
-    fi
-
-      if [[ ! -s "server.jar" ]]; then
+      if [[ ! -s "${SERVERSTARTERJAR_PATH}" ]]; then
         crashServer "ERROR! server.jar konnte nicht heruntergeladen oder gefunden werden. URL: ${SERVERSTARTERJAR_DOWNLOAD_URL}"
       fi
     }
