@@ -544,7 +544,9 @@ data:
       [[ $SOURCE != /* ]] && SOURCE=$DIR/$SOURCE
     done
     DIR=$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )
-    SOURCE_DIR="${DIR}"
+
+    PACK_SOURCE_DIR="${PACK_SOURCE_DIR:-/opt/minecraft}"
+    SOURCE_DIR="${PACK_SOURCE_DIR}"
 
     if [[ "${SOURCE_DIR}" == *" "* ]]; then
       echo "WARNING! The current location of this script contains spaces. This may cause this server to crash!"
