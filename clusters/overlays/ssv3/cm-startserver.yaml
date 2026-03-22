@@ -30,7 +30,7 @@ data:
     ############################################DESCRIPTION#################################################
     #
     # Start script to easily run your server pack.
-    # Adapted for container/OpenShift environments with read-only source locations and writable runtime dirs.
+    # Adapted for container/OpenShift environments with ConfigMap-backed read-only config files.
     #
     #######################################################################################################
 
@@ -104,41 +104,7 @@ data:
       "$JAVA" ${1}
     }
 
-    copy_source_to_runtime() {
-      local src="$1"
-      local dst="$2"
-
-      mkdir -p "${dst}" || crashServer "ERROR! Could not create runtime directory ${dst}."
-
-      if [[ "$(cd "${src}" && pwd)" == "$(cd "${dst}" && pwd)" ]]; then
-        echo "[INIT] Source and runtime directory are identical. Skipping copy."
-        return 0
-      fi
-
-      echo "[INIT] Syncing server pack from ${src} to ${dst}"
-
-      if commandAvailable rsync; then
-        rsync -a \
-          --delete \
-          --exclude 'world' \
-          --exclude 'logs' \
-          --exclude '.fabric-installer' \
-          --exclude 'crash-reports' \
-          --exclude 'debug' \
-          "${src}/" "${dst}/" || crashServer "ERROR! Sync of server pack to ${dst} failed."
-      else
-        find "${dst}" -mindepth 1 -maxdepth 1 \
-          ! -name 'world' \
-          ! -name 'logs' \
-          ! -name 'crash-reports' \
-          ! -name 'debug' \
-          -exec rm -rf {} + 2>/dev/null || true
-
-        cp -a "${src}/." "${dst}/" || crashServer "ERROR! Copy of server pack to ${dst} failed."
-      fi
-    }
-
-    # RCON über server.properties aktivieren
+    # RCON defaults
     RCON_ENABLE="${RCON_ENABLE:-true}"
     RCON_HOST="${RCON_HOST:-127.0.0.1}"
     RCON_PORT="${RCON_PORT:-25575}"
@@ -179,15 +145,6 @@ data:
       esac
     }
 
-    _set_prop() {
-      local key="$1" value="$2" file="$3"
-      if grep -qE "^${key}=" "${file}" 2>/dev/null; then
-        sed -i "s#^${key}=.*#${key}=${value}#" "${file}"
-      else
-        echo "${key}=${value}" >> "${file}"
-      fi
-    }
-
     configure_rcon_server_properties() {
       if [[ "${RCON_ENABLE}" != "true" ]]; then
         echo "[RCON] disabled via RCON_ENABLE=${RCON_ENABLE}"
@@ -195,16 +152,15 @@ data:
       fi
 
       if [[ ! -f server.properties ]]; then
-        echo "[RCON] server.properties nicht vorhanden – lege Minimaldatei an."
-        touch server.properties || crashServer "ERROR! Could not create server.properties"
+        echo "[RCON] WARN: server.properties nicht vorhanden – überspringe automatische RCON-Konfiguration."
+        return 0
       fi
 
-      _set_prop "enable-rcon"   "true"             server.properties
-      _set_prop "rcon.port"     "${RCON_PORT}"     server.properties
-      _set_prop "rcon.password" "${RCON_PASSWORD}" server.properties
-      _set_prop "enable-query"  "false"            server.properties
-
-      echo "[RCON] RCON in server.properties aktiviert (port=${RCON_PORT})"
+      echo "[RCON] server.properties wird nicht verändert (ConfigMap-Modus aktiv)."
+      echo "[RCON] Bitte sicherstellen, dass folgende Werte bereits gesetzt sind:"
+      echo "       enable-rcon=true"
+      echo "       rcon.port=${RCON_PORT}"
+      echo "       rcon.password=<passend zu RCON_PASSWORD>"
     }
 
     stage_backup_mod() {
@@ -361,6 +317,10 @@ data:
           fi
         fi
       else
+        if [[ ! -s "user_jvm_args.txt" ]]; then
+          crashServer "ERROR! user_jvm_args.txt fehlt. Im ConfigMap-Modus muss diese Datei bereitgestellt werden."
+        fi
+
         if [[ "${USE_SSJ}" == "false" ]]; then
           FORGE_JAR_LOCATION="libraries/net/minecraftforge/forge/${MINECRAFT_VERSION}-${MODLOADER_VERSION}/forge-${MINECRAFT_VERSION}-${MODLOADER_VERSION}-server.jar"
           SERVER_RUN_COMMAND="@user_jvm_args.txt @libraries/net/minecraftforge/forge/${MINECRAFT_VERSION}-${MODLOADER_VERSION}/unix_args.txt nogui"
@@ -372,43 +332,17 @@ data:
           SERVER_RUN_COMMAND="@user_jvm_args.txt -Djava.security.manager=allow -jar ${SERVERSTARTERJAR_PATH} --installer-force --installer ${FORGE_INSTALLER_URL} nogui"
           refreshServerJar
         fi
-
-        echo "Generating user_jvm_args.txt from variables..."
-        echo "Edit JAVA_ARGS in your variables.txt. Do not edit user_jvm_args.txt directly!"
-        echo "Manually made changes to user_jvm_args.txt will be lost in the nether!"
-        rm -f user_jvm_args.txt
-        {
-          echo "# Xmx and Xms set the maximum and minimum RAM usage, respectively."
-          echo "# They can take any number, followed by an M or a G."
-          echo "# M means Megabyte, G means Gigabyte."
-          echo "# For example, to set the maximum to 3GB: -Xmx3G"
-          echo "# To set the minimum to 2.5GB: -Xms2500M"
-          echo "# A good default for a modded server is 4GB."
-          echo "# Uncomment the next line to set it."
-          echo "# -Xmx4G"
-          echo "${JAVA_ARGS}"
-        } >> user_jvm_args.txt
       fi
     }
 
     setupNeoForge() {
       echo ""
       echo "Running NeoForge checks and setup..."
-      echo "Generating user_jvm_args.txt from variables..."
-      echo "Edit JAVA_ARGS in your variables.txt. Do not edit user_jvm_args.txt directly!"
-      echo "Manually made changes to user_jvm_args.txt will be lost in the nether!"
-      rm -f user_jvm_args.txt
-      {
-        echo "# Xmx and Xms set the maximum and minimum RAM usage, respectively."
-        echo "# They can take any number, followed by an M or a G."
-        echo "# M means Megabyte, G means Gigabyte."
-        echo "# For example, to set the maximum to 3GB: -Xmx3G"
-        echo "# To set the minimum to 2.5GB: -Xms2500M"
-        echo "# A good default for a modded server is 4GB."
-        echo "# Uncomment the next line to set it."
-        echo "# -Xmx4G"
-        echo "${JAVA_ARGS}"
-      } >> user_jvm_args.txt
+      echo "Using existing user_jvm_args.txt from ConfigMap."
+
+      if [[ ! -s "user_jvm_args.txt" ]]; then
+        crashServer "ERROR! user_jvm_args.txt fehlt. Im ConfigMap-Modus muss diese Datei bereitgestellt werden."
+      fi
 
       if [[ ${SEMANTICS[1]} -eq 20 ]] && [[ ${#SEMANTICS[@]} -eq 2 || ${SEMANTICS[2]} -eq 1 ]]; then
         SERVER_RUN_COMMAND="@user_jvm_args.txt -jar ${SERVERSTARTERJAR_PATH} --installer-force --installer https://maven.neoforged.net/releases/net/neoforged/forge/${MINECRAFT_VERSION}-${MODLOADER_VERSION}/forge-${MINECRAFT_VERSION}-${MODLOADER_VERSION}-installer.jar nogui"
@@ -534,42 +468,26 @@ data:
       SERVER_RUN_COMMAND="${JAVA_ARGS} -jar ${LAUNCHER_JAR_LOCATION} nogui"
     }
 
-    echo "Start script generated by ServerPackCreator 7.2.3."
+    echo "Start script generated by ServerPackCreator 7.2.7."
     echo "To change the launch settings of this server, such as JVM args / flags, Minecraft version, modloader version etc., edit the variables.txt-file."
 
-    SOURCE=${BASH_SOURCE[0]}
-    while [ -L "$SOURCE" ]; do
-      DIR=$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )
-      SOURCE=$(readlink "$SOURCE")
-      [[ $SOURCE != /* ]] && SOURCE=$DIR/$SOURCE
-    done
-    DIR=$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )
+    WORK_DIR="/data"
 
-    PACK_SOURCE_DIR="${PACK_SOURCE_DIR:-/opt/minecraft}"
-    SOURCE_DIR="${PACK_SOURCE_DIR}"
+    mkdir -p "${WORK_DIR}" || true
+    if [[ ! -w "${WORK_DIR}" ]]; then
+      crashServer "ERROR! ${WORK_DIR} ist nicht beschreibbar."
+    fi
 
-    if [[ "${SOURCE_DIR}" == *" "* ]]; then
+    cd "${WORK_DIR}" || crashServer "ERROR! Konnte nicht nach ${WORK_DIR} wechseln."
+    SERVERSTARTERJAR_PATH="${WORK_DIR}/server.jar"
+
+    if [[ "${WORK_DIR}" == *" "* ]]; then
       echo "WARNING! The current location of this script contains spaces. This may cause this server to crash!"
     fi
 
     if [[ "$(id -u)" == "0" ]]; then
       echo "Warning! Running with administrator-privileges is not recommended."
     fi
-
-    RUNTIME_DIR="${RUNTIME_DIR:-/data/minecraft}"
-    mkdir -p "${RUNTIME_DIR}" || true
-    if [[ ! -w "${RUNTIME_DIR}" ]]; then
-      RUNTIME_DIR="/tmp/minecraft"
-      mkdir -p "${RUNTIME_DIR}" || true
-    fi
-    if [[ ! -w "${RUNTIME_DIR}" ]]; then
-      crashServer "ERROR! Kein beschreibbares Runtime-Verzeichnis gefunden."
-    fi
-
-    copy_source_to_runtime "${SOURCE_DIR}" "${RUNTIME_DIR}"
-
-    cd "${RUNTIME_DIR}" || crashServer "ERROR! Konnte nicht nach ${RUNTIME_DIR} wechseln."
-    SERVERSTARTERJAR_PATH="${RUNTIME_DIR}/server.jar"
 
     if [[ ! -s "variables.txt" ]]; then
       crashServer "ERROR! variables.txt not present. Without it the server can not be installed, configured or started."
@@ -637,31 +555,10 @@ data:
 
     if [[ ! -s "eula.txt" ]]; then
       if [[ "${EULA:-}" == "TRUE" || "${EULA:-}" == "true" ]]; then
-        {
-          echo "# By changing the setting below to TRUE you are indicating your agreement to the EULA (https://aka.ms/MinecraftEULA)."
-          echo "# $(date -u)"
-          echo "eula=true"
-        } > eula.txt
-        echo "[init] EULA accepted via ENV"
+        echo "[init] EULA accepted via ENV, but eula.txt fehlt."
+        echo "[init] Bitte eula.txt im Image oder per ConfigMap bereitstellen."
       else
-        echo "Mojang's EULA has not yet been accepted. In order to run a Minecraft server, you must accept Mojang's EULA."
-        echo "Mojang's EULA is available to read at https://aka.ms/MinecraftEULA"
-        if [[ -t 0 ]]; then
-          echo "If you agree to Mojang's EULA then type 'I agree'"
-          echo -n "Response: "
-          read -r ANSWER
-          if [[ "${ANSWER}" == "I agree" ]]; then
-            echo "User agreed to Mojang's EULA."
-            {
-              echo "# By changing the setting below to TRUE you are indicating your agreement to the EULA (https://aka.ms/MinecraftEULA)."
-              echo "eula=true"
-            } > eula.txt
-          else
-            crashServer "User did not agree to Mojang's EULA. Entered: ${ANSWER}."
-          fi
-        else
-          crashServer "EULA not accepted. Set environment variable EULA=true."
-        fi
+        crashServer "EULA not accepted. Set environment variable EULA=true und stelle eula.txt bereit."
       fi
     fi
 
@@ -673,8 +570,7 @@ data:
 
     echo ""
     echo "Starting server..."
-    echo "SOURCE_DIR:                     ${SOURCE_DIR}"
-    echo "RUNTIME_DIR:                    ${RUNTIME_DIR}"
+    echo "Work directory:                 $(pwd)"
     echo "Minecraft version:              ${MINECRAFT_VERSION}"
     echo "Modloader:                      ${MODLOADER}"
     echo "Modloader version:              ${MODLOADER_VERSION}"
