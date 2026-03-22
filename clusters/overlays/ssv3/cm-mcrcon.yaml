@@ -14,5 +14,7 @@ data:
     /gamerule doInsomnia false
     /gamerule playersSleepingPercentage 0
     /gamerule keepInventory true
+    # /gamerule doWeatherCycle true
+    # /gamerule doDaylightCycle true
 
     
