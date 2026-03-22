@@ -54,14 +54,12 @@ RUN if [[ -n "${FILE_ID}" && -n "${ZIP}" ]]; then \
       DIR2=$(( FILE_ID % 1000 )); \
       FINAL_URL="https://mediafilez.forgecdn.net/files/${DIR1}/${DIR2}/${ZIP}"; \
       echo "Downloading: ${FINAL_URL}"; \
-      curl -fL -o "${APP_DIR}/${ZIP}" "${FINAL_URL}"; \
-      unzip -uo "${APP_DIR}/${ZIP}" -d "${DATA_DIR}"; \
-      \
-      # Client-only Mods entfernen \
+      curl -fL --retry 3 -o "${APP_DIR}/${ZIP}" "${FINAL_URL}" || exit 1; \
+      test -s "${APP_DIR}/${ZIP}" || exit 1; \
+      unzip -uo "${APP_DIR}/${ZIP}" -d "${DATA_DIR}" || exit 1; \
+      test -d "${DATA_DIR}/mods" || exit 1; \
       rm -f "${DATA_DIR}"/mods/Audio\ Improvements\ v*.jar || true; \
       rm -f "${DATA_DIR}"/mods/*colorwheel*.jar || true; \
-      \
-      # Oculus auf dem Server disabled halten \
       for f in "${DATA_DIR}"/mods/oculus-*.jar; do \
         if [[ -f "$f" ]]; then \
           mv "$f" "$f.disabled" || true; \
@@ -69,6 +67,7 @@ RUN if [[ -n "${FILE_ID}" && -n "${ZIP}" ]]; then \
       done; \
     else \
       echo "FILE_ID oder ZIP nicht gesetzt – skip download"; \
+      exit 1; \
     fi
 
 
