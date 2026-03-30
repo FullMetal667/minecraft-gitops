@@ -76,6 +76,15 @@ jobs:
           echo "zip=${ZIP}" >> $GITHUB_OUTPUT
           echo "dir=${DIR}" >> $GITHUB_OUTPUT
 
+      - name: Generate mc-env.env from params
+        if: steps.params-file.outputs.exists == 'true' && steps.params-changed.outputs.changed == 'true'
+        run: |
+          chmod +x build/render-mc-env.sh
+          MOD_NAME="${{ steps.params.outputs.mod_name }}"
+          build/render-mc-env.sh \
+            "${{ steps.params-file.outputs.file }}" \
+            "clusters/overlays/${MOD_NAME}/mc-env.env"
+
       - name: Install oc
         if: steps.params-file.outputs.exists == 'true' && steps.params-changed.outputs.changed == 'true'
         uses: redhat-actions/oc-installer@v1
@@ -129,22 +138,23 @@ jobs:
           TAG="${{ steps.params.outputs.image_tag }}"
           REPO="${{ steps.params.outputs.docker_repo }}"
 
-          FILE="clusters/overlays/${MOD_NAME}/kustomization.yaml"
+          KUSTOM_FILE="clusters/overlays/${MOD_NAME}/kustomization.yaml"
+          ENV_FILE="clusters/overlays/${MOD_NAME}/mc-env.env"
 
-          echo "Updating image tag in $FILE to ${TAG}"
+          echo "Updating image tag in $KUSTOM_FILE to ${TAG}"
 
-          sed -i "s#^\(\s*newTag:\s*\).*#\1\"${TAG}\"#" "$FILE"
+          sed -i "s#^\(\s*newTag:\s*\).*#\1\"${TAG}\"#" "$KUSTOM_FILE"
 
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add "$FILE"
+
+          git add "$KUSTOM_FILE" "$ENV_FILE"
 
           if git diff --cached --quiet; then
             echo "No changes to commit."
           else
-            git commit -m "chore(${MOD_NAME}): bump kustomize image tag to ${TAG}"
+            git commit -m "chore(${MOD_NAME}): bump image tag to ${TAG} and regenerate mc-env"
 
-            # Remote-Änderungen holen (z.B. aof7-Commit) und lokal drüber rebasen
             BRANCH="${GITHUB_REF_NAME#refs/heads/}"
             echo "Rebasing onto origin/${BRANCH}..."
             git pull --rebase origin "$BRANCH"

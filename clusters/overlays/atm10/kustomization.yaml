@@ -12,7 +12,7 @@ resources:
 secretGenerator:
   - name: mc-env
     envs:
-      - ../../../build/params-atm10.env
+      - mc-env.env
 generatorOptions:
   disableNameSuffixHash: true
 patches:
