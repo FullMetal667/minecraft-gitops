@@ -79,9 +79,8 @@ jobs:
       - name: Generate mc-env.env from params
         if: steps.params-file.outputs.exists == 'true' && steps.params-changed.outputs.changed == 'true'
         run: |
-          chmod +x build/render-mc-env.sh
           MOD_NAME="${{ steps.params.outputs.mod_name }}"
-          build/render-mc-env.sh \
+          bash build/render-mc-env.sh \
             "${{ steps.params-file.outputs.file }}" \
             "clusters/overlays/${MOD_NAME}/mc-env.env"
 
