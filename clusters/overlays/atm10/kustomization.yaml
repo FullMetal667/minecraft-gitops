@@ -12,8 +12,9 @@ resources:
 secretGenerator:
   - name: mc-env
     envs:
-      - mc-env.env
-    type: Opaque
+      - ../../../build/params-atm10.env
+generatorOptions:
+  disableNameSuffixHash: true
 patches:
   - path: patch-resources.yaml
     target:
