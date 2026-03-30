@@ -15,6 +15,7 @@ jobs:
     env:
       OCP_API_URL: ${{ secrets.OCP_API_URL }}
       OCP_TOKEN:   ${{ secrets.OCP_TOKEN }}
+      WEBHOOK_SECRET: ${{ secrets.WEBHOOK_SECRET }}
       BEFORE_SHA:  ${{ github.event.before }}
       AFTER_SHA:   ${{ github.sha }}
 
@@ -119,6 +120,7 @@ jobs:
             --param ZIP="$ZIP" \
             --param DIR="$DIR" \
             --param DOCKER_REPO="$DOCKER_REPO" \
+            --param WEBHOOK_SECRET="$WEBHOOK_SECRET" \
             | oc apply -n "minecraft-$MOD_NAME" -f -
 
       - name: Start build and wait
