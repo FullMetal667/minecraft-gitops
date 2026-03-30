@@ -134,31 +134,41 @@ jobs:
       - name: Update kustomization image tag in Git
         if: steps.params-file.outputs.exists == 'true' && steps.params-changed.outputs.changed == 'true'
         run: |
+          set -euo pipefail
+
           MOD_NAME="${{ steps.params.outputs.mod_name }}"
           TAG="${{ steps.params.outputs.image_tag }}"
-          REPO="${{ steps.params.outputs.docker_repo }}"
 
           KUSTOM_FILE="clusters/overlays/${MOD_NAME}/kustomization.yaml"
           ENV_FILE="clusters/overlays/${MOD_NAME}/mc-env.env"
 
           echo "Updating image tag in $KUSTOM_FILE to ${TAG}"
-
           sed -i "s#^\(\s*newTag:\s*\).*#\1\"${TAG}\"#" "$KUSTOM_FILE"
+
+          echo "Git status before add:"
+          git status --short
 
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
           git add "$KUSTOM_FILE" "$ENV_FILE"
 
+          echo "Git status after add:"
+          git status --short
+
           if git diff --cached --quiet; then
             echo "No changes to commit."
-          else
-            git commit -m "chore(${MOD_NAME}): bump image tag to ${TAG} and regenerate mc-env"
-
-            BRANCH="${GITHUB_REF_NAME#refs/heads/}"
-            echo "Rebasing onto origin/${BRANCH}..."
-            git pull --rebase origin "$BRANCH"
-
-            echo "Pushing changes..."
-            git push origin "$BRANCH"
+            exit 0
           fi
+
+          git commit -m "chore(${MOD_NAME}): bump image tag to ${TAG} and regenerate mc-env"
+
+          echo "Git status after commit:"
+          git status --short
+
+          BRANCH="${GITHUB_REF_NAME#refs/heads/}"
+          echo "Rebasing onto origin/${BRANCH}..."
+          git pull --rebase origin "$BRANCH"
+
+          echo "Pushing changes..."
+          git push origin "$BRANCH"
