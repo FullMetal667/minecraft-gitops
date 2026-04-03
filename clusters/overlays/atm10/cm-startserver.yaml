@@ -72,6 +72,18 @@ data:
       fi
     }
 
+    disable_problematic_mods() {
+      local mod_name="little-big-redstone-1.5.2-beta-1.21.1.jar"
+      local mods_dir="${DATA_DIR}/mods"
+      local disabled_dir="${DATA_DIR}/disabled-mods"
+
+      if [[ -f "${mods_dir}/${mod_name}" ]]; then
+        echo "[MOD] Disabling problematic mod: ${mod_name}"
+        mkdir -p "${disabled_dir}"
+        mv "${mods_dir}/${mod_name}" "${disabled_dir}/"
+      fi
+    }
+
     pack_seems_present() {
       # ATM10 braucht user_jvm_args.txt + viele Mods
       [[ -f "${DATA_DIR}/user_jvm_args.txt" ]] || return 1
@@ -323,6 +335,11 @@ data:
     # =======================
     stage_backup_mod || true
     place_backup_mod || true
+
+    # =======================
+    # Problematische Mods deaktivieren
+    # =======================
+    disable_problematic_mods
 
     # =======================
     # Hauptloop
