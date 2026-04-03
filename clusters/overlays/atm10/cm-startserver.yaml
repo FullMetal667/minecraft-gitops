@@ -24,7 +24,7 @@ data:
     MODPACK_URL="${MODPACK_URL:-}"
 
     # ---- ATM10 / NeoForge Version ----
-    NEOFORGE_VERSION="${NEOFORGE_VERSION:-21.1.220}"
+    NEOFORGE_VERSION="${NEOFORGE_VERSION:-21.1.222}"
     INSTALLER="neoforge-${NEOFORGE_VERSION}-installer.jar"
     NEOFORGE_URL="https://maven.neoforged.net/releases/net/neoforged/neoforge/${NEOFORGE_VERSION}/neoforge-${NEOFORGE_VERSION}-installer.jar"
 
@@ -336,10 +336,10 @@ data:
     stage_backup_mod || true
     place_backup_mod || true
 
-    # =======================
-    # Problematische Mods deaktivieren
-    # =======================
-    disable_problematic_mods
+    # # =======================
+    # # Problematische Mods deaktivieren
+    # # =======================
+    # disable_problematic_mods
 
     # =======================
     # Hauptloop
