@@ -24,7 +24,7 @@ data:
     MODPACK_URL="${MODPACK_URL:-}"
 
     # ---- ATM10 / NeoForge Version ----
-    NEOFORGE_VERSION="${NEOFORGE_VERSION:-21.1.219}"
+    NEOFORGE_VERSION="${NEOFORGE_VERSION:-21.1.220}"
     INSTALLER="neoforge-${NEOFORGE_VERSION}-installer.jar"
     NEOFORGE_URL="https://maven.neoforged.net/releases/net/neoforged/neoforge/${NEOFORGE_VERSION}/neoforge-${NEOFORGE_VERSION}-installer.jar"
 
