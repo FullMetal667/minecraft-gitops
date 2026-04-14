@@ -16,4 +16,4 @@ def update_env(version: str, file_id: str):
 
 
 if __name__ == "__main__":
-    update_env("6.6", "7892979")
+    update_env("6.5", "7889883")
