@@ -1,0 +1,47 @@
+servers:
+  atm10:
+    display_name: "All the Mods 10"
+    provider: "curseforge"
+    mod_id: 925200
+    file_name_pattern: "All the Mods 10-(?P<version>\\d+(?:\\.\\d+)+)"
+    use_server_pack_file_id: true
+    env_file: "build/params-atm10.env"
+    branch_prefix: "bot/atm10"
+    pr_title: "ATM10 update to {version}"
+
+  ssv3:
+    display_name: "Some Server V3"
+    provider: "curseforge"
+    mod_id: 123456
+    file_name_pattern: "SSV3-(?P<version>\\d+(?:\\.\\d+)+)"
+    use_server_pack_file_id: true
+    env_file: "build/params-ssv3.env"
+    branch_prefix: "bot/ssv3"
+    pr_title: "SSV3 update to {version}"
+
+  sb4:
+    display_name: "Skyblock 4"
+    provider: "github_release"
+    repo: "owner/repo"
+    asset_pattern: "serverpack-(?P<version>\\d+(?:\\.\\d+)+)\\.zip"
+    env_file: "build/params-sb4.env"
+    branch_prefix: "bot/sb4"
+    pr_title: "SB4 update to {version}"
+
+  aof7:
+    display_name: "All Of Fabric 7"
+    provider: "github_release"
+    repo: "owner/repo"
+    asset_pattern: "serverpack-(?P<version>\\d+(?:\\.\\d+)+)\\.zip"
+    env_file: "build/params-sb4.env"
+    branch_prefix: "bot/sb4"
+    pr_title: "SB4 update to {version}"
+
+  sb4:
+    display_name: "Skyblock 4"
+    provider: "github_release"
+    repo: "owner/repo"
+    asset_pattern: "serverpack-(?P<version>\\d+(?:\\.\\d+)+)\\.zip"
+    env_file: "build/params-sb4.env"
+    branch_prefix: "bot/sb4"
+    pr_title: "SB4 update to {version}"

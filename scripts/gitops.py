@@ -1,116 +1,98 @@
+#!/usr/bin/env python3
+from __future__ import annotations
+
 import subprocess
 import sys
+from pathlib import Path
+
+from common import REPO_ROOT, ensure_server_exists, params_file, overlay_kustomization, run, server_from_params_filename
 
 
-FILE_PATH = "../build/params-atm10.env"
-
-
-def run(cmd):
-    print(f"> {cmd}")
-    subprocess.run(cmd, shell=True, check=True)
-
-
-def has_changes(file_path):
+def branch_exists(branch: str) -> bool:
     result = subprocess.run(
-        f"git status --porcelain -- {file_path}",
+        f"git rev-parse --verify {branch}",
         shell=True,
         capture_output=True,
-        text=True
+        text=True,
+        cwd=REPO_ROOT,
+    )
+    return result.returncode == 0
+
+
+def has_changes(paths: list[Path]) -> bool:
+    quoted = " ".join(str(p) for p in paths)
+    result = subprocess.run(
+        f"git status --porcelain -- {quoted}",
+        shell=True,
+        capture_output=True,
+        text=True,
+        cwd=REPO_ROOT,
     )
     return bool(result.stdout.strip())
 
 
-def has_staged_changes(file_path):
-    result = subprocess.run(
-        f"git diff --cached --quiet -- {file_path}",
-        shell=True
-    )
-    return result.returncode != 0
-
-
-def branch_exists_remote(branch):
-    result = subprocess.run(
-        f"git ls-remote --heads origin {branch}",
-        shell=True,
-        capture_output=True,
-        text=True
-    )
-    return bool(result.stdout.strip())
-
-
-def ensure_worktree_safe():
-    result = subprocess.run(
-        "git status --porcelain",
-        shell=True,
-        capture_output=True,
-        text=True
-    )
-
-    lines = [line.strip() for line in result.stdout.splitlines() if line.strip()]
-    allowed = {f"M {FILE_PATH}", f"?? {FILE_PATH}"}
-
-    disallowed = [line for line in lines if line not in allowed]
-
-    if disallowed:
-        print("Working tree is not clean. Please commit, stash, or discard these changes first:")
-        for line in disallowed:
-            print(f"  {line}")
-        sys.exit(1)
-
-
-def checkout_fresh_main():
+def checkout_main_and_update() -> None:
     run("git checkout main")
     run("git pull origin main")
 
 
-def create_branch(branch):
-    run(f"git checkout -b {branch}")
+def create_or_checkout_branch(server: str, version: str) -> str:
+    branch = f"bot/{server}-{version}"
+
+    if branch_exists(branch):
+        run(f"git checkout {branch}")
+        run("git rebase main")
+    else:
+        run(f"git checkout -b {branch}")
+
+    return branch
 
 
-def run_update(version, file_id):
-    run(f"python3 update_atm10.py {version} {file_id}")
+def commit_and_push(server: str, version: str, changed_paths: list[Path], branch: str) -> None:
+    quoted = " ".join(str(p) for p in changed_paths)
+
+    run(f"git add {quoted}")
+
+    if not has_changes(changed_paths):
+        print("Keine Änderungen erkannt. Kein Commit notwendig.")
+        return
+
+    run(f'git commit -m "chore({server}): update to {version}"')
+    run(f"git push -u origin {branch}")
 
 
-def commit_and_push(version):
-    run(f"git add {FILE_PATH}")
+def main() -> int:
+    if len(sys.argv) < 4:
+        print("Usage: python3 gitops.py <server|params-file> <version> <file_id> [zip]")
+        return 1
 
-    if not has_staged_changes(FILE_PATH):
-        print(f"No staged changes found in {FILE_PATH}. Skipping commit.")
-        return False
+    server = server_from_params_filename(sys.argv[1])
+    version = sys.argv[2]
+    file_id = sys.argv[3]
+    zip_name = sys.argv[4] if len(sys.argv) >= 5 else None
 
-    run(f'git commit -m "ATM10 update to {version}"')
-    run("git push -u origin HEAD")
-    return True
+    ensure_server_exists(server)
 
+    print(f"Running GitOps for server={server}, version={version}, file_id={file_id}")
 
-def main():
-    if len(sys.argv) != 3:
-        print("Usage: python3 gitops.py <version> <file_id>")
-        sys.exit(1)
+    checkout_main_and_update()
+    branch = create_or_checkout_branch(server, version)
 
-    version = sys.argv[1]
-    file_id = sys.argv[2]
-    branch = f"bot/atm10-{version}"
+    cmd = f"python3 scripts/update_server.py {server} {version} {file_id}"
+    if zip_name:
+        cmd += f" {zip_name}"
+    run(cmd)
 
-    print(f"Running GitOps for version {version} with FILE_ID {file_id}")
+    changed_paths = [
+        params_file(server),
+        overlay_kustomization(server),
+    ]
 
-    if branch_exists_remote(branch):
-        print(f"Remote branch {branch} already exists. Nothing to do.")
-        sys.exit(2)
+    commit_and_push(server, version, changed_paths, branch)
 
-    ensure_worktree_safe()
-    checkout_fresh_main()
-    create_branch(branch)
-    run_update(version, file_id)
-
-    if not has_changes(FILE_PATH):
-        print(f"No changes detected in {FILE_PATH}. Skipping.")
-        sys.exit(2)
-
-    changed = commit_and_push(version)
-    if not changed:
-        sys.exit(2)
+    print(f"Fertig. Branch: {branch}")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())
