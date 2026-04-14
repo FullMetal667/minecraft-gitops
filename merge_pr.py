@@ -37,16 +37,6 @@ def ensure_gh_auth():
         sys.exit(1)
 
 
-def pr_exists(pr_number):
-    result = subprocess.run(
-        f"gh pr view {pr_number}",
-        shell=True,
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL
-    )
-    return result.returncode == 0
-
-
 def show_pr_summary(pr_number):
     result = run(
         f'gh pr view {pr_number} --json number,title,headRefName,baseRefName,state,mergeable,url',
@@ -69,12 +59,13 @@ def main():
     ensure_gh_available()
     ensure_gh_auth()
 
-    if not pr_exists(pr_number):
+    try:
+        print(f"Merge PR #{pr_number}")
+        show_pr_summary(pr_number)
+    except subprocess.CalledProcessError:
         print(f"PR #{pr_number} existiert nicht oder ist nicht erreichbar.")
         sys.exit(1)
 
-    print(f"Merge PR #{pr_number}")
-    show_pr_summary(pr_number)
     merge_pr(pr_number)
 
 
