@@ -66,6 +66,19 @@ def main() -> int:
     branch_version = sanitize_branch_part(version)
     branch = f"bot/{server}-{branch_version}"
 
+    status = subprocess.run(
+        ["git", "status", "--porcelain"],
+        text=True,
+        capture_output=True,
+        cwd=REPO_ROOT,
+        check=True,
+    )
+
+    if status.stdout.strip():
+        print("Repository is not clean. Bitte erst committen oder staschen:")
+        print(status.stdout)
+        return 1
+
     # main aktualisieren
     run(["git", "checkout", "main"], check=True)
     run(["git", "pull", "origin", "main"], check=True)
