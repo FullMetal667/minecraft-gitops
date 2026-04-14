@@ -1,66 +1,111 @@
-import json
-import os
+import subprocess
 import sys
-import urllib.error
-import urllib.request
 
 
-def create_pull_request(owner: str, repo: str, head: str, base: str, version: str) -> str:
-    token = os.getenv("GITHUB_TOKEN")
-    if not token:
-        raise RuntimeError("GITHUB_TOKEN is not set.")
-
-    url = f"https://api.github.com/repos/{owner}/{repo}/pulls"
-
-    payload = {
-        "title": f"ATM10 update to {version}",
-        "head": head,
-        "base": base,
-        "body": (
-            f"Automatisch erstellter Update-PR für ATM10.\n\n"
-            f"- Version: `{version}`\n"
-            f"- Source branch: `{head}`\n"
-            f"- Target branch: `{base}`\n\n"
-            f"Bitte params, Build-Verhalten und Rollout prüfen."
-        ),
-        "maintainer_can_modify": True,
-    }
-
-    data = json.dumps(payload).encode("utf-8")
-
-    req = urllib.request.Request(
-        url=url,
-        data=data,
-        method="POST",
-        headers={
-            "Accept": "application/vnd.github+json",
-            "Authorization": f"Bearer {token}",
-            "X-GitHub-Api-Version": "2022-11-28",
-            "Content-Type": "application/json",
-            "User-Agent": "minecraft-gitops-agent",
-        },
+def run(cmd, capture_output=False):
+    print(f"> {cmd}")
+    return subprocess.run(
+        cmd,
+        shell=True,
+        check=True,
+        text=True,
+        capture_output=capture_output
     )
 
-    try:
-        with urllib.request.urlopen(req) as resp:
-            response_data = json.loads(resp.read().decode("utf-8"))
-            return response_data["html_url"]
-    except urllib.error.HTTPError as e:
-        body = e.read().decode("utf-8", errors="replace")
-        raise RuntimeError(f"GitHub API error {e.code}: {body}") from e
+
+def branch_exists_remote(branch):
+    result = subprocess.run(
+        f"git ls-remote --heads origin {branch}",
+        shell=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.DEVNULL,
+        text=True
+    )
+    return bool(result.stdout.strip())
+
+
+def pr_already_exists(branch):
+    result = subprocess.run(
+        f'gh pr list --head "{branch}" --state open --json number',
+        shell=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True
+    )
+
+    if result.returncode != 0:
+        print("Fehler beim Prüfen vorhandener PRs.")
+        print(result.stderr.strip())
+        sys.exit(1)
+
+    return result.stdout.strip() not in ("[]", "")
+
+
+def ensure_gh_available():
+    result = subprocess.run(
+        "gh --version",
+        shell=True,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL
+    )
+    if result.returncode != 0:
+        print("GitHub CLI 'gh' ist nicht installiert oder nicht im PATH.")
+        sys.exit(1)
+
+
+def ensure_gh_auth():
+    result = subprocess.run(
+        "gh auth status",
+        shell=True,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL
+    )
+    if result.returncode != 0:
+        print("GitHub CLI ist nicht eingeloggt. Bitte zuerst 'gh auth login' ausführen.")
+        sys.exit(1)
+
+
+def create_pr(version, file_id):
+    branch = f"bot/atm10-{version}"
+    title = f"ATM10 update to {version}"
+    body = (
+        f"Automated ATM10 update to version {version}.\n\n"
+        f"- IMAGE_TAG={version}\n"
+        f"- FILE_ID={file_id}\n"
+        f"- Branch={branch}"
+    )
+
+    if not branch_exists_remote(branch):
+        print(f"Remote-Branch {branch} existiert nicht. Bitte zuerst gitops.py ausführen.")
+        sys.exit(1)
+
+    if pr_already_exists(branch):
+        print(f"Für {branch} existiert bereits ein offener PR. Abbruch.")
+        return
+
+    run(
+        f'gh pr create '
+        f'--base main '
+        f'--head "{branch}" '
+        f'--title "{title}" '
+        f'--body "{body}"'
+    )
+
+
+def main():
+    if len(sys.argv) != 3:
+        print("Usage: python3 create_pr.py <version> <file_id>")
+        sys.exit(1)
+
+    version = sys.argv[1]
+    file_id = sys.argv[2]
+
+    ensure_gh_available()
+    ensure_gh_auth()
+
+    print(f"Erstelle PR für ATM10-Version {version} mit FILE_ID {file_id}")
+    create_pr(version, file_id)
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 6:
-        print("Usage: python3 create_pr.py <owner> <repo> <head_branch> <base_branch> <version>")
-        sys.exit(1)
-
-    owner = sys.argv[1]
-    repo = sys.argv[2]
-    head = sys.argv[3]
-    base = sys.argv[4]
-    version = sys.argv[5]
-
-    pr_url = create_pull_request(owner, repo, head, base, version)
-    print(f"PR created: {pr_url}")
-
+    main()
