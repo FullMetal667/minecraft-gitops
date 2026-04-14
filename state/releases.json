@@ -1,0 +1,60 @@
+{
+  "releases": [
+    {
+      "id": "aof7-6766319",
+      "server": "aof7",
+      "current_version": "unknown",
+      "new_version": "All of Fabric 7 - 2.5.3",
+      "file_id": "6766319",
+      "file_name": "All of Fabric 7-2.5.3.zip",
+      "status": "awaiting_prepare_approval"
+    },
+    {
+      "id": "bmc4-7818388",
+      "server": "bmc4",
+      "current_version": "unknown",
+      "new_version": "BMC4 [FORGE] 1.20.1 v57.5",
+      "file_id": "7818388",
+      "file_name": "Better MC [FORGE] 1.20.1 v57.5.zip",
+      "status": "awaiting_prepare_approval"
+    },
+    {
+      "id": "linggango-7922996",
+      "server": "linggango",
+      "current_version": "unknown",
+      "new_version": "Linggango V6.4.5.2",
+      "file_id": "7922996",
+      "file_name": "Linggango-V6.4.5.2.zip",
+      "status": "awaiting_prepare_approval"
+    },
+    {
+      "id": "sb4-7893110",
+      "server": "sb4",
+      "current_version": "unknown",
+      "new_version": "FTB StoneBlock 4 1.10.0",
+      "file_id": "7893110",
+      "file_name": "ftb-stoneblock-4-1.10.0.zip",
+      "status": "awaiting_prepare_approval"
+    },
+    {
+      "id": "ssv3-7907890",
+      "server": "ssv3",
+      "current_version": "unknown",
+      "new_version": "Society - Sunlit Valley - 4.0.5",
+      "file_id": "7907890",
+      "file_name": "Society-Sunlit-Valley-4.0.5.zip",
+      "status": "awaiting_prepare_approval"
+    },
+    {
+      "id": "atm10-7892974",
+      "server": "atm10",
+      "current_version": "6.6",
+      "new_version": "6.6",
+      "file_id": "7892974",
+      "file_name": "All the Mods 10-6.6.zip",
+      "status": "failed",
+      "prepare_stdout": "M\tbuild/params-aof7.env\nM\tbuild/params-atm10.env\nM\tbuild/params-bmc4.env\nM\tbuild/params-linggango.env\nM\tbuild/params-sb4.env\nM\tbuild/params-ssv3.env\nM\tscripts/__pycache__/common.cpython-310.pyc\nM\tscripts/common.py\nM\tscripts/release_watcher.py\nM\tstate/releases.json\nYour branch is up to date with 'origin/main'.\nRunning GitOps for server=atm10, version=6.6, file_id=7892974\n> git checkout main\n> git pull origin main\n> python3 scripts/notify_telegram.py \"🚀 Release-Workflow gestartet\nServer: `atm10`\nVersion: `6.6`\nFile ID: `7892974`\"\n> python3 scripts/gitops.py atm10 6.6 7892974\n> python3 scripts/notify_telegram.py \"❌ Release fehlgeschlagen\nServer: `atm10`\nVersion: `6.6`\"\n",
+      "prepare_stderr": "/bin/sh: 1: atm10: not found\n/bin/sh: 1: 6.6: not found\n/bin/sh: 1: 7892974: not found\nAlready on 'main'\nerror: cannot pull with rebase: You have unstaged changes.\nerror: please commit or stash them.\nTraceback (most recent call last):\n  File \"/home/croth/minecraft-gitops/scripts/gitops.py\", line 98, in <module>\n    raise SystemExit(main())\n  File \"/home/croth/minecraft-gitops/scripts/gitops.py\", line 78, in main\n    checkout_main_and_update()\n  File \"/home/croth/minecraft-gitops/scripts/gitops.py\", line 36, in checkout_main_and_update\n    run(\"git pull origin main\")\n  File \"/home/croth/minecraft-gitops/scripts/common.py\", line 18, in run\n    return subprocess.run(\n  File \"/usr/lib/python3.10/subprocess.py\", line 526, in run\n    raise CalledProcessError(retcode, process.args,\nsubprocess.CalledProcessError: Command 'git pull origin main' returned non-zero exit status 128.\n/bin/sh: 1: atm10: not found\n/bin/sh: 1: 6.6: not found\n"
+    }
+  ]
+}
