@@ -67,6 +67,7 @@ def main():
         sys.exit(1)
 
     merge_pr(pr_number)
+    print("PR merged successfully.")
 
 
 if __name__ == "__main__":
