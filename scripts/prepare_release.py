@@ -1,7 +1,11 @@
+#!/usr/bin/env python3
+from __future__ import annotations
+
+import shlex
 import subprocess
 import sys
 
-from detect_latest_atm10 import get_latest_server_file
+from common import server_from_params_filename
 
 
 def run(cmd: str) -> None:
@@ -9,36 +13,41 @@ def run(cmd: str) -> None:
     subprocess.run(cmd, shell=True, check=True)
 
 
-def run_result(cmd: str) -> subprocess.CompletedProcess:
-    print(f"> {cmd}")
-    return subprocess.run(cmd, shell=True, text=True)
+def notify(message: str) -> None:
+    escaped = message.replace('"', '\\"')
+    try:
+        run(f'python3 scripts/notify_telegram.py "{escaped}"')
+    except subprocess.CalledProcessError:
+        print("Telegram-Notification fehlgeschlagen, Workflow läuft weiter.")
 
 
-def main() -> None:
-    if len(sys.argv) == 2 and sys.argv[1] == "latest":
-        version, file_id = get_latest_server_file()
-        print(f"Detected latest ATM10 release: version={version}, file_id={file_id}")
-    elif len(sys.argv) == 3:
-        version = sys.argv[1]
-        file_id = sys.argv[2]
-    else:
-        print("Usage:")
-        print("  python3 prepare_release.py <version> <file_id>")
-        print("  python3 prepare_release.py latest")
-        sys.exit(1)
+def main() -> int:
+    if len(sys.argv) < 4:
+        print("Usage: python3 prepare_release.py <server|params-file> <version> <file_id> [zip]")
+        return 1
 
-    result = run_result(f"python3 gitops.py {version} {file_id}")
+    raw_server = sys.argv[1]
+    version = sys.argv[2]
+    file_id = sys.argv[3]
+    zip_name = sys.argv[4] if len(sys.argv) >= 5 else None
 
-    if result.returncode == 2:
-        print(f"Release for ATM10 {version} already exists or nothing changed. Nothing more to do.")
-        sys.exit(0)
+    server = server_from_params_filename(raw_server)
 
-    if result.returncode != 0:
-        print(f"gitops.py failed for ATM10 {version}.")
-        sys.exit(result.returncode)
+    notify(f"🚀 Release-Workflow gestartet\nServer: `{server}`\nVersion: `{version}`\nFile ID: `{file_id}`")
 
-    run(f"python3 create_pr.py {version} {file_id}")
+    cmd = f"python3 scripts/gitops.py {shlex.quote(server)} {shlex.quote(version)} {shlex.quote(file_id)}"
+    if zip_name:
+        cmd += f" {shlex.quote(zip_name)}"
+
+    try:
+        run(cmd)
+    except subprocess.CalledProcessError as exc:
+        notify(f"❌ Release fehlgeschlagen\nServer: `{server}`\nVersion: `{version}`")
+        raise SystemExit(exc.returncode)
+
+    notify(f"✅ Release vorbereitet\nServer: `{server}`\nVersion: `{version}`")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())
