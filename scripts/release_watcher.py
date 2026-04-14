@@ -49,7 +49,7 @@ def main() -> int:
             "id": release_id,
             "server": server,
             "current_version": current_version,
-            "new_version": latest["display_name"] or "unknown",
+            "new_version": latest["version"],
             "file_id": new_file_id,
             "file_name": latest.get("file_name"),
             "status": "awaiting_prepare_approval",
