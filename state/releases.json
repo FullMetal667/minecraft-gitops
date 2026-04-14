@@ -1,0 +1,60 @@
+{
+  "releases": [
+    {
+      "id": "aof7-6766319",
+      "server": "aof7",
+      "current_version": "unknown",
+      "new_version": "All of Fabric 7 - 2.5.3",
+      "file_id": "6766319",
+      "file_name": "All of Fabric 7-2.5.3.zip",
+      "status": "awaiting_prepare_approval"
+    },
+    {
+      "id": "bmc4-7818388",
+      "server": "bmc4",
+      "current_version": "unknown",
+      "new_version": "BMC4 [FORGE] 1.20.1 v57.5",
+      "file_id": "7818388",
+      "file_name": "Better MC [FORGE] 1.20.1 v57.5.zip",
+      "status": "awaiting_prepare_approval"
+    },
+    {
+      "id": "linggango-7922996",
+      "server": "linggango",
+      "current_version": "unknown",
+      "new_version": "Linggango V6.4.5.2",
+      "file_id": "7922996",
+      "file_name": "Linggango-V6.4.5.2.zip",
+      "status": "awaiting_prepare_approval"
+    },
+    {
+      "id": "sb4-7893110",
+      "server": "sb4",
+      "current_version": "unknown",
+      "new_version": "FTB StoneBlock 4 1.10.0",
+      "file_id": "7893110",
+      "file_name": "ftb-stoneblock-4-1.10.0.zip",
+      "status": "awaiting_prepare_approval"
+    },
+    {
+      "id": "ssv3-7907890",
+      "server": "ssv3",
+      "current_version": "unknown",
+      "new_version": "Society - Sunlit Valley - 4.0.5",
+      "file_id": "7907890",
+      "file_name": "Society-Sunlit-Valley-4.0.5.zip",
+      "status": "awaiting_prepare_approval"
+    },
+    {
+      "id": "atm10-7892974",
+      "server": "atm10",
+      "current_version": "6.6",
+      "new_version": "All the Mods 10-6.6",
+      "file_id": "7892974",
+      "file_name": "All the Mods 10-6.6.zip",
+      "status": "failed",
+      "prepare_stdout": "Your branch is up to date with 'origin/main'.\nAlready up to date.\n",
+      "prepare_stderr": "Switched to branch 'main'\nFrom https://github.com/FullMetal667/minecraft-gitops\n * branch            main       -> FETCH_HEAD\nfatal: 'bot/atm10-All the Mods 10-6.6' is not a valid branch name.\nTraceback (most recent call last):\n  File \"/home/croth/minecraft-gitops/scripts/prepare_release.py\", line 97, in <module>\n  File \"/home/croth/minecraft-gitops/scripts/prepare_release.py\", line 51, in main\n    \n  File \"/usr/lib/python3.10/subprocess.py\", line 526, in run\n    raise CalledProcessError(retcode, process.args,\nsubprocess.CalledProcessError: Command '['git', 'checkout', '-b', 'bot/atm10-All the Mods 10-6.6']' returned non-zero exit status 128.\n"
+    }
+  ]
+}
