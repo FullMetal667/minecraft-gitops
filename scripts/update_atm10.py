@@ -2,7 +2,7 @@ import re
 from pathlib import Path
 import sys
 
-FILE = Path("build/params-atm10.env")
+FILE = Path("../build/params-atm10.env")
 
 
 def update_env(version: str, file_id: str):

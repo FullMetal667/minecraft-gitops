@@ -2,7 +2,7 @@ import subprocess
 import sys
 
 
-FILE_PATH = "build/params-atm10.env"
+FILE_PATH = "../build/params-atm10.env"
 
 
 def run(cmd):
@@ -76,10 +76,11 @@ def commit_and_push(version):
 
     if not has_staged_changes(FILE_PATH):
         print(f"No staged changes found in {FILE_PATH}. Skipping commit.")
-        return
+        return False
 
     run(f'git commit -m "ATM10 update to {version}"')
     run("git push -u origin HEAD")
+    return True
 
 
 def main():
@@ -94,8 +95,8 @@ def main():
     print(f"Running GitOps for version {version} with FILE_ID {file_id}")
 
     if branch_exists_remote(branch):
-        print(f"Remote branch {branch} already exists. Aborting.")
-        sys.exit(1)
+        print(f"Remote branch {branch} already exists. Nothing to do.")
+        sys.exit(2)
 
     ensure_worktree_safe()
     checkout_fresh_main()
@@ -104,9 +105,11 @@ def main():
 
     if not has_changes(FILE_PATH):
         print(f"No changes detected in {FILE_PATH}. Skipping.")
-        return
+        sys.exit(2)
 
-    commit_and_push(version)
+    changed = commit_and_push(version)
+    if not changed:
+        sys.exit(2)
 
 
 if __name__ == "__main__":
