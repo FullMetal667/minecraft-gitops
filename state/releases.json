@@ -44,6 +44,17 @@
       "file_id": "7907890",
       "file_name": "Society-Sunlit-Valley-4.0.5.zip",
       "status": "awaiting_prepare_approval"
+    },
+    {
+      "id": "atm10-7892974",
+      "server": "atm10",
+      "current_version": "6.6",
+      "new_version": "6.6",
+      "file_id": "7892974",
+      "file_name": "All the Mods 10-6.6.zip",
+      "status": "failed",
+      "prepare_stdout": "M\tbuild/params-aof7.env\nM\tbuild/params-atm10.env\nM\tbuild/params-bmc4.env\nM\tbuild/params-linggango.env\nM\tbuild/params-sb4.env\nM\tbuild/params-ssv3.env\nM\tscripts/__pycache__/common.cpython-310.pyc\nM\tscripts/common.py\nM\tscripts/release_watcher.py\nM\tstate/releases.json\nYour branch is up to date with 'origin/main'.\nRunning GitOps for server=atm10, version=6.6, file_id=7892974\n> git checkout main\n> git pull origin main\n> python3 scripts/notify_telegram.py \"🚀 Release-Workflow gestartet\nServer: `atm10`\nVersion: `6.6`\nFile ID: `7892974`\"\n> python3 scripts/gitops.py atm10 6.6 7892974\n> python3 scripts/notify_telegram.py \"❌ Release fehlgeschlagen\nServer: `atm10`\nVersion: `6.6`\"\n",
+      "prepare_stderr": "/bin/sh: 1: atm10: not found\n/bin/sh: 1: 6.6: not found\n/bin/sh: 1: 7892974: not found\nAlready on 'main'\nerror: cannot pull with rebase: You have unstaged changes.\nerror: please commit or stash them.\nTraceback (most recent call last):\n  File \"/home/croth/minecraft-gitops/scripts/gitops.py\", line 98, in <module>\n    raise SystemExit(main())\n  File \"/home/croth/minecraft-gitops/scripts/gitops.py\", line 78, in main\n    checkout_main_and_update()\n  File \"/home/croth/minecraft-gitops/scripts/gitops.py\", line 36, in checkout_main_and_update\n    run(\"git pull origin main\")\n  File \"/home/croth/minecraft-gitops/scripts/common.py\", line 18, in run\n    return subprocess.run(\n  File \"/usr/lib/python3.10/subprocess.py\", line 526, in run\n    raise CalledProcessError(retcode, process.args,\nsubprocess.CalledProcessError: Command 'git pull origin main' returned non-zero exit status 128.\n/bin/sh: 1: atm10: not found\n/bin/sh: 1: 6.6: not found\n"
     }
   ]
 }

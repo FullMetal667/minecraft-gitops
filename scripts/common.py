@@ -68,11 +68,17 @@ def load_env_file(path: Path) -> Dict[str, str]:
         if not line or line.startswith("#"):
             continue
 
+        if line.startswith("export "):
+            line = line[len("export "):].strip()
+
         if "=" not in line:
             continue
 
         key, value = line.split("=", 1)
-        result[key.strip()] = value.strip()
+        key = key.strip()
+        value = value.strip().strip('"').strip("'")
+
+        result[key] = value
 
     return result
 

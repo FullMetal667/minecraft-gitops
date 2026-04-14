@@ -26,7 +26,7 @@ def main() -> int:
         env = load_env_file(env_path)
 
         project_id = env.get("CURSEFORGE_PROJECT_ID")
-        current_version = env.get("VERSION", "unknown")
+        current_version = env.get("VERSION", env.get("IMAGE_TAG", "unknown"))
         current_file_id = env.get("FILE_ID")
 
         if not project_id or not current_file_id:
