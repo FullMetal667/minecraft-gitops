@@ -14,3 +14,6 @@ world/
 backup/
 data/
 state/
+
+__pycache__/
+*.pyc
