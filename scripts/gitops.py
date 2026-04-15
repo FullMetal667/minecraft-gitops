@@ -76,9 +76,9 @@ def commit_and_push(server: str, version: str, changed_paths: list[Path], branch
 
     push_url = f"https://{github_user}:{github_token}@github.com/{repo}.git"
 
-    print(f"> git push -u https://{github_user}:***@github.com/{repo}.git {branch}")
+    print(f"> git push https://{github_user}:***@github.com/{repo}.git {branch}:{branch}")
     subprocess.run(
-        ["git", "push", "-u", push_url, branch],
+        ["git", "push", push_url, f"{branch}:{branch}"],
         check=True,
         cwd=REPO_ROOT,
     )
