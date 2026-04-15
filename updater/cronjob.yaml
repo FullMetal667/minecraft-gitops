@@ -1,0 +1,27 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: release-watcher
+spec:
+  schedule: "*/15 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: Never
+          containers:
+            - name: watcher
+              image: quay.io/your-org/minecraft-gitops:latest
+              command: ["python3", "scripts/release_watcher.py"]
+              envFrom:
+                - secretRef:
+                    name: minecraft-gitops-secrets
+                - configMapRef:
+                    name: minecraft-gitops-config
+              volumeMounts:
+                - name: state
+                  mountPath: /data/state
+          volumes:
+            - name: state
+              persistentVolumeClaim:
+                claimName: minecraft-gitops-state

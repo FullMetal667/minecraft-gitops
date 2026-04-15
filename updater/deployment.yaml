@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: telegram-bot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: telegram-bot
+  template:
+    metadata:
+      labels:
+        app: telegram-bot
+    spec:
+      containers:
+        - name: bot
+          image: chrisroth667/minecraft-gitops:latest
+          command: ["python3", "scripts/telegram_bot.py"]
+          envFrom:
+            - secretRef:
+                name: minecraft-gitops-secrets
+            - configMapRef:
+                name: minecraft-gitops-config
+          env:
+            - name: STATE_DIR
+              value: /data/state
+          volumeMounts:
+            - name: state
+              mountPath: /data/state
+      volumes:
+        - name: state
+          persistentVolumeClaim:
+            claimName: minecraft-gitops-state

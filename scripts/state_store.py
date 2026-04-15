@@ -4,11 +4,12 @@ from __future__ import annotations
 import json
 from pathlib import Path
 from typing import Any
-
+import os
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-STATE_FILE = REPO_ROOT / "state" / "releases.json"
-
+STATE_DIR = Path(os.environ.get("STATE_DIR", "/data/state"))
+STATE_DIR.mkdir(parents=True, exist_ok=True)
+STATE_FILE = STATE_DIR / "releases.json"
 
 def _ensure_state_file() -> None:
     STATE_FILE.parent.mkdir(parents=True, exist_ok=True)
