@@ -177,47 +177,71 @@ def handle_cancel(release: dict[str, Any], api: TelegramAPI) -> None:
 
 
 def handle_callback(callback_query: dict[str, Any], api: TelegramAPI) -> None:
-    api.answer_callback_query(callback_query["id"], "Verstanden")
+    try:
+        try:
+            api.answer_callback_query(callback_query["id"], "Verstanden")
+        except Exception as exc:
+            print(f"Warning: answerCallbackQuery failed: {exc}")
 
-    data = callback_query.get("data", "")
-    if ":" not in data:
-        return
-
-    action, release_id = data.split(":", 1)
-    release = find_release(release_id)
-    if not release:
-        api.send_message(f"⚠️ Release nicht gefunden: {release_id}")
-        return
-
-    if action == "prepare":
-        if release["status"] != "awaiting_prepare_approval":
-            api.send_message(f"ℹ️ Release {release_id} ist bereits im Status {release['status']}.")
+        data = callback_query.get("data", "")
+        if ":" not in data:
+            print(f"Warning: invalid callback data: {data}")
             return
-        handle_prepare(release, api)
-        return
 
-    if action == "merge":
-        if release["status"] != "awaiting_merge_approval":
-            api.send_message(f"ℹ️ Release {release_id} ist bereits im Status {release['status']}.")
+        action, release_id = data.split(":", 1)
+        release = find_release(release_id)
+        if not release:
+            api.send_message(f"⚠️ Release nicht gefunden: {release_id}")
             return
-        handle_merge(release, api)
-        return
 
-    if action == "cancel":
-        handle_cancel(release, api)
-        return
+        if action == "prepare":
+            if release["status"] != "awaiting_prepare_approval":
+                api.send_message(f"ℹ️ Release {release_id} ist bereits im Status {release['status']}.")
+                return
+            handle_prepare(release, api)
+            return
+
+        if action == "merge":
+            if release["status"] != "awaiting_merge_approval":
+                api.send_message(f"ℹ️ Release {release_id} ist bereits im Status {release['status']}.")
+                return
+            handle_merge(release, api)
+            return
+
+        if action == "cancel":
+            handle_cancel(release, api)
+            return
+
+        api.send_message(f"⚠️ Unbekannte Aktion: {action}")
+
+    except Exception as exc:
+        print(f"Error while handling callback: {exc}")
+        try:
+            api.send_message(f"❌ Fehler beim Verarbeiten des Telegram-Callbacks:\n{exc}")
+        except Exception:
+            pass
 
 
 def main() -> int:
     api = TelegramAPI()
+
+    bootstrap = api.get_updates(timeout=1)
+    results = bootstrap.get("result", [])
     offset: int | None = None
+
+    if results:
+        offset = results[-1]["update_id"] + 1
+
+    print(f"Starting telegram bot with offset={offset}")
 
     while True:
         updates = api.get_updates(offset=offset, timeout=20)
         for update in updates.get("result", []):
             offset = update["update_id"] + 1
+
             if "callback_query" in update:
                 handle_callback(update["callback_query"], api)
+
         time.sleep(1)
 
 
