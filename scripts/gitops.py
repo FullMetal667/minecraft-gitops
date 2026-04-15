@@ -47,6 +47,27 @@ def create_or_checkout_branch(server: str, version: str) -> str:
 
     return branch
 
+def configure_git_auth():
+    import os
+    import subprocess
+
+    github_user = os.environ.get("GITHUB_USER")
+    github_token = os.environ.get("GITHUB_TOKEN")
+    repo = os.environ.get("GITHUB_REPO", "FullMetal667/minecraft-gitops")
+
+    if not github_user or not github_token:
+        raise RuntimeError("GITHUB_USER oder GITHUB_TOKEN fehlt")
+
+    subprocess.run(
+        [
+            "git",
+            "remote",
+            "set-url",
+            "origin",
+            f"https://{github_user}:{github_token}@github.com/{repo}.git",
+        ],
+        check=True,
+    )
 
 def commit_and_push(server: str, version: str, changed_paths: list[Path], branch: str) -> None:
     quoted = " ".join(str(p) for p in changed_paths)
@@ -87,6 +108,9 @@ def main() -> int:
         params_file(server),
         overlay_kustomization(server),
     ]
+
+    configure_git_auth()
+    run(f"git push -u origin {branch}")
 
     commit_and_push(server, version, changed_paths, branch)
 
