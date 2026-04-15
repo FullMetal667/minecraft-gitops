@@ -16,14 +16,10 @@ from common import (
 )
 
 
-def run_git(args: list[str]) -> None:
-    print("> " + " ".join(args))
-    subprocess.run(args, check=True, cwd=REPO_ROOT)
-
-
 def branch_exists(branch: str) -> bool:
     result = subprocess.run(
-        ["git", "rev-parse", "--verify", branch],
+        f"git rev-parse --verify {branch}",
+        shell=True,
         capture_output=True,
         text=True,
         cwd=REPO_ROOT,
@@ -32,8 +28,10 @@ def branch_exists(branch: str) -> bool:
 
 
 def has_changes(paths: list[Path]) -> bool:
+    quoted = " ".join(str(p) for p in paths)
     result = subprocess.run(
-        ["git", "status", "--porcelain", "--", *[str(p) for p in paths]],
+        f"git status --porcelain -- {quoted}",
+        shell=True,
         capture_output=True,
         text=True,
         cwd=REPO_ROOT,
@@ -42,30 +40,32 @@ def has_changes(paths: list[Path]) -> bool:
 
 
 def checkout_main_and_update() -> None:
-    run_git(["git", "checkout", "main"])
-    run_git(["git", "pull", "origin", "main"])
+    run("git checkout main")
+    run("git pull origin main")
 
 
 def create_or_checkout_branch(server: str, version: str) -> str:
     branch = f"bot/{server}-{version}"
 
     if branch_exists(branch):
-        run_git(["git", "checkout", branch])
-        run_git(["git", "rebase", "main"])
+        run(f"git checkout {branch}")
+        run("git rebase main")
     else:
-        run_git(["git", "checkout", "-b", branch])
+        run(f"git checkout -b {branch}")
 
     return branch
 
 
 def commit_and_push(server: str, version: str, changed_paths: list[Path], branch: str) -> None:
-    run_git(["git", "add", *[str(p) for p in changed_paths]])
+    quoted = " ".join(str(p) for p in changed_paths)
+
+    run(f"git add {quoted}")
 
     if not has_changes(changed_paths):
         print("Keine Änderungen erkannt. Kein Commit notwendig.")
         return
 
-    run_git(["git", "commit", "-m", f"chore({server}): update to {version}"])
+    run(f'git commit -m "chore({server}): update to {version}"')
 
     github_user = os.environ.get("GITHUB_USER")
     github_token = os.environ.get("GITHUB_TOKEN")
@@ -97,7 +97,6 @@ def main() -> int:
     ensure_server_exists(server)
 
     print(f"Running GitOps for server={server}, version={version}, file_id={file_id}")
-    print(f"REPO_ROOT={REPO_ROOT}")
 
     checkout_main_and_update()
     branch = create_or_checkout_branch(server, version)
