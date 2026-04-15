@@ -91,13 +91,12 @@ def main() -> int:
         text=True,
         capture_output=True,
         cwd=REPO_ROOT,
-        check=True,
     )
 
-    if status.stdout.strip():
-        print("Repository is not clean. Bitte erst committen oder staschen:", file=sys.stderr)
+    if status.returncode != 0:
         print(status.stdout, file=sys.stderr)
-        return 1
+        print(status.stderr, file=sys.stderr)
+        return status.returncode
 
     run(["git", "checkout", "main"], check=True)
     run(["git", "pull", "origin", "main"], check=True)
