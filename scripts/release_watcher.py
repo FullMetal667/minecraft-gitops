@@ -9,6 +9,19 @@ from state_store import find_release, upsert_release
 from telegram_api import TelegramAPI
 
 
+NON_NOTIFY_RESTATUSES = {
+    "awaiting_prepare_approval",
+    "prepared",
+    "awaiting_merge_approval",
+    "merging",
+    "build_running",
+    "build_failed",
+    "merge_failed",
+    "cancelled",
+    "done",
+}
+
+
 def build_prepare_keyboard(release_id: str) -> dict:
     return {
         "inline_keyboard": [[
@@ -16,6 +29,18 @@ def build_prepare_keyboard(release_id: str) -> dict:
             {"text": "❌ Ignorieren", "callback_data": f"cancel:{release_id}"},
         ]]
     }
+
+
+def should_skip_known_release(existing_release: dict | None) -> bool:
+    """
+    Unterdrückt erneute Benachrichtigungen für exakt dieselbe Release-ID.
+    Eine spätere Version bekommt eine andere Release-ID und wird daher erneut gemeldet.
+    """
+    if not existing_release:
+        return False
+
+    status = str(existing_release.get("status", "")).strip().lower()
+    return status in NON_NOTIFY_RESTATUSES or bool(status)
 
 
 def main() -> int:
@@ -57,8 +82,14 @@ def main() -> int:
             continue
 
         release_id = f"{server}-{new_server_file_id}"
-        if find_release(release_id):
-            print(f"{server}: release already known: {release_id}")
+        existing_release = find_release(release_id)
+
+        if should_skip_known_release(existing_release):
+            existing_status = existing_release.get("status", "unknown")
+            print(
+                f"{server}: release already known: {release_id} "
+                f"(status={existing_status})"
+            )
             continue
 
         release = {
