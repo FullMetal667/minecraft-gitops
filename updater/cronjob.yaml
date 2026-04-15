@@ -12,7 +12,12 @@ spec:
           containers:
             - name: watcher
               image: chrisroth667/minecraft-gitops:latest
-              command: ["python3", "scripts/release_watcher.py"]
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  git config --global --add safe.directory /opt/minecraft-gitops
+                  exec python3 scripts/release_watcher.py
               envFrom:
                 - secretRef:
                     name: minecraft-gitops-secrets
