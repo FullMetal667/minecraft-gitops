@@ -4,6 +4,7 @@ from __future__ import annotations
 import re
 import sys
 from pathlib import Path
+from urllib.parse import quote
 
 from common import (
     ensure_server_exists,
@@ -35,6 +36,15 @@ def update_image_tag(kustomization_path: Path, version: str) -> None:
     )
 
 
+def default_zip_name(server: str, version: str) -> str:
+    defaults = {
+        "aof7": f"All of Fabric 7-Server-{version}.zip",
+    }
+
+    filename = defaults.get(server, f"{server}-{version}.zip")
+    return quote(filename)
+
+
 def main() -> int:
     if len(sys.argv) < 4:
         print("Usage: python3 update_server.py <server|params-file> <version> <file_id> [zip]")
@@ -50,17 +60,18 @@ def main() -> int:
     env_file = params_file(server)
     kust_file = overlay_kustomization(server)
 
+    resolved_zip = zip_name if zip_name else default_zip_name(server, version)
+
     upsert_env_value(env_file, "VERSION", version)
     upsert_env_value(env_file, "FILE_ID", file_id)
-
-    if zip_name:
-        upsert_env_value(env_file, "ZIP", zip_name)
+    upsert_env_value(env_file, "ZIP", resolved_zip)
 
     update_image_tag(kust_file, version)
 
     print(f"Server '{server}' erfolgreich aktualisiert:")
     print(f"  - {env_file}")
     print(f"  - {kust_file}")
+    print(f"  - ZIP={resolved_zip}")
 
     return 0
 
