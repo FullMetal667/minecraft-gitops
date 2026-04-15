@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import os
 import re
 import subprocess
 import sys
@@ -14,6 +15,7 @@ from common import (
     server_from_params_filename,
 )
 from curseforge import resolve_release_by_project_id
+
 
 def run(cmd: list[str], check: bool = True) -> subprocess.CompletedProcess:
     print("> " + " ".join(cmd), file=sys.stderr)
@@ -54,6 +56,30 @@ def sanitize_branch_part(value: str) -> str:
     return value or "unknown"
 
 
+def push_branch_with_auth(branch: str) -> subprocess.CompletedProcess:
+    github_user = os.environ.get("GITHUB_USER")
+    github_token = os.environ.get("GITHUB_TOKEN")
+    repo = os.environ.get("GITHUB_REPO", "FullMetal667/minecraft-gitops")
+
+    if not github_user or not github_token:
+        raise RuntimeError("GITHUB_USER oder GITHUB_TOKEN fehlt")
+
+    push_url = f"https://{github_user}:{github_token}@github.com/{repo}.git"
+
+    print(
+        f"> git push https://{github_user}:***@github.com/{repo}.git {branch}:{branch}",
+        file=sys.stderr,
+    )
+
+    return subprocess.run(
+        ["git", "push", push_url, f"{branch}:{branch}"],
+        text=True,
+        capture_output=True,
+        cwd=REPO_ROOT,
+        check=False,
+    )
+
+
 def main() -> int:
     if len(sys.argv) < 2:
         print(
@@ -66,7 +92,7 @@ def main() -> int:
     zip_name = sys.argv[2] if len(sys.argv) >= 3 else None
 
     server = server_from_params_filename(raw_server)
-    
+
     env = load_env_file(params_file(server))
 
     project_id = env.get("CURSEFORGE_PROJECT_ID")
@@ -140,11 +166,13 @@ def main() -> int:
             print(commit.stdout, file=sys.stderr)
             print(commit.stderr, file=sys.stderr)
             return commit.returncode
-        push = run(["git", "push", "-u", "origin", branch], check=False)
+
+        push = push_branch_with_auth(branch)
         if push.returncode != 0:
             print(push.stdout, file=sys.stderr)
             print(push.stderr, file=sys.stderr)
             return push.returncode
+
         committed = True
 
         pr_view = subprocess.run(
