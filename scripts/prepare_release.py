@@ -6,9 +6,14 @@ import re
 import subprocess
 import sys
 
-from curseforge import resolve_release
-from common import REPO_ROOT, params_file, overlay_kustomization, server_from_params_filename
-
+from common import (
+    REPO_ROOT,
+    load_env_file,
+    params_file,
+    overlay_kustomization,
+    server_from_params_filename,
+)
+from curseforge import resolve_release_by_project_id
 
 def run(cmd: list[str], check: bool = True) -> subprocess.CompletedProcess:
     print("> " + " ".join(cmd), file=sys.stderr)
@@ -61,10 +66,21 @@ def main() -> int:
     zip_name = sys.argv[2] if len(sys.argv) >= 3 else None
 
     server = server_from_params_filename(raw_server)
+    
+    env = load_env_file(params_file(server))
 
-    # Vorläufig hart verdrahtet für ATM10
-    release = resolve_release("all-the-mods-10", mc_version="1.20.1")
-    version = release["version"]
+    project_id = env.get("CURSEFORGE_PROJECT_ID")
+    mc_version = env.get("MC_VERSION")
+
+    if not project_id:
+        print(
+            f"CURSEFORGE_PROJECT_ID fehlt in {params_file(server)}",
+            file=sys.stderr,
+        )
+        return 1
+
+    release = resolve_release_by_project_id(int(project_id), mc_version=mc_version)
+    version = str(release["version"])
     server_file_id = str(release["server_file_id"])
 
     branch_version = sanitize_branch_part(version)

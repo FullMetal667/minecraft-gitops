@@ -48,7 +48,7 @@ def format_prepare_summary(release: dict[str, Any], summary: dict[str, Any]) -> 
         f"Server: {release['server']}\n"
         f"Aktuell: {release['current_version']}\n"
         f"Neu: {release['new_version']}\n"
-        f"File ID: {release['file_id']}\n"
+        f"Server File ID: {release['server_file_id']}\n"
         f"Branch: {summary['branch']}\n"
         f"Commit erstellt: {'ja' if summary.get('committed') else 'nein'}\n"
         f"Dateien:\n- " + "\n- ".join(summary["changed_files"]) + "\n\n"
@@ -65,7 +65,7 @@ def handle_prepare(release: dict[str, Any], api: TelegramAPI) -> None:
         f"🔧 Prepare startet\n"
         f"Server: {release['server']}\n"
         f"Version: {release['new_version']}\n"
-        f"File ID: {release['file_id']}"
+        f"Server File ID: {release['server_file_id']}"
     )
 
     result = run_cmd([
@@ -73,7 +73,7 @@ def handle_prepare(release: dict[str, Any], api: TelegramAPI) -> None:
         "scripts/prepare_release.py",
         release["server"],
         release["new_version"],
-        release["file_id"],
+        release["server_file_id"],
     ])
 
     if result.returncode != 0:
