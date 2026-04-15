@@ -7,10 +7,11 @@ import subprocess
 from pathlib import Path
 from typing import Dict
 
-
-REPO_ROOT = Path(__file__).resolve().parent.parent
+REPO_ROOT = Path(__file__).resolve().parent
 BUILD_DIR = REPO_ROOT / "build"
-OVERLAYS_DIR = REPO_ROOT / "clusters" / "overlays"
+CLUSTERS_DIR = REPO_ROOT / "clusters"
+CONFIG_DIR = REPO_ROOT / "config"
+STATE_DIR = REPO_ROOT / "state"
 
 
 def run(cmd: str, check: bool = True, capture_output: bool = False) -> subprocess.CompletedProcess:
