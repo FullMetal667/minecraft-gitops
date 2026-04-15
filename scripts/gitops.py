@@ -16,10 +16,14 @@ from common import (
 )
 
 
+def run_git(args: list[str]) -> None:
+    print("> " + " ".join(args))
+    subprocess.run(args, check=True, cwd=REPO_ROOT)
+
+
 def branch_exists(branch: str) -> bool:
     result = subprocess.run(
-        f"git rev-parse --verify {branch}",
-        shell=True,
+        ["git", "rev-parse", "--verify", branch],
         capture_output=True,
         text=True,
         cwd=REPO_ROOT,
@@ -28,10 +32,8 @@ def branch_exists(branch: str) -> bool:
 
 
 def has_changes(paths: list[Path]) -> bool:
-    quoted = " ".join(str(p) for p in paths)
     result = subprocess.run(
-        f"git status --porcelain -- {quoted}",
-        shell=True,
+        ["git", "status", "--porcelain", "--", *[str(p) for p in paths]],
         capture_output=True,
         text=True,
         cwd=REPO_ROOT,
@@ -40,23 +42,31 @@ def has_changes(paths: list[Path]) -> bool:
 
 
 def checkout_main_and_update() -> None:
-    run("git checkout main")
-    run("git pull origin main")
+    run_git(["git", "checkout", "main"])
+    run_git(["git", "pull", "origin", "main"])
 
 
 def create_or_checkout_branch(server: str, version: str) -> str:
     branch = f"bot/{server}-{version}"
 
     if branch_exists(branch):
-        run(f"git checkout {branch}")
-        run("git rebase main")
+        run_git(["git", "checkout", branch])
+        run_git(["git", "rebase", "main"])
     else:
-        run(f"git checkout -b {branch}")
+        run_git(["git", "checkout", "-b", branch])
 
     return branch
 
 
-def configure_git_auth() -> None:
+def commit_and_push(server: str, version: str, changed_paths: list[Path], branch: str) -> None:
+    run_git(["git", "add", *[str(p) for p in changed_paths]])
+
+    if not has_changes(changed_paths):
+        print("Keine Änderungen erkannt. Kein Commit notwendig.")
+        return
+
+    run_git(["git", "commit", "-m", f"chore({server}): update to {version}"])
+
     github_user = os.environ.get("GITHUB_USER")
     github_token = os.environ.get("GITHUB_TOKEN")
     repo = os.environ.get("GITHUB_REPO", "FullMetal667/minecraft-gitops")
@@ -64,30 +74,14 @@ def configure_git_auth() -> None:
     if not github_user or not github_token:
         raise RuntimeError("GITHUB_USER oder GITHUB_TOKEN fehlt")
 
+    push_url = f"https://{github_user}:{github_token}@github.com/{repo}.git"
+
+    print(f"> git push -u https://{github_user}:***@github.com/{repo}.git {branch}")
     subprocess.run(
-        [
-            "git",
-            "remote",
-            "set-url",
-            "origin",
-            f"https://{github_user}:{github_token}@github.com/{repo}.git",
-        ],
+        ["git", "push", "-u", push_url, branch],
         check=True,
         cwd=REPO_ROOT,
     )
-
-
-def commit_and_push(server: str, version: str, changed_paths: list[Path], branch: str) -> None:
-    quoted = " ".join(str(p) for p in changed_paths)
-
-    run(f"git add {quoted}")
-
-    if not has_changes(changed_paths):
-        print("Keine Änderungen erkannt. Kein Commit notwendig.")
-        return
-
-    run(f'git commit -m "chore({server}): update to {version}"')
-    run(f"git push -u origin {branch}")
 
 
 def main() -> int:
@@ -103,6 +97,7 @@ def main() -> int:
     ensure_server_exists(server)
 
     print(f"Running GitOps for server={server}, version={version}, file_id={file_id}")
+    print(f"REPO_ROOT={REPO_ROOT}")
 
     checkout_main_and_update()
     branch = create_or_checkout_branch(server, version)
@@ -117,7 +112,6 @@ def main() -> int:
         overlay_kustomization(server),
     ]
 
-    configure_git_auth()
     commit_and_push(server, version, changed_paths, branch)
 
     print(f"Fertig. Branch: {branch}")
