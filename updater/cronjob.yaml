@@ -17,7 +17,9 @@ spec:
                 - -c
                 - |
                   git config --global --add safe.directory /opt/minecraft-gitops
-                  exec python3 scripts/release_watcher.py
+                  git config --global --user.name FullMetal667
+                  git config --global --user.email roth.segnitz@web.de
+                  exec python3 scripts/telegram_bot.py
               envFrom:
                 - secretRef:
                     name: minecraft-gitops-secrets
