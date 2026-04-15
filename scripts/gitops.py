@@ -1,11 +1,19 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
+import os
 import subprocess
 import sys
 from pathlib import Path
 
-from common import REPO_ROOT, ensure_server_exists, params_file, overlay_kustomization, run, server_from_params_filename
+from common import (
+    REPO_ROOT,
+    ensure_server_exists,
+    params_file,
+    overlay_kustomization,
+    run,
+    server_from_params_filename,
+)
 
 
 def branch_exists(branch: str) -> bool:
@@ -47,10 +55,8 @@ def create_or_checkout_branch(server: str, version: str) -> str:
 
     return branch
 
-def configure_git_auth():
-    import os
-    import subprocess
 
+def configure_git_auth() -> None:
     github_user = os.environ.get("GITHUB_USER")
     github_token = os.environ.get("GITHUB_TOKEN")
     repo = os.environ.get("GITHUB_REPO", "FullMetal667/minecraft-gitops")
@@ -67,7 +73,9 @@ def configure_git_auth():
             f"https://{github_user}:{github_token}@github.com/{repo}.git",
         ],
         check=True,
+        cwd=REPO_ROOT,
     )
+
 
 def commit_and_push(server: str, version: str, changed_paths: list[Path], branch: str) -> None:
     quoted = " ".join(str(p) for p in changed_paths)
@@ -110,8 +118,6 @@ def main() -> int:
     ]
 
     configure_git_auth()
-    run(f"git push -u origin {branch}")
-
     commit_and_push(server, version, changed_paths, branch)
 
     print(f"Fertig. Branch: {branch}")
