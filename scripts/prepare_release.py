@@ -1,16 +1,14 @@
 #!/usr/bin/env python3
 from __future__ import annotations
-from curseforge import resolve_release
 
 import json
 import re
 import subprocess
 import sys
-from pathlib import Path
 
+from curseforge import resolve_release
 from common import REPO_ROOT, params_file, overlay_kustomization, server_from_params_filename
 
-release = resolve_release("all-the-mods-10", mc_version="1.20.1")
 
 def run(cmd: list[str], check: bool = True) -> subprocess.CompletedProcess:
     print("> " + " ".join(cmd), file=sys.stderr)
@@ -52,19 +50,23 @@ def sanitize_branch_part(value: str) -> str:
 
 
 def main() -> int:
-    if len(sys.argv) < 4:
+    if len(sys.argv) < 2:
         print(
-            "Usage: python3 scripts/prepare_release.py <server|params-file> <version> <server_file_id> [zip]",
+            "Usage: python3 scripts/prepare_release.py <server|params-file> [zip]",
             file=sys.stderr,
         )
         return 1
 
     raw_server = sys.argv[1]
-    version = release["version"]
-    server_file_id = release["server_file_id"]
-    zip_name = sys.argv[4] if len(sys.argv) >= 5 else None
+    zip_name = sys.argv[2] if len(sys.argv) >= 3 else None
 
     server = server_from_params_filename(raw_server)
+
+    # Vorläufig hart verdrahtet für ATM10
+    release = resolve_release("all-the-mods-10", mc_version="1.20.1")
+    version = release["version"]
+    server_file_id = str(release["server_file_id"])
+
     branch_version = sanitize_branch_part(version)
     branch = f"bot/{server}-{branch_version}"
 
@@ -77,22 +79,19 @@ def main() -> int:
     )
 
     if status.stdout.strip():
-        print("Repository is not clean. Bitte erst committen oder staschen:")
-        print(status.stdout)
+        print("Repository is not clean. Bitte erst committen oder staschen:", file=sys.stderr)
+        print(status.stdout, file=sys.stderr)
         return 1
 
-    # main aktualisieren
     run(["git", "checkout", "main"], check=True)
     run(["git", "pull", "origin", "main"], check=True)
 
-    # Arbeitsbranch vorbereiten
     if branch_exists(branch):
         run(["git", "checkout", branch], check=True)
         run(["git", "rebase", "main"], check=True)
     else:
         run(["git", "checkout", "-b", branch], check=True)
 
-    # Server-Dateien aktualisieren
     update_cmd = ["python3", "scripts/update_server.py", server, version, server_file_id]
     if zip_name:
         update_cmd.append(zip_name)
@@ -109,30 +108,26 @@ def main() -> int:
     ]
     changed_rel = [str(p.relative_to(REPO_ROOT)) for p in changed_paths]
 
-    # Änderungen stagen
     run(["git", "add", *changed_rel], check=True)
 
-    status = git_stdout(["git", "status", "--short", "--", *changed_rel])
+    status_text = git_stdout(["git", "status", "--short", "--", *changed_rel])
     diff_cached = git_stdout(["git", "diff", "--cached", "--", *changed_rel])
 
     committed = False
-    push_result = ""
     pr_url = None
 
-    if status:
+    if status_text:
         run(
             ["git", "commit", "-m", f"chore({server}): update to {version}"],
             check=True,
         )
         push = run(["git", "push", "-u", "origin", branch], check=False)
-        push_result = (push.stdout or "") + (push.stderr or "")
         if push.returncode != 0:
             print(push.stdout, file=sys.stderr)
             print(push.stderr, file=sys.stderr)
             return push.returncode
         committed = True
 
-        # Optional: PR URL lesen, falls bereits vorhanden
         pr_view = subprocess.run(
             ["gh", "pr", "view", branch, "--json", "url"],
             text=True,
@@ -151,7 +146,7 @@ def main() -> int:
         "server_file_id": server_file_id,
         "branch": branch,
         "changed_files": changed_rel,
-        "status": status,
+        "status": status_text,
         "diff": diff_cached,
         "committed": committed,
         "pr_url": pr_url,
