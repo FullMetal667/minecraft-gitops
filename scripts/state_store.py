@@ -2,14 +2,13 @@
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 from typing import Any
-import os
 
-REPO_ROOT = Path(__file__).resolve().parent.parent
 STATE_DIR = Path(os.environ.get("STATE_DIR", "/data/state"))
-STATE_DIR.mkdir(parents=True, exist_ok=True)
 STATE_FILE = STATE_DIR / "releases.json"
+
 
 def _ensure_state_file() -> None:
     STATE_FILE.parent.mkdir(parents=True, exist_ok=True)
@@ -24,7 +23,10 @@ def load_state() -> dict[str, Any]:
 
 def save_state(state: dict[str, Any]) -> None:
     _ensure_state_file()
-    STATE_FILE.write_text(json.dumps(state, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    STATE_FILE.write_text(
+        json.dumps(state, indent=2, ensure_ascii=False) + "\n",
+        encoding="utf-8",
+    )
 
 
 def list_releases() -> list[dict[str, Any]]:
