@@ -1,66 +1,168 @@
 #!/usr/bin/env python3
-from __future__ import annotations
-
 import os
-import re
-from typing import Any
-
 import requests
 
-
 API_BASE = "https://api.curseforge.com/v1"
+GAME_ID_MINECRAFT = 432
 
 
-def _headers() -> dict[str, str]:
-    api_key = os.environ.get("CURSEFORGE_API_KEY")
-    if not api_key:
-        raise RuntimeError("CURSEFORGE_API_KEY is not set.")
-    return {"x-api-key": api_key}
+def _headers():
+    return {
+        "Accept": "application/json",
+        "x-api-key": os.environ["CURSEFORGE_API_KEY"],
+    }
 
 
-def get_mod_files(project_id: str | int, page_size: int = 20) -> list[dict[str, Any]]:
+def _get(path, params=None):
     resp = requests.get(
-        f"{API_BASE}/mods/{project_id}/files",
+        f"{API_BASE}{path}",
         headers=_headers(),
-        params={"pageSize": page_size, "index": 0},
+        params=params,
         timeout=30,
     )
     resp.raise_for_status()
     return resp.json()["data"]
 
 
-def extract_version(display_name: str, file_name: str) -> str:
-    candidates = [display_name or "", file_name or ""]
+# ---------------------------
+# Project / Mod
+# ---------------------------
+def get_project_by_slug(slug: str) -> dict:
+    data = _get(
+        "/mods/search",
+        params={
+            "gameId": GAME_ID_MINECRAFT,
+            "slug": slug,
+            "pageSize": 1,
+        },
+    )
+    if not data:
+        raise RuntimeError(f"Projekt nicht gefunden: {slug}")
+    return data[0]
 
-    patterns = [
-        r'[-_ ]v?(\d+\.\d+(?:\.\d+)*)',
-        r'\bv?(\d+\.\d+(?:\.\d+)*)\b',
-    ]
 
-    for text in candidates:
-        for pattern in patterns:
-            m = re.search(pattern, text, re.IGNORECASE)
-            if m:
-                return m.group(1)
+# ---------------------------
+# Files
+# ---------------------------
+def get_files(mod_id: int, mc_version: str | None = None):
+    params = {"pageSize": 50}
+    if mc_version:
+        params["gameVersion"] = mc_version
 
-    return "unknown"
+    files = _get(f"/mods/{mod_id}/files", params=params)
+
+    return sorted(
+        files,
+        key=lambda x: x.get("fileDate", ""),
+        reverse=True,
+    )
 
 
-def detect_latest_file(project_id: str | int) -> dict[str, Any]:
-    files = get_mod_files(project_id, page_size=50)
-    if not files:
-        raise RuntimeError(f"No CurseForge files found for project_id={project_id}")
+def get_latest_client_file(mod_id: int, mc_version: str | None = None):
+    files = get_files(mod_id, mc_version)
 
-    files_sorted = sorted(files, key=lambda item: item["id"], reverse=True)
-    latest = files_sorted[0]
+    for f in files:
+        name = (f.get("fileName") or "").lower()
+        display = (f.get("displayName") or "").lower()
 
-    display_name = latest.get("displayName", "")
-    file_name = latest.get("fileName", "")
+        if "server" in name or "server" in display:
+            continue
+
+        return f
+
+    raise RuntimeError("Keine Client-Datei gefunden")
+
+
+def get_file_details(mod_id: int, file_id: int):
+    return _get(f"/mods/{mod_id}/files/{file_id}")
+
+
+# ---------------------------
+# Server File Resolution
+# ---------------------------
+def find_server_file_id(mod_id: int, client_file: dict) -> int:
+    client_id = client_file["id"]
+
+    # 1. Direktreferenz versuchen
+    details = get_file_details(mod_id, client_id)
+
+    for key in ("serverPackFileId", "serverFileId", "alternateFileId"):
+        value = details.get(key)
+        if isinstance(value, int) and value > 0 and value != client_id:
+            return value
+
+    # 2. Fallback: Heuristik
+    client_name = (client_file.get("displayName") or "").lower()
+    client_date = client_file.get("fileDate", "")
+
+    version_token = extract_version_token(client_name)
+
+    files = get_files(mod_id)
+
+    candidates = []
+    for f in files:
+        name = (f.get("fileName") or "").lower()
+        display = (f.get("displayName") or "").lower()
+
+        if "server" not in name and "server" not in display:
+            continue
+
+        score = 0
+
+        if version_token and version_token in name:
+            score += 3
+        if version_token and version_token in display:
+            score += 3
+
+        if client_date and f.get("fileDate", "")[:10] == client_date[:10]:
+            score += 2
+
+        candidates.append((score, f))
+
+    candidates.sort(
+        key=lambda x: (x[0], x[1].get("fileDate", "")),
+        reverse=True,
+    )
+
+    if candidates and candidates[0][0] > 0:
+        return candidates[0][1]["id"]
+
+    raise RuntimeError(
+        f"Keine Server-Datei für Client-File {client_id} gefunden"
+    )
+
+
+# ---------------------------
+# Version Extraction
+# ---------------------------
+def extract_version_token(display_name: str) -> str | None:
+    parts = display_name.replace("(", " ").replace(")", " ").split()
+
+    for part in reversed(parts):
+        if any(c.isdigit() for c in part):
+            return part.lower()
+
+    return None
+
+
+# ---------------------------
+# Main Resolver
+# ---------------------------
+def resolve_release(slug: str, mc_version: str | None = None) -> dict:
+    project = get_project_by_slug(slug)
+    mod_id = project["id"]
+
+    client_file = get_latest_client_file(mod_id, mc_version)
+    server_file_id = find_server_file_id(mod_id, client_file)
+
+    version = extract_version_token(client_file.get("displayName", "")) \
+        or client_file.get("displayName")
 
     return {
-        "file_id": str(latest["id"]),
-        "display_name": display_name,
-        "file_name": file_name,
-        "version": extract_version(display_name, file_name),
-        "download_url": latest.get("downloadUrl"),
+        "project_id": mod_id,
+        "project_name": project["name"],
+        "version": version,
+        "client_file_id": client_file["id"],
+        "server_file_id": server_file_id,
+        "display_name": client_file.get("displayName"),
     }

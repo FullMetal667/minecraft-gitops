@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 from __future__ import annotations
+from curseforge import resolve_release
 
 import json
 import re
@@ -9,6 +10,7 @@ from pathlib import Path
 
 from common import REPO_ROOT, params_file, overlay_kustomization, server_from_params_filename
 
+release = resolve_release("all-the-mods-10", mc_version="1.20.1")
 
 def run(cmd: list[str], check: bool = True) -> subprocess.CompletedProcess:
     print("> " + " ".join(cmd), file=sys.stderr)
@@ -52,14 +54,14 @@ def sanitize_branch_part(value: str) -> str:
 def main() -> int:
     if len(sys.argv) < 4:
         print(
-            "Usage: python3 scripts/prepare_release.py <server|params-file> <version> <file_id> [zip]",
+            "Usage: python3 scripts/prepare_release.py <server|params-file> <version> <server_file_id> [zip]",
             file=sys.stderr,
         )
         return 1
 
     raw_server = sys.argv[1]
-    version = sys.argv[2]
-    file_id = sys.argv[3]
+    version = release["version"]
+    server_file_id = release["server_file_id"]
     zip_name = sys.argv[4] if len(sys.argv) >= 5 else None
 
     server = server_from_params_filename(raw_server)
@@ -91,7 +93,7 @@ def main() -> int:
         run(["git", "checkout", "-b", branch], check=True)
 
     # Server-Dateien aktualisieren
-    update_cmd = ["python3", "scripts/update_server.py", server, version, file_id]
+    update_cmd = ["python3", "scripts/update_server.py", server, version, server_file_id]
     if zip_name:
         update_cmd.append(zip_name)
 
@@ -146,7 +148,7 @@ def main() -> int:
     summary = {
         "server": server,
         "version": version,
-        "file_id": file_id,
+        "server_file_id": server_file_id,
         "branch": branch,
         "changed_files": changed_rel,
         "status": status,
