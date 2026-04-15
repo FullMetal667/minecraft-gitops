@@ -20,8 +20,8 @@ spec:
             - -c
             - |
               git config --global --add safe.directory /opt/minecraft-gitops
-              git config --global --user.name FullMetal667
-              git config --global --user.email roth.segnitz@web.de
+              git config --global user.name "FullMetal667"
+              git config --global user.email "roth.segnitz@web.de"
               exec python3 scripts/telegram_bot.py
           envFrom:
             - secretRef:

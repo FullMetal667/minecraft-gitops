@@ -132,10 +132,14 @@ def main() -> int:
     pr_url = None
 
     if status_text:
-        run(
+        commit = run(
             ["git", "commit", "-m", f"chore({server}): update to {version}"],
-            check=True,
+            check=False,
         )
+        if commit.returncode != 0:
+            print(commit.stdout, file=sys.stderr)
+            print(commit.stderr, file=sys.stderr)
+            return commit.returncode
         push = run(["git", "push", "-u", "origin", branch], check=False)
         if push.returncode != 0:
             print(push.stdout, file=sys.stderr)
