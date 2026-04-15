@@ -29,6 +29,8 @@ spec:
           env:
             - name: STATE_DIR
               value: /data/state
+            - name: HOME
+              value: /tmp
           volumeMounts:
             - name: state
               mountPath: /data/state

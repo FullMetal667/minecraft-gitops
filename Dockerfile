@@ -29,8 +29,12 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
 RUN mkdir -p ${APP_HOME}/state ${APP_HOME}/tmp \
     && chgrp -R 0 ${APP_HOME} \
     && chmod -R g=u ${APP_HOME}
 
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 CMD ["python3", "scripts/telegram_bot.py"]

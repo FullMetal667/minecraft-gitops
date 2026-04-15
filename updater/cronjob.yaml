@@ -23,6 +23,9 @@ spec:
                     name: minecraft-gitops-secrets
                 - configMapRef:
                     name: minecraft-gitops-config
+              env:
+                - name: HOME
+                  value: /tmp
               volumeMounts:
                 - name: state
                   mountPath: /data/state
