@@ -11,7 +11,7 @@ spec:
           restartPolicy: Never
           containers:
             - name: watcher
-              image: quay.io/your-org/minecraft-gitops:latest
+              image: chrisroth667/minecraft-gitops:latest
               command: ["python3", "scripts/release_watcher.py"]
               envFrom:
                 - secretRef:
