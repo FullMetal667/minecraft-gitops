@@ -27,4 +27,4 @@ patches:
 images: 
   - name: docker.io/chrisroth667/minecraft
     newName: docker.io/chrisroth667/sb4
-    newTag: 1.11.0
+    newTag: "1.11.0"
