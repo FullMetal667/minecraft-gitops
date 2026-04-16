@@ -5,6 +5,8 @@ import re
 import sys
 from pathlib import Path
 
+from modloader_utils import extract_modloader_parts
+
 from common import (
     ensure_server_exists,
     load_env_file,
@@ -41,9 +43,6 @@ def strip_quotes(value: str) -> str:
 
 
 def resolve_image_tag_placeholders(value: str, version: str) -> str:
-    """
-    Ersetzt typische Platzhalter mit der konkreten Version.
-    """
     value = strip_quotes(value)
     value = value.replace("${IMAGE_TAG}", version)
     value = value.replace("$IMAGE_TAG", version)
@@ -53,17 +52,11 @@ def resolve_image_tag_placeholders(value: str, version: str) -> str:
 
 
 def looks_like_plain_version(value: str) -> bool:
-    """
-    Erkennt Werte wie 1.10.0 oder 2.5.3-beta.1 grob als 'nur Version'.
-    """
     value = strip_quotes(value)
     return bool(re.fullmatch(r"[0-9]+(?:\.[0-9A-Za-z_-]+)+", value))
 
 
 def default_zip_name(server: str, version: str) -> str:
-    """
-    Fallback, falls im params-File kein brauchbarer ZIP-Wert vorhanden ist.
-    """
     mapping = {
         "sb4": f"ftb-stoneblock-4-{version}-server.zip",
         "aof7": f"All%20of%20Fabric%207-Server-{version}.zip",
@@ -72,9 +65,6 @@ def default_zip_name(server: str, version: str) -> str:
 
 
 def default_dir_name(server: str, version: str) -> str:
-    """
-    Fallback, falls im params-File kein brauchbarer DIR-Wert vorhanden ist.
-    """
     mapping = {
         "sb4": f"ftb-stoneblock-4-{version}-server",
         "aof7": f"All of Fabric 7-Server-{version}",
@@ -83,12 +73,6 @@ def default_dir_name(server: str, version: str) -> str:
 
 
 def resolve_zip_and_dir(server: str, version: str, env: dict[str, str], zip_name: str | None) -> tuple[str, str]:
-    """
-    Priorität:
-    1. explizit übergebenes zip_name, wenn es nicht bloß wie eine Version aussieht
-    2. vorhandener ZIP-Wert aus params-File, mit ${IMAGE_TAG}-Auflösung
-    3. Fallback pro Server
-    """
     raw_zip = strip_quotes(zip_name) if zip_name else ""
     env_zip = strip_quotes(env.get("ZIP", ""))
     env_dir = strip_quotes(env.get("DIR", ""))
@@ -108,15 +92,34 @@ def resolve_zip_and_dir(server: str, version: str, env: dict[str, str], zip_name
     return resolved_zip, resolved_dir
 
 
+def resolve_modloader(local_zip_path: str | None) -> tuple[str, str]:
+    if not local_zip_path:
+        return "unknown", "unknown"
+
+    zip_path = Path(local_zip_path)
+    if not zip_path.exists():
+        print(f"Warnung: Lokales ZIP für Modloader-Erkennung nicht gefunden: {zip_path}")
+        return "unknown", "unknown"
+
+    try:
+        return extract_modloader_parts(zip_path)
+    except Exception as exc:
+        print(f"Warnung: Modloader konnte nicht aus {zip_path} ermittelt werden: {exc}")
+        return "unknown", "unknown"
+
+
 def main() -> int:
     if len(sys.argv) < 4:
-        print("Usage: python3 update_server.py <server|params-file> <version> <file_id> [zip]")
+        print(
+            "Usage: python3 update_server.py <server|params-file> <version> <file_id> [zip_name] [local_zip_path]"
+        )
         return 1
 
     server = server_from_params_filename(sys.argv[1])
     version = sys.argv[2]
     file_id = sys.argv[3]
     zip_name = sys.argv[4] if len(sys.argv) >= 5 else None
+    local_zip_path = sys.argv[5] if len(sys.argv) >= 6 else None
 
     ensure_server_exists(server)
 
@@ -125,12 +128,15 @@ def main() -> int:
 
     env = load_env_file(env_file)
     resolved_zip, resolved_dir = resolve_zip_and_dir(server, version, env, zip_name)
+    modloader, modloader_version = resolve_modloader(local_zip_path)
 
     upsert_env_value(env_file, "VERSION", version)
     upsert_env_value(env_file, "IMAGE_TAG", version)
     upsert_env_value(env_file, "FILE_ID", file_id)
     upsert_env_value(env_file, "ZIP", resolved_zip)
     upsert_env_value(env_file, "DIR", resolved_dir)
+    upsert_env_value(env_file, "MODLOADER", modloader)
+    upsert_env_value(env_file, "MODLOADER_VERSION", modloader_version)
 
     update_image_tag(kust_file, version)
 
@@ -141,6 +147,8 @@ def main() -> int:
     print(f"  - FILE_ID={file_id}")
     print(f"  - ZIP={resolved_zip}")
     print(f"  - DIR={resolved_dir}")
+    print(f"  - MODLOADER={modloader}")
+    print(f"  - MODLOADER_VERSION={modloader_version}")
 
     return 0
 
