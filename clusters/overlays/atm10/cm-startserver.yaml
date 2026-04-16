@@ -12,7 +12,7 @@ data:
 
     # Marker für einmalige Initialisierung
     ATM10_INIT_MARKER="${DATA_DIR}/.atm10_initialized"
-
+    
     # ==========================
     # Modpack/Serverpack Download (NUR runtime)
     # ==========================
