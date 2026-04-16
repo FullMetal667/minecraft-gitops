@@ -1,41 +1,78 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
+import fcntl
 import json
 import os
 import re
 import subprocess
 import sys
+from pathlib import Path
 
 from common import (
     REPO_ROOT,
     load_env_file,
-    params_file,
     overlay_kustomization,
+    params_file,
     server_from_params_filename,
 )
 from curseforge import resolve_release_by_project_id
 
 
+LOCK_PATH = "/tmp/minecraft-gitops-prepare.lock"
+
+
+class RepoLock:
+    def __init__(self, path: str):
+        self.path = path
+        self.fd = None
+
+    def __enter__(self):
+        self.fd = open(self.path, "w")
+        try:
+            fcntl.flock(self.fd.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError as exc:
+            raise RuntimeError(
+                "Ein anderer Prepare-Lauf arbeitet bereits im Repository."
+            ) from exc
+        self.fd.write(str(os.getpid()))
+        self.fd.flush()
+        return self
+
+    def __exit__(self, exc_type, exc, tb):
+        if self.fd:
+            fcntl.flock(self.fd.fileno(), fcntl.LOCK_UN)
+            self.fd.close()
+
+
 def run(cmd: list[str], check: bool = True) -> subprocess.CompletedProcess:
     print("> " + " ".join(cmd), file=sys.stderr)
-    return subprocess.run(
+    result = subprocess.run(
         cmd,
         text=True,
         capture_output=True,
         cwd=REPO_ROOT,
-        check=check,
+        check=False,
     )
+
+    if result.stdout:
+        print(result.stdout, file=sys.stderr, end="")
+    if result.stderr:
+        print(result.stderr, file=sys.stderr, end="")
+
+    if check and result.returncode != 0:
+        raise subprocess.CalledProcessError(
+            result.returncode,
+            cmd,
+            output=result.stdout,
+            stderr=result.stderr,
+        )
+
+    return result
 
 
 def git_stdout(args: list[str]) -> str:
-    result = subprocess.run(
-        args,
-        text=True,
-        capture_output=True,
-        cwd=REPO_ROOT,
-        check=True,
-    )
+    result = run(args, check=True)
     return result.stdout.strip()
 
 
@@ -45,6 +82,7 @@ def branch_exists(branch: str) -> bool:
         text=True,
         capture_output=True,
         cwd=REPO_ROOT,
+        check=False,
     )
     return result.returncode == 0
 
@@ -80,6 +118,43 @@ def push_branch_with_auth(branch: str) -> subprocess.CompletedProcess:
     )
 
 
+def is_rebase_in_progress() -> bool:
+    git_dir = REPO_ROOT / ".git"
+    return (git_dir / "rebase-merge").exists() or (git_dir / "rebase-apply").exists()
+
+
+def abort_rebase_if_needed() -> None:
+    if is_rebase_in_progress():
+        run(["git", "rebase", "--abort"], check=False)
+
+
+def ensure_clean_repo() -> None:
+    status = run(["git", "status", "--porcelain"], check=True)
+    if status.stdout.strip():
+        raise RuntimeError(
+            "Repository ist nicht sauber. Bitte vorher laufenden Rebase/Konflikte/Änderungen bereinigen."
+        )
+
+
+def safe_checkout_main() -> None:
+    abort_rebase_if_needed()
+    ensure_clean_repo()
+    run(["git", "checkout", "main"], check=True)
+    run(["git", "pull", "--ff-only", "origin", "main"], check=True)
+
+
+def checkout_or_create_branch(branch: str) -> None:
+    if branch_exists(branch):
+        run(["git", "checkout", branch], check=True)
+        try:
+            run(["git", "rebase", "main"], check=True)
+        except subprocess.CalledProcessError:
+            run(["git", "rebase", "--abort"], check=False)
+            raise
+    else:
+        run(["git", "checkout", "-b", branch], check=True)
+
+
 def main() -> int:
     if len(sys.argv) < 2:
         print(
@@ -92,7 +167,6 @@ def main() -> int:
     zip_name = sys.argv[2] if len(sys.argv) >= 3 else None
 
     server = server_from_params_filename(raw_server)
-
     env = load_env_file(params_file(server))
 
     project_id = env.get("CURSEFORGE_PROJECT_ID")
@@ -112,96 +186,101 @@ def main() -> int:
     branch_version = sanitize_branch_part(version)
     branch = f"bot/{server}-{branch_version}"
 
-    status = subprocess.run(
-        ["git", "status", "--porcelain"],
-        text=True,
-        capture_output=True,
-        cwd=REPO_ROOT,
-    )
-
-    if status.returncode != 0:
-        print(status.stdout, file=sys.stderr)
-        print(status.stderr, file=sys.stderr)
-        return status.returncode
-
-    run(["git", "checkout", "main"], check=True)
-    run(["git", "pull", "origin", "main"], check=True)
-
-    if branch_exists(branch):
-        run(["git", "checkout", branch], check=True)
-        run(["git", "rebase", "main"], check=True)
-    else:
-        run(["git", "checkout", "-b", branch], check=True)
-
-    update_cmd = ["python3", "scripts/update_server.py", server, version, server_file_id]
-    if zip_name:
-        update_cmd.append(zip_name)
-
-    update_result = run(update_cmd, check=False)
-    if update_result.returncode != 0:
-        print(update_result.stdout, file=sys.stderr)
-        print(update_result.stderr, file=sys.stderr)
-        return update_result.returncode
-
-    changed_paths = [
-        params_file(server),
-        overlay_kustomization(server),
-    ]
-    changed_rel = [str(p.relative_to(REPO_ROOT)) for p in changed_paths]
-
-    run(["git", "add", *changed_rel], check=True)
-
-    status_text = git_stdout(["git", "status", "--short", "--", *changed_rel])
-    diff_cached = git_stdout(["git", "diff", "--cached", "--", *changed_rel])
-
     committed = False
     pr_url = None
 
-    if status_text:
-        commit = run(
-            ["git", "commit", "-m", f"chore({server}): update to {version}"],
-            check=False,
-        )
-        if commit.returncode != 0:
-            print(commit.stdout, file=sys.stderr)
-            print(commit.stderr, file=sys.stderr)
-            return commit.returncode
+    try:
+        with RepoLock(LOCK_PATH):
+            safe_checkout_main()
+            checkout_or_create_branch(branch)
 
-        push = push_branch_with_auth(branch)
-        if push.returncode != 0:
-            print(push.stdout, file=sys.stderr)
-            print(push.stderr, file=sys.stderr)
-            return push.returncode
+            update_cmd = [
+                "python3",
+                "scripts/update_server.py",
+                server,
+                version,
+                server_file_id,
+            ]
+            if zip_name:
+                update_cmd.append(zip_name)
 
-        committed = True
+            update_result = run(update_cmd, check=False)
+            if update_result.returncode != 0:
+                return update_result.returncode
 
-        pr_view = subprocess.run(
-            ["gh", "pr", "view", branch, "--json", "url"],
-            text=True,
-            capture_output=True,
-            cwd=REPO_ROOT,
-        )
-        if pr_view.returncode == 0:
-            try:
-                pr_url = json.loads(pr_view.stdout)["url"]
-            except Exception:
-                pr_url = None
+            changed_paths = [
+                params_file(server),
+                overlay_kustomization(server),
+            ]
+            changed_rel = [str(p.relative_to(REPO_ROOT)) for p in changed_paths]
 
-    summary = {
-        "server": server,
-        "version": version,
-        "server_file_id": server_file_id,
-        "branch": branch,
-        "changed_files": changed_rel,
-        "status": status_text,
-        "diff": diff_cached,
-        "committed": committed,
-        "pr_url": pr_url,
-        "zip": zip_name,
-    }
+            run(["git", "add", *changed_rel], check=True)
 
-    print(json.dumps(summary, indent=2, ensure_ascii=False))
-    return 0
+            status_text = git_stdout(["git", "status", "--short", "--", *changed_rel])
+            diff_cached = git_stdout(["git", "diff", "--cached", "--", *changed_rel])
+
+            if status_text:
+                commit = run(
+                    ["git", "commit", "-m", f"chore({server}): update to {version}"],
+                    check=False,
+                )
+                if commit.returncode != 0:
+                    return commit.returncode
+
+                push = push_branch_with_auth(branch)
+                if push.returncode != 0:
+                    print(push.stdout, file=sys.stderr, end="")
+                    print(push.stderr, file=sys.stderr, end="")
+                    return push.returncode
+
+                committed = True
+
+                pr_view = subprocess.run(
+                    ["gh", "pr", "view", branch, "--json", "url"],
+                    text=True,
+                    capture_output=True,
+                    cwd=REPO_ROOT,
+                    check=False,
+                )
+                if pr_view.returncode == 0:
+                    try:
+                        pr_url = json.loads(pr_view.stdout)["url"]
+                    except Exception:
+                        pr_url = None
+
+            summary = {
+                "server": server,
+                "version": version,
+                "server_file_id": server_file_id,
+                "branch": branch,
+                "changed_files": changed_rel,
+                "status": status_text,
+                "diff": diff_cached,
+                "committed": committed,
+                "pr_url": pr_url,
+                "zip": zip_name,
+            }
+
+            print(json.dumps(summary, indent=2, ensure_ascii=False))
+            return 0
+
+    except RuntimeError as exc:
+        print(str(exc), file=sys.stderr)
+        return 1
+    except subprocess.CalledProcessError as exc:
+        if exc.output:
+            print(exc.output, file=sys.stderr, end="")
+        if exc.stderr:
+            print(exc.stderr, file=sys.stderr, end="")
+        return exc.returncode
+    finally:
+        # Versuch, das Repo in einen definierten Zustand zu bringen
+        try:
+            if is_rebase_in_progress():
+                run(["git", "rebase", "--abort"], check=False)
+            run(["git", "checkout", "main"], check=False)
+        except Exception:
+            pass
 
 
 if __name__ == "__main__":
