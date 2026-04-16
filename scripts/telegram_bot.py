@@ -244,7 +244,7 @@ def handle_callback(callback_query: dict[str, Any], api: TelegramAPI) -> None:
         except Exception:
             pass
 
-
+ 
 def main() -> int:
     api = TelegramAPI()
 
