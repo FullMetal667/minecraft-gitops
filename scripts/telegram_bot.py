@@ -175,6 +175,29 @@ def handle_cancel(release: dict[str, Any], api: TelegramAPI) -> None:
         f"Version: {release['new_version']}"
     )
 
+def handle_message(message: dict[str, Any], api: TelegramAPI) -> None:
+    chat = message.get("chat", {})
+    chat_id = chat.get("id")
+    chat_type = chat.get("type")
+    text = (message.get("text") or "").strip()
+
+    print(f"Incoming message: chat_id={chat_id}, chat_type={chat_type}, text={text}")
+
+    if text.startswith("/start"):
+        api.send_message(
+            f"👋 Bot ist aktiv.\n"
+            f"chat_id={chat_id}\n"
+            f"chat_type={chat_type}",
+            chat_id=chat_id,
+        )
+        return
+
+    if text == "/chatid":
+        api.send_message(
+            f"Diese Chat-ID ist:\n{chat_id}",
+            chat_id=chat_id,
+        )
+        return
 
 def handle_callback(callback_query: dict[str, Any], api: TelegramAPI) -> None:
     try:
@@ -241,9 +264,13 @@ def main() -> int:
 
             if "callback_query" in update:
                 handle_callback(update["callback_query"], api)
+                continue
+
+            if "message" in update:
+                handle_message(update["message"], api)
+                continue
 
         time.sleep(1)
-
 
 if __name__ == "__main__":
     raise SystemExit(main())
