@@ -7,7 +7,6 @@ import os
 import re
 import subprocess
 import sys
-from pathlib import Path
 
 from common import REPO_ROOT, server_from_params_filename
 
@@ -203,6 +202,55 @@ def checkout_branch(branch: str) -> None:
     raise RuntimeError(f"Branch {branch} wurde weder lokal noch auf origin gefunden.")
 
 
+def conflicted_files() -> list[str]:
+    result = run(["git", "diff", "--name-only", "--diff-filter=U"], check=True)
+    return [line.strip() for line in result.stdout.splitlines() if line.strip()]
+
+
+def auto_resolve_known_conflicts(server: str) -> bool:
+    expected = {
+        f"build/params-{server}.env",
+        f"clusters/overlays/{server}/kustomization.yaml",
+    }
+
+    conflicts = set(conflicted_files())
+    if not conflicts:
+        return False
+
+    if not conflicts.issubset(expected):
+        return False
+
+    for path in sorted(conflicts):
+        run(["git", "checkout", "--theirs", "--", path], check=True)
+        run(["git", "add", "--", path], check=True)
+
+    return True
+
+
+def rebase_branch_onto_main(server: str, branch: str) -> None:
+    try:
+        run(["git", "rebase", "main"], check=True)
+        return
+    except subprocess.CalledProcessError as exc:
+        if not auto_resolve_known_conflicts(server):
+            run(["git", "rebase", "--abort"], check=False)
+            raise RuntimeError(
+                f"Rebase von {branch} auf main fehlgeschlagen. "
+                f"Nicht automatisch auflösbare Konflikte.\n"
+                f"stdout:\n{exc.output or ''}\n"
+                f"stderr:\n{exc.stderr or ''}"
+            ) from exc
+
+    continue_result = run(["git", "rebase", "--continue"], check=False)
+    if continue_result.returncode != 0:
+        run(["git", "rebase", "--abort"], check=False)
+        raise RuntimeError(
+            f"Rebase von {branch} auf main konnte trotz Auto-Resolve nicht fortgesetzt werden.\n"
+            f"stdout:\n{continue_result.stdout or ''}\n"
+            f"stderr:\n{continue_result.stderr or ''}"
+        )
+
+
 def main() -> int:
     args = [arg for arg in sys.argv[1:] if arg != "--yes"]
     auto_yes = "--yes" in sys.argv[1:]
@@ -236,17 +284,7 @@ def main() -> int:
             run(["git", "pull", "--ff-only", "origin", "main"], check=True)
 
             checkout_branch(branch)
-
-            try:
-                run(["git", "rebase", "main"], check=True)
-            except subprocess.CalledProcessError as exc:
-                run(["git", "rebase", "--abort"], check=False)
-                raise RuntimeError(
-                    f"Rebase von {branch} auf main fehlgeschlagen. "
-                    f"Bitte Konflikte manuell lösen.\n"
-                    f"stdout:\n{exc.output or ''}\n"
-                    f"stderr:\n{exc.stderr or ''}"
-                ) from exc
+            rebase_branch_onto_main(server, branch)
 
             push_branch_with_auth(branch, force_with_lease=True)
 
