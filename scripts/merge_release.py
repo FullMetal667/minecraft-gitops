@@ -37,7 +37,11 @@ class RepoLock:
             self.fd.close()
 
 
-def run(cmd: list[str], check: bool = True) -> subprocess.CompletedProcess:
+def run(
+    cmd: list[str],
+    check: bool = True,
+    env: dict[str, str] | None = None,
+) -> subprocess.CompletedProcess:
     print("> " + " ".join(cmd), file=sys.stderr)
     result = subprocess.run(
         cmd,
@@ -45,6 +49,7 @@ def run(cmd: list[str], check: bool = True) -> subprocess.CompletedProcess:
         capture_output=True,
         cwd=REPO_ROOT,
         check=False,
+        env=env,
     )
 
     if result.stdout:
@@ -288,10 +293,16 @@ def main() -> int:
 
             push_branch_with_auth(branch, force_with_lease=True)
 
-            run(
-                ["gh", "pr", "merge", branch, "--squash", "--delete-branch"],
-                check=True,
+            merge_result = run(
+                ["gh", "pr", "merge", pr_url, "--squash", "--delete-branch"],
+                check=False,
             )
+            if merge_result.returncode != 0:
+                raise RuntimeError(
+                    f"GitHub PR-Merge fehlgeschlagen.\n"
+                    f"stdout:\n{merge_result.stdout or ''}\n"
+                    f"stderr:\n{merge_result.stderr or ''}"
+                )
 
             print(
                 json.dumps(
