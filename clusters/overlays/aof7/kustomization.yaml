@@ -27,4 +27,4 @@ patches:
 images:
   - name: docker.io/chrisroth667/minecraft
     newName: docker.io/chrisroth667/aof7
-    newTag: "2.5.2"
+    newTag: 2.5.3
