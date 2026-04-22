@@ -47,6 +47,12 @@ spec:
         - name: minecraft
           image: "docker.io/chrisroth667/minecraft:0.0.0"
           imagePullPolicy: Always
+          resources:
+            limits:
+              memory: 8961Mi
+            requests:
+              cpu: 3370m
+              memory: 8961Mi
           ports:
             - containerPort: 25565
               protocol: TCP
