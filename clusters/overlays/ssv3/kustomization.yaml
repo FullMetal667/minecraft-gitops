@@ -28,4 +28,4 @@ patches:
 images: 
   - name: docker.io/chrisroth667/minecraft
     newName: docker.io/chrisroth667/ssv3
-    newTag: 4.0.6
+    newTag: "4.0.6"
