@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: minecraft-atmons
+  labels:
+    app: minecraft
+    modpack: atmons
+

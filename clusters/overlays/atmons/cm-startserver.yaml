@@ -1,0 +1,381 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: startserver
+data:
+  startserver.sh: |
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    APP_DIR="${APP_DIR:-/opt/atmons}"
+    DATA_DIR="${DATA_DIR:-/data}"
+
+    # Marker für einmalige Initialisierung
+    ATMONS_INIT_MARKER="${DATA_DIR}/.atmons_initialized"
+    
+    # ==========================
+    # Modpack/Serverpack Download (NUR runtime)
+    # ==========================
+    # Unterstützt:
+    #   1) FILE_ID + ZIP (ForgeCDN-Pattern)
+    #   2) MODPACK_URL (direkter Link zur ZIP) – optional
+    FILE_ID="$(printf '%s' "${FILE_ID}" | tr -d '\r' | xargs || true)"
+    ZIP="$(printf '%s' "${ZIP}" | tr -d '\r' | xargs || true)"
+    MODPACK_URL="${MODPACK_URL:-}"
+
+    # ---- ATMONS / NeoForge Version ----
+    NEOFORGE_VERSION="${NEOFORGE_VERSION:-21.1.224}"
+    INSTALLER="neoforge-${NEOFORGE_VERSION}-installer.jar"
+    NEOFORGE_URL="https://maven.neoforged.net/releases/net/neoforged/neoforge/${NEOFORGE_VERSION}/neoforge-${NEOFORGE_VERSION}-installer.jar"
+
+    # ---- SimpleBackups (über overlays) ----
+    BACKUP_MOD="${BACKUP_MOD:-advanced}"
+
+    AB_FILE_ID="${AB_FILE_ID:-7173771}"
+    AB_FILE_NAME="${AB_FILE_NAME:-SimpleBackups-1.21-4.0.23.jar}"
+
+    # ---- RCON ----
+    RCON_ENABLE="${RCON_ENABLE:-true}"
+    RCON_HOST="${RCON_HOST:-127.0.0.1}"
+    RCON_PORT="${RCON_PORT:-25575}"
+    RCON_PASSWORD="${RCON_PASSWORD:-mc321}"
+    RCON_WAIT_SECS="${RCON_WAIT_SECS:-1800}"
+    RCON_POLL_INTERVAL="${RCON_POLL_INTERVAL:-5}"
+
+    # ---- nc / ncat detection ----
+    NC_BIN="${NC_BIN:-nc}"
+    if ! command -v "${NC_BIN}" >/dev/null 2>&1; then
+      if command -v ncat >/dev/null 2>&1; then
+        NC_BIN="ncat"
+      fi
+    fi
+
+    mkdir -p "${DATA_DIR}"
+    cd "${DATA_DIR}"
+
+    trim() {
+      # trim leading/trailing whitespace; keep empty safe
+      local s="${1:-}"
+      # remove CR (windows newlines) + trim
+      printf '%s' "${s}" | tr -d '\r' | xargs 2>/dev/null || true
+    }
+
+    is_numeric() {
+      [[ "${1:-}" =~ ^[0-9]+$ ]]
+    }
+
+    count_mod_jars() {
+      if [[ -d "${DATA_DIR}/mods" ]]; then
+        find "${DATA_DIR}/mods" -maxdepth 1 -type f -name '*.jar' 2>/dev/null | wc -l | tr -d ' '
+      else
+        echo "0"
+      fi
+    }
+
+    disable_problematic_mods() {
+      local mod_name="little-big-redstone-1.5.2-beta-1.21.1.jar"
+      local mods_dir="${DATA_DIR}/mods"
+      local disabled_dir="${DATA_DIR}/disabled-mods"
+
+      if [[ -f "${mods_dir}/${mod_name}" ]]; then
+        echo "[MOD] Disabling problematic mod: ${mod_name}"
+        mkdir -p "${disabled_dir}"
+        mv "${mods_dir}/${mod_name}" "${disabled_dir}/"
+      fi
+    }
+
+    pack_seems_present() {
+      # ATMONS braucht user_jvm_args.txt + viele Mods
+      [[ -f "${DATA_DIR}/user_jvm_args.txt" ]] || return 1
+      [[ -d "${DATA_DIR}/mods" ]] || return 1
+
+      local jars
+      jars="$(count_mod_jars)"
+      # konservative Schwelle: ATMONS ist deutlich größer; 50 schützt vor "nur overlays"
+      if ! is_numeric "${jars}"; then
+        return 1
+      fi
+      [[ "${jars}" -ge 50 ]] || return 1
+      return 0
+    }
+
+    flatten_nested_pack_dir() {
+      # Manche Serverpacks liegen in einem Unterordner (z.B. /ServerFiles/*).
+      # Wenn wir sowas erkennen: Inhalte nach /data ziehen.
+      shopt -s nullglob dotglob
+      local candidates=("${DATA_DIR}"/*/)
+      for d in "${candidates[@]}"; do
+        if [[ -f "${d}/startserver.sh" || -f "${d}/run.sh" || -f "${d}/user_jvm_args.txt" || -d "${d}/mods" ]]; then
+          echo "[PACK] Detected nested pack dir: ${d} -> flatten into ${DATA_DIR}"
+          cp -an "${d}/"* "${DATA_DIR}/" 2>/dev/null || true
+          break
+        fi
+      done
+      shopt -u nullglob dotglob
+    }
+
+    download_and_extract_serverpack() {
+      mkdir -p "${DATA_DIR}"
+
+      # immer definieren (sonst unbound bei set -u)
+      local tmpzip="/tmp/serverpack.zip"
+      rm -f "${tmpzip}" || true
+      trap 'rm -f "${tmpzip}" 2>/dev/null || true' RETURN
+
+      # WICHTIG: nicht nach "looks initialized" skippen, sondern wirklich prüfen
+      if pack_seems_present; then
+        echo "[PACK] Pack present – skip pack download."
+        return 0
+      fi
+
+      local url=""
+      if [[ -n "${MODPACK_URL}" ]]; then
+        url="$(trim "${MODPACK_URL}")"
+      elif [[ -n "${FILE_ID}" && -n "${ZIP}" ]]; then
+        if ! [[ "${FILE_ID}" =~ ^[0-9]+$ ]]; then
+          echo "[PACK] ERROR: FILE_ID must be numeric, got: '${FILE_ID}'"
+          exit 1
+        fi
+        local dir1=$(( FILE_ID / 1000 ))
+        local dir2=$(( FILE_ID % 1000 ))
+        url="https://mediafilez.forgecdn.net/files/${dir1}/${dir2}/${ZIP}"
+      else
+        echo "[PACK] No FILE_ID/ZIP or MODPACK_URL set – skip pack download."
+        return 0
+      fi
+
+      echo "[PACK] Downloading serverpack: ${url}"
+      if command -v curl >/dev/null 2>&1; then
+        curl -fL --retry 5 --retry-delay 2 --connect-timeout 20 -o "${tmpzip}" "${url}"
+      elif command -v wget >/dev/null 2>&1; then
+        wget -O "${tmpzip}" "${url}"
+      else
+        echo "[PACK] ERROR: neither curl nor wget available."
+        exit 1
+      fi
+
+      echo "[PACK] Extracting to ${DATA_DIR} (protecting mounted files) ..."
+
+      unzip -oq "${tmpzip}" -d "${DATA_DIR}" \
+        -x "server.properties" "*/server.properties" \
+          "startserver.sh" "*/startserver.sh" \
+          "run.sh" "*/run.sh"
+
+      echo "[PACK] Done."
+    }
+
+    selected_backup_filename() {
+      case "${BACKUP_MOD}" in
+        advanced) echo "${AB_FILE_NAME}" ;;
+        none|"")  echo "" ;;
+        *)        echo "${AB_FILE_NAME}" ;;
+      esac
+    }
+
+    selected_backup_url() {
+      # AB_FILE_ID kann auch kaputt sein → sanitize + numeric check
+      local id
+      id="$(trim "${AB_FILE_ID}")"
+      if ! is_numeric "${id}"; then
+        # fallback: keine URL
+        echo ""
+        return 0
+      fi
+      local dir1 dir2
+      dir1=$(( id / 1000 ))
+      dir2=$(( id % 1000 ))
+      echo "https://mediafilez.forgecdn.net/files/${dir1}/${dir2}/${AB_FILE_NAME}"
+    }
+
+    stage_backup_mod() {
+      local fname url
+      fname="$(selected_backup_filename)"
+      url="$(selected_backup_url)"
+      [[ -n "${fname}" ]] || return 0
+
+      mkdir -p "${DATA_DIR}/overlays/mods"
+
+      if [[ -f "${DATA_DIR}/overlays/mods/${fname}" ]]; then
+        return 0
+      fi
+
+      if [[ -f "${DATA_DIR}/${fname}" ]]; then
+        cp -n "${DATA_DIR}/${fname}" "${DATA_DIR}/overlays/mods/${fname}" 2>/dev/null || true
+        return 0
+      fi
+
+      if [[ -n "${url}" ]]; then
+        echo "[BK] downloading ${fname} from ${url}"
+        if ! curl -fsSL "${url}" -o "${DATA_DIR}/overlays/mods/${fname}"; then
+          echo "[BK] WARN: download failed for ${fname} (continuing without backup mod)"
+          rm -f "${DATA_DIR}/overlays/mods/${fname}" || true
+        fi
+      fi
+    }
+
+    place_backup_mod() {
+      local fname src
+      fname="$(selected_backup_filename)"
+      [[ -n "${fname}" ]] || return 0
+
+      mkdir -p "${DATA_DIR}/mods"
+
+      if [[ -f "${DATA_DIR}/overlays/mods/${fname}" ]]; then
+        src="${DATA_DIR}/overlays/mods/${fname}"
+      else
+        return 0
+      fi
+
+      if [[ -f "${DATA_DIR}/mods/${fname}" ]]; then
+        echo "[BK] ${fname} bereits in mods/ vorhanden – nichts überschrieben."
+        return 0
+      fi
+
+      cp -n "${src}" "${DATA_DIR}/mods/${fname}" 2>/dev/null || true
+    }
+
+    # ============================================================
+    # 0) Initialisierung EINMALIG: Modpack laden/entpacken (runtime)
+    #    plus optionaler Fallback copy aus APP_DIR
+    # ============================================================
+    if [[ ! -f "${ATMONS_INIT_MARKER}" ]]; then
+      echo "[ATMONS] First init: serverpack + base files"
+
+      download_and_extract_serverpack
+
+      # Fallback: falls du später doch mal ein Pack ins Image legen willst
+      if [[ -d "${APP_DIR}" ]]; then
+        shopt -s dotglob
+        cp -an "${APP_DIR}/"* "${DATA_DIR}/" 2>/dev/null || true
+        shopt -u dotglob
+      fi
+
+      # Marker nur setzen, wenn das Pack wirklich da ist
+      if pack_seems_present; then
+        touch "${ATMONS_INIT_MARKER}"
+        echo "[ATMONS] Init marker written."
+      else
+        echo "[ATMONS] ERROR: Pack not present after init (mods jars: $(count_mod_jars)). Not writing marker."
+        echo "[ATMONS] Hint: check FILE_ID/ZIP or MODPACK_URL and write permissions on ${DATA_DIR}"
+        exit 1
+      fi
+    else
+      # Optional: wenn Marker existiert aber Pack fehlt (z.B. durch kaputtes Volume), fail fast
+      if ! pack_seems_present; then
+        echo "[ATMONS] ERROR: Init marker exists but pack is missing (mods jars: $(count_mod_jars))."
+        echo "[ATMONS] Remove ${ATMONS_INIT_MARKER} and re-init, or fix your volume contents."
+        exit 1
+      fi
+    fi
+
+    # =======================
+    # EULA
+    # =======================
+    if [ ! -f eula.txt ] || ! grep -q 'eula=true' eula.txt; then
+      if [ "${EULA:-}" = "TRUE" ] || [ "${EULA:-}" = "true" ]; then
+        {
+          echo "# By changing the setting below to TRUE you are indicating your agreement to the EULA (https://aka.ms/MinecraftEULA)."
+          echo "# $(date -u)"
+          echo "eula=true"
+        } > eula.txt
+        echo "[init] EULA accepted via ENV"
+      else
+        echo "[init] EULA not accepted. Setze ENV EULA=true oder lege /data/eula.txt mit 'eula=true' an."
+        exit 3
+      fi
+    fi
+
+    # =======================
+    # ATMONS / NeoForge – Installation
+    # =======================
+    if ! command -v "${ATMONS_JAVA:-java}" >/dev/null 2>&1; then
+      echo "[ATMONS] Minecraft 1.21 requires Java 21 - Java not found (ATMONS_JAVA oder java)"
+      exit 1
+    fi
+
+    if [[ ! -d "libraries" ]]; then
+      echo "[ATMONS] Neoforge not installed, installing now."
+      if [[ ! -f "${INSTALLER}" ]]; then
+        echo "[ATMONS] No Neoforge installer found, downloading now: ${NEOFORGE_URL}"
+        if command -v wget >/dev/null 2>&1; then
+          wget -O "${INSTALLER}" "${NEOFORGE_URL}"
+        elif command -v curl >/dev/null 2>&1; then
+          curl -o "${INSTALLER}" -L "${NEOFORGE_URL}"
+        else
+          echo "[ATMONS] Neither wget nor curl were found in the container. Please add one and try again."
+          exit 1
+        fi
+      fi
+
+      echo "[ATMONS] Running Neoforge installer."
+      "${ATMONS_JAVA:-java}" -jar "${INSTALLER}" -installServer
+    fi
+
+    if [[ ! -e server.properties ]]; then
+      cat > server.properties <<EOF
+    allow-flight=true
+    motd=All the Mods 10
+    max-tick-time=180000
+    EOF
+    fi
+
+    if [[ "${ATMONS_INSTALL_ONLY:-false}" == "true" ]]; then
+      echo "[ATMONS] INSTALL_ONLY: complete"
+      exit 0
+    fi
+
+    JAVA_VERSION="$("${ATMONS_JAVA:-java}" -fullversion 2>&1 | awk -F '"' '/version/ {print $2}' | cut -d'.' -f1 || echo 0)"
+    if ! [[ "${JAVA_VERSION}" =~ ^[0-9]+$ ]] || [[ "${JAVA_VERSION}" -lt 21 ]]; then
+      echo "[ATMONS] Minecraft 1.21 requires Java 21 - found Java ${JAVA_VERSION}"
+      exit 1
+    fi
+
+    # =======================
+    # SimpleBackups einmalig bereitstellen
+    # =======================
+    stage_backup_mod || true
+    place_backup_mod || true
+
+    # # =======================
+    # # Problematische Mods deaktivieren
+    # # =======================
+    # disable_problematic_mods
+
+    # =======================
+    # Hauptloop
+    # =======================
+    while true; do
+      echo "[ATMONS] starting server ..."
+      "${ATMONS_JAVA:-java}" @user_jvm_args.txt @libraries/net/neoforged/neoforge/${NEOFORGE_VERSION}/unix_args.txt nogui &
+      SERVER_PID=$!
+
+      if [[ "${RCON_ENABLE}" == "true" && -s "${DATA_DIR}/commands.txt" ]]; then
+        echo "[RCON] waiting for ${RCON_HOST}:${RCON_PORT} (timeout ${RCON_WAIT_SECS}s) ..."
+        waited=0
+        until command -v "${NC_BIN}" >/dev/null 2>&1 && ${NC_BIN} -z "${RCON_HOST}" "${RCON_PORT}" 2>/dev/null; do
+          sleep "${RCON_POLL_INTERVAL}"
+          waited=$(( waited + RCON_POLL_INTERVAL ))
+          if [[ "${waited}" -ge "${RCON_WAIT_SECS}" ]]; then
+            echo "[RCON] timeout (${RCON_WAIT_SECS}s) – skip commands"
+            break
+          fi
+        done
+
+        if command -v "${NC_BIN}" >/dev/null 2>&1 && ${NC_BIN} -z "${RCON_HOST}" "${RCON_PORT}" 2>/dev/null; then
+          sleep 3
+          echo "[RCON] sending commands from commands.txt"
+          sed -e 's#^/##' -e '/^\s*#/d' -e '/^\s*$/d' "${DATA_DIR}/commands.txt" | \
+            /usr/local/bin/mcrcon -H "${RCON_HOST}" -P "${RCON_PORT}" -p "${RCON_PASSWORD}" -s || true
+        fi
+      fi
+
+      wait "${SERVER_PID}" || true
+
+      if [[ "${ATMONS_RESTART:-true}" == "false" ]]; then
+        echo "[ATMONS] server stopped, automatic restart disabled (ATMONS_RESTART=false)"
+        exit 0
+      fi
+
+      echo "[ATMONS] Restarting automatically in 10 seconds (Ctrl+C to stop container)"
+      sleep 10
+    done

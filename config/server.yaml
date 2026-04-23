@@ -45,3 +45,13 @@ servers:
     env_file: "build/params-sb4.env"
     branch_prefix: "bot/sb4"
     pr_title: "SB4 update to {version}"
+
+  atmons:
+    display_name: "All The Mons
+    provider: "github_release"
+    repo: "owner/repo"
+    asset_pattern: "serverpack-(?P<version>\\d+(?:\\.\\d+)+)\\.zip"
+    env_file: "build/params-atmons.env"
+    branch_prefix: "bot/atmons"
+    pr_title: "ATMons update to {version}"
+    

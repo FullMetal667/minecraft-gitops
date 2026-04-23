@@ -1,0 +1,92 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: minecraft-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: minecraft
+  template:
+    metadata:
+      labels:
+        app: minecraft
+    spec:
+      securityContext: {}
+      serviceAccountName: minecraft-sa
+      volumes:
+        - name: world-data
+          persistentVolumeClaim:
+            claimName: world-data
+        - name: backup
+          persistentVolumeClaim:
+            claimName: backup-pvc
+        - name: overrides
+          persistentVolumeClaim:
+            claimName: overrides-storage
+        - name: startserver
+          configMap:
+            name: startserver
+            defaultMode: 0755
+        - name: server-properties
+          configMap:
+            name: mc-server-properties
+            defaultMode: 0777
+        - name: user-jvm-args
+          configMap:
+            name: user-jvm-args
+            defaultMode: 0755
+        - name: mcrcon-commands
+          configMap:
+            name: minecraft-commands
+            defaultMode: 0755
+        - name: env-file
+          secret:
+            secretName: mc-env 
+      containers:
+        - name: minecraft
+          image: "docker.io/chrisroth667/minecraft:0.0.0"
+          imagePullPolicy: Always
+          resources:
+            limits:
+              memory: 8961Mi
+            requests:
+              cpu: 3370m
+              memory: 8961Mi
+          ports:
+            - containerPort: 25565
+              protocol: TCP
+          env:
+            - name: EULA
+              value: "true"
+          envFrom:
+            - secretRef:
+                name: mc-env
+          volumeMounts:
+            - name: mcrcon-commands
+              mountPath: /data/commands.txt
+              subPath: commands.txt
+            - name: env-file
+              mountPath: /opt/.env
+              subPath: .env
+            - name: world-data
+              mountPath: /data/world
+            - name: overrides
+              mountPath: /data/overrides
+            - name: backup
+              mountPath: /data/simplebackups
+            - name: startserver
+              mountPath: /data/startserver.sh
+              subPath: startserver.sh
+            - name: server-properties
+              mountPath: /data/server.properties
+              subPath: server.properties
+            - name: user-jvm-args
+              mountPath: /data/user-jvm-args.txt
+              subPath: user-jvm-args.txt
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      schedulerName: default-scheduler

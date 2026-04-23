@@ -1,0 +1,11 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: all-the-mons
+  namespace: minecraft-atmons
+spec:
+  template:
+    spec:
+      containers:
+      - name: minecraft
+        $patch: delete
