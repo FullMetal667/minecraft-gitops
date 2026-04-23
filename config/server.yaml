@@ -47,7 +47,7 @@ servers:
     pr_title: "SB4 update to {version}"
 
   atmons:
-    display_name: "All The Mons
+    display_name: "All The Mons"
     provider: "github_release"
     repo: "owner/repo"
     asset_pattern: "serverpack-(?P<version>\\d+(?:\\.\\d+)+)\\.zip"
